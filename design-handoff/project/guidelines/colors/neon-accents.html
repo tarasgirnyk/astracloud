@@ -1,0 +1,29 @@
+<!-- @dsCard group="Colors" viewport="700x160" name="Neon accents" subtitle="Cyan + violet — gradients, glow, decoration on dark" -->
+<html>
+<head>
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body{margin:0;padding:20px;background:var(--navy-950);font-family:var(--font-body)}
+  .row{display:flex;gap:8px}
+  .sw{flex:1;height:70px;border-radius:var(--radius-md);display:flex;align-items:flex-end;padding:8px;color:#0b0c10;font:600 12px/1 var(--font-body)}
+  .glowrow{display:flex;gap:16px;margin-top:14px}
+  .glow{width:100px;height:40px;border-radius:var(--radius-pill);background:var(--navy-800)}
+  .g1{box-shadow:var(--glow-cyan)}
+  .g2{box-shadow:var(--glow-violet)}
+  .g3{box-shadow:var(--glow-orange)}
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="sw" style="background:var(--cyan-300)">cyan 300</div>
+    <div class="sw" style="background:var(--cyan-400)">cyan 400</div>
+    <div class="sw" style="background:var(--cyan-500)">cyan 500</div>
+    <div class="sw" style="background:var(--violet-300)">violet 300</div>
+    <div class="sw" style="background:var(--violet-400)">violet 400</div>
+    <div class="sw" style="background:var(--violet-500)">violet 500</div>
+  </div>
+  <div class="glowrow">
+    <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>
+  </div>
+</body>
+</html>

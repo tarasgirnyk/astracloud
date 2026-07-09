@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Astra Cloud — Homepage" description="Full marketing landing page: hero, services, infrastructure advantages, pricing table, FAQ, consultation CTA, footer." -->
+<helmet>
+  <script src="./ds-base.js"></script>
+  <style>
+    .partner-logo { filter: grayscale(1) opacity(0.5); transition: filter 0.2s ease; }
+    .partner-logo:hover { filter: grayscale(0) opacity(1); }
+
+    /* Hero space background */
+    .hero-space-bg { position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; border-radius:inherit; }
+    .hero-nebula { position:absolute; border-radius:50%; filter:blur(70px); animation:hero-nebula-pulse 14s ease-in-out infinite alternate; }
+    .hero-nebula--purple { width:45vw; height:45vw; top:-20%; left:-10%; background:radial-gradient(circle, rgba(139,92,246,0.16) 0%, transparent 70%); animation-duration:14s; }
+    .hero-nebula--blue { width:40vw; height:40vw; top:0%; right:-15%; background:radial-gradient(circle, rgba(59,130,246,0.14) 0%, transparent 65%); animation-duration:18s; animation-delay:-5s; }
+    .hero-nebula--orange { width:30vw; height:30vw; bottom:-15%; left:35%; background:radial-gradient(circle, rgba(255,112,22,0.10) 0%, transparent 65%); animation-duration:20s; animation-delay:-9s; }
+    @keyframes hero-nebula-pulse { 0% { opacity:0.6; transform:scale(1); } 100% { opacity:1; transform:scale(1.08); } }
+
+    .hero-star { position:absolute; border-radius:50%; background:#fff; animation:hero-twinkle linear infinite; }
+    @keyframes hero-twinkle { 0%, 100% { opacity:0.15; } 50% { opacity:1; } }
+
+    .hero-star-glow { position:absolute; width:3px; height:3px; border-radius:50%; background:var(--glow-color, #fff); box-shadow:0 0 6px 2px var(--glow-color, #fff), 0 0 14px 4px color-mix(in srgb, var(--glow-color, #fff) 40%, transparent); animation:hero-glow-pulse ease-in-out infinite; }
+    @keyframes hero-glow-pulse { 0%, 100% { opacity:0.3; transform:scale(1); } 50% { opacity:1; transform:scale(1.4); } }
+
+    .hero-shooting-star { position:absolute; width:2px; height:2px; background:#fff; border-radius:50%; animation:hero-shoot linear infinite; opacity:0; }
+    .hero-shooting-star::after { content:''; position:absolute; top:50%; transform:translateY(-50%); right:2px; width:100px; height:1px; background:linear-gradient(to left, rgba(255,255,255,0.8), transparent); }
+    @keyframes hero-shoot { 0% { opacity:0; transform:translateX(0) translateY(0); } 5% { opacity:1; } 30% { opacity:0; transform:translateX(260px) translateY(70px); } 100% { opacity:0; transform:translateX(260px) translateY(70px); } }
+
+    .hero-content { position:relative; z-index:1; }
+
+    .nav-dropdown { position:relative; }
+    .nav-dropdown .nav-dropdown-menu { display:none; }
+    .nav-dropdown:hover .nav-dropdown-menu { display:flex; }
+    .nav-dropdown-menu a:hover { background:var(--surface-light); }
+
+    /* Mobile nav */
+    .nav-burger { display:none; flex-direction:column; justify-content:center; gap:5px; width:26px; height:20px; cursor:pointer; background:none; border:none; padding:0; margin-left:auto; }
+    .nav-burger span { display:block; height:2px; width:100%; background:var(--text-on-light); border-radius:2px; }
+    .mobile-nav-toggle { display:none; }
+    .mobile-nav-panel { display:none; flex-direction:column; padding:8px var(--container-padding) 20px; background:var(--white); border-top:1px solid var(--border-on-light); }
+    .mobile-nav-panel a { color:var(--text-on-light); text-decoration:none; font:var(--text-ui-label); padding:12px 4px; border-bottom:1px solid var(--border-on-light); }
+    #mobile-nav-toggle:checked ~ .mobile-nav-panel { display:flex; }
+
+    @media (max-width: 768px) {
+      .main-nav { display:none !important; }
+      .nav-burger { display:flex; }
+
+      .hero-grid { grid-template-columns:1fr !important; }
+      .hero-title { font-size:2.25rem !important; }
+      .hero-image { height:240px !important; }
+      .hero-section { padding:56px 0 40px !important; }
+
+      .partners-row { flex-wrap:wrap !important; justify-content:center !important; gap:28px !important; }
+
+      .service-card { grid-template-columns:1fr !important; padding:var(--space-6) !important; }
+
+      .advantages-grid { grid-template-columns:1fr !important; }
+
+      .footer-grid { grid-template-columns:1fr !important; gap:var(--space-8) !important; }
+
+      h2 { font-size:1.75rem !important; }
+    }
+  </style>
+</helmet>
+
+<div style="background:var(--surface-light); overflow-x:hidden;">
+
+  <!-- Header -->
+  <header style="position:sticky; top:0; z-index:50; background:rgba(250,249,245,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--border-on-light);">
+    <input type="checkbox" id="mobile-nav-toggle" class="mobile-nav-toggle">
+    <div class="ac-container" style="display:flex; align-items:center; justify-content:space-between; min-height:76px; padding-top:14px; padding-bottom:14px; gap:16px 24px; flex-wrap:wrap;">
+      <img src="../../assets/logo/astra-cloud-logo.png" alt="Astra Cloud" style="height:50px; filter:invert(1) brightness(0.3) sepia(1) hue-rotate(190deg) saturate(0);">
+      <nav class="main-nav" style="display:flex; align-items:center; gap:24px; flex-wrap:wrap; font:var(--text-ui-label); color:var(--text-on-light);">
+        <a href="#vps" style="color:inherit; text-decoration:none;">VPS сервери</a>
+        <a href="#dedicated" style="color:inherit; text-decoration:none;">Виділений сервер</a>
+        <a href="#colocation" style="color:inherit; text-decoration:none;">Колокація</a>
+        <div class="nav-dropdown">
+          <span style="display:flex; align-items:center; gap:4px; cursor:pointer;">Компанія <span style="font-size:10px;">▾</span></span>
+          <div class="nav-dropdown-menu" style="flex-direction:column; position:absolute; top:100%; left:0; margin-top:0; padding-top:12px; min-width:240px; z-index:20;">
+            <div style="background:var(--white); border:1px solid var(--border-on-light); border-radius:var(--radius-md); box-shadow:0 8px 24px rgba(0,0,0,0.12); padding:8px; display:flex; flex-direction:column;">
+            <a href="#" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Про нас</a>
+            <a href="#" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Умови користування</a>
+            <a href="#" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Політика конфіденційності</a>
+            <a href="#" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Політика повернення коштів</a>
+            </div>
+          </div>
+        </div>
+        <a href="#" style="color:inherit; text-decoration:none;">Блог</a>
+      </nav>
+      <div style="display:flex; align-items:center; gap:16px; font:var(--text-caption); color:var(--text-on-light-muted); flex-wrap:wrap;">
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Select" hint-size="90px,44px" options="{{ languageOptions }}" value="{{ activeLanguage }}" on-change="{{ setActiveLanguage }}"></x-import>
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Select" hint-size="100px,44px" options="{{ currencyOptions }}" value="{{ activeCurrency }}" on-change="{{ setActiveCurrency }}"></x-import>
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Button" hint-size="140px,40px" variant="primary" size="sm">Кабінет</x-import>
+      </div>
+      <label for="mobile-nav-toggle" class="nav-burger" aria-label="Меню">
+        <span></span><span></span><span></span>
+      </label>
+    </div>
+    <div class="mobile-nav-panel">
+      <a href="#vps">VPS сервери</a>
+      <a href="#dedicated">Виділений сервер</a>
+      <a href="#colocation">Колокація</a>
+      <a href="#">Про нас</a>
+      <a href="#">Умови користування</a>
+      <a href="#">Політика конфіденційності</a>
+      <a href="#">Політика повернення коштів</a>
+      <a href="#">Блог</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero-section" style="background:var(--gradient-hero); padding:var(--space-32) 0 var(--space-24); position:relative; overflow:hidden;">
+    <div class="hero-space-bg">
+      <div class="hero-nebula hero-nebula--purple"></div>
+      <div class="hero-nebula hero-nebula--blue"></div>
+      <div class="hero-nebula hero-nebula--orange"></div>
+
+      <div class="hero-star" style="top:13%; left:7%; width:1px; height:1px; animation-delay:0.00s; animation-duration:2.00s;"></div>
+      <div class="hero-star" style="top:50%; left:60%; width:2px; height:2px; animation-delay:0.17s; animation-duration:2.13s;"></div>
+      <div class="hero-star" style="top:87%; left:13%; width:1px; height:1px; animation-delay:0.34s; animation-duration:2.26s;"></div>
+      <div class="hero-star" style="top:24%; left:66%; width:2px; height:2px; animation-delay:0.51s; animation-duration:2.39s;"></div>
+      <div class="hero-star" style="top:61%; left:19%; width:1px; height:1px; animation-delay:0.68s; animation-duration:2.52s;"></div>
+      <div class="hero-star" style="top:98%; left:72%; width:2px; height:2px; animation-delay:0.85s; animation-duration:2.65s;"></div>
+      <div class="hero-star" style="top:35%; left:25%; width:1px; height:1px; animation-delay:1.02s; animation-duration:2.78s;"></div>
+      <div class="hero-star" style="top:72%; left:78%; width:2px; height:2px; animation-delay:1.19s; animation-duration:2.91s;"></div>
+      <div class="hero-star" style="top:9%; left:31%; width:1px; height:1px; animation-delay:1.36s; animation-duration:3.04s;"></div>
+      <div class="hero-star" style="top:46%; left:84%; width:2px; height:2px; animation-delay:1.53s; animation-duration:3.17s;"></div>
+      <div class="hero-star" style="top:83%; left:37%; width:1px; height:1px; animation-delay:1.70s; animation-duration:3.30s;"></div>
+      <div class="hero-star" style="top:20%; left:90%; width:2px; height:2px; animation-delay:1.87s; animation-duration:3.43s;"></div>
+      <div class="hero-star" style="top:57%; left:43%; width:1px; height:1px; animation-delay:2.04s; animation-duration:3.56s;"></div>
+      <div class="hero-star" style="top:94%; left:96%; width:2px; height:2px; animation-delay:2.21s; animation-duration:3.69s;"></div>
+      <div class="hero-star" style="top:31%; left:49%; width:1px; height:1px; animation-delay:2.38s; animation-duration:3.82s;"></div>
+      <div class="hero-star" style="top:68%; left:2%; width:2px; height:2px; animation-delay:2.55s; animation-duration:3.95s;"></div>
+      <div class="hero-star" style="top:5%; left:55%; width:1px; height:1px; animation-delay:2.72s; animation-duration:4.08s;"></div>
+      <div class="hero-star" style="top:42%; left:8%; width:2px; height:2px; animation-delay:2.89s; animation-duration:4.21s;"></div>
+      <div class="hero-star" style="top:79%; left:61%; width:1px; height:1px; animation-delay:3.06s; animation-duration:4.34s;"></div>
+      <div class="hero-star" style="top:16%; left:14%; width:2px; height:2px; animation-delay:3.23s; animation-duration:4.47s;"></div>
+      <div class="hero-star" style="top:53%; left:67%; width:1px; height:1px; animation-delay:3.40s; animation-duration:4.60s;"></div>
+      <div class="hero-star" style="top:90%; left:20%; width:2px; height:2px; animation-delay:3.57s; animation-duration:4.73s;"></div>
+      <div class="hero-star" style="top:27%; left:73%; width:1px; height:1px; animation-delay:3.74s; animation-duration:4.86s;"></div>
+      <div class="hero-star" style="top:64%; left:26%; width:2px; height:2px; animation-delay:3.91s; animation-duration:4.99s;"></div>
+      <div class="hero-star" style="top:1%; left:79%; width:1px; height:1px; animation-delay:4.08s; animation-duration:2.12s;"></div>
+      <div class="hero-star" style="top:38%; left:32%; width:2px; height:2px; animation-delay:4.25s; animation-duration:2.25s;"></div>
+      <div class="hero-star" style="top:75%; left:85%; width:1px; height:1px; animation-delay:4.42s; animation-duration:2.38s;"></div>
+      <div class="hero-star" style="top:12%; left:38%; width:2px; height:2px; animation-delay:4.59s; animation-duration:2.51s;"></div>
+      <div class="hero-star" style="top:49%; left:91%; width:1px; height:1px; animation-delay:4.76s; animation-duration:2.64s;"></div>
+      <div class="hero-star" style="top:86%; left:44%; width:2px; height:2px; animation-delay:4.93s; animation-duration:2.77s;"></div>
+      <div class="hero-star" style="top:23%; left:97%; width:1px; height:1px; animation-delay:0.10s; animation-duration:2.90s;"></div>
+      <div class="hero-star" style="top:60%; left:50%; width:2px; height:2px; animation-delay:0.27s; animation-duration:3.03s;"></div>
+      <div class="hero-star" style="top:97%; left:3%; width:1px; height:1px; animation-delay:0.44s; animation-duration:3.16s;"></div>
+      <div class="hero-star" style="top:34%; left:56%; width:2px; height:2px; animation-delay:0.61s; animation-duration:3.29s;"></div>
+      <div class="hero-star" style="top:71%; left:9%; width:1px; height:1px; animation-delay:0.78s; animation-duration:3.42s;"></div>
+      <div class="hero-star" style="top:8%; left:62%; width:2px; height:2px; animation-delay:0.95s; animation-duration:3.55s;"></div>
+      <div class="hero-star" style="top:45%; left:15%; width:1px; height:1px; animation-delay:1.12s; animation-duration:3.68s;"></div>
+      <div class="hero-star" style="top:82%; left:68%; width:2px; height:2px; animation-delay:1.29s; animation-duration:3.81s;"></div>
+      <div class="hero-star" style="top:19%; left:21%; width:1px; height:1px; animation-delay:1.46s; animation-duration:3.94s;"></div>
+      <div class="hero-star" style="top:56%; left:74%; width:2px; height:2px; animation-delay:1.63s; animation-duration:4.07s;"></div>
+      <div class="hero-star" style="top:93%; left:27%; width:1px; height:1px; animation-delay:1.80s; animation-duration:4.20s;"></div>
+      <div class="hero-star" style="top:30%; left:80%; width:2px; height:2px; animation-delay:1.97s; animation-duration:4.33s;"></div>
+      <div class="hero-star" style="top:67%; left:33%; width:1px; height:1px; animation-delay:2.14s; animation-duration:4.46s;"></div>
+      <div class="hero-star" style="top:4%; left:86%; width:2px; height:2px; animation-delay:2.31s; animation-duration:4.59s;"></div>
+      <div class="hero-star" style="top:41%; left:39%; width:1px; height:1px; animation-delay:2.48s; animation-duration:4.72s;"></div>
+      <div class="hero-star" style="top:78%; left:92%; width:2px; height:2px; animation-delay:2.65s; animation-duration:4.85s;"></div>
+      <div class="hero-star" style="top:15%; left:45%; width:1px; height:1px; animation-delay:2.82s; animation-duration:4.98s;"></div>
+      <div class="hero-star" style="top:52%; left:98%; width:2px; height:2px; animation-delay:2.99s; animation-duration:2.11s;"></div>
+      <div class="hero-star" style="top:89%; left:51%; width:1px; height:1px; animation-delay:3.16s; animation-duration:2.24s;"></div>
+      <div class="hero-star" style="top:26%; left:4%; width:2px; height:2px; animation-delay:3.33s; animation-duration:2.37s;"></div>
+
+      <div class="hero-star-glow" style="top:31%; left:11%; animation-delay:0.00s; animation-duration:4.00s; --glow-color:#a78bfa;"></div>
+      <div class="hero-star-glow" style="top:12%; left:78%; animation-delay:0.41s; animation-duration:4.30s; --glow-color:#60a5fa;"></div>
+      <div class="hero-star-glow" style="top:83%; left:55%; animation-delay:0.82s; animation-duration:4.60s; --glow-color:#ff7016;"></div>
+      <div class="hero-star-glow" style="top:64%; left:32%; animation-delay:1.23s; animation-duration:4.90s; --glow-color:#fff;"></div>
+      <div class="hero-star-glow" style="top:45%; left:9%; animation-delay:1.64s; animation-duration:5.20s; --glow-color:#fff;"></div>
+      <div class="hero-star-glow" style="top:26%; left:76%; animation-delay:2.05s; animation-duration:5.50s; --glow-color:#f9a8d4;"></div>
+      <div class="hero-star-glow" style="top:7%; left:53%; animation-delay:2.46s; animation-duration:5.80s; --glow-color:#a78bfa;"></div>
+      <div class="hero-star-glow" style="top:78%; left:30%; animation-delay:2.87s; animation-duration:6.10s; --glow-color:#60a5fa;"></div>
+
+      <div class="hero-shooting-star" style="top:12%; left:20%; animation-duration:8s; animation-delay:0s;"></div>
+      <div class="hero-shooting-star" style="top:28%; left:55%; animation-duration:11s; animation-delay:-3s;"></div>
+      <div class="hero-shooting-star" style="top:8%; left:70%; animation-duration:14s; animation-delay:-7s;"></div>
+      <div class="hero-shooting-star" style="top:45%; left:10%; animation-duration:10s; animation-delay:-5s;"></div>
+
+      <div id="hero-tsparticles" style="position:absolute; inset:0;"></div>
+    </div>
+
+    <div class="ac-container hero-content hero-grid" style="display:grid; grid-template-columns:1.1fr 0.9fr; gap:var(--space-16); align-items:center;">
+      <div>
+        <h1 class="hero-title" style="font:800 3.5rem/1.05 var(--font-display); letter-spacing:var(--tracking-display); color:var(--text-on-dark); margin:0;">Ваші дані —<br>наша хмара</h1>
+        <p style="font:var(--text-body-lg); color:var(--text-on-dark-muted); max-width:480px; margin:24px 0 0;">Хмарні рішення для вашого бізнесу. Надійне збереження даних та висока продуктивність у будь-якій точці світу.</p>
+        <div style="display:flex; gap:16px; margin-top:36px;">
+          <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Button" hint-size="140px,52px" variant="primary" size="lg">Наші послуги</x-import>
+        </div>
+      </div>
+      <div class="hero-image" style="background-image:url('../../assets/img/hero3.png'); background-size:cover; background-position:center; background-repeat:no-repeat; border-radius:var(--radius-xl); height:380px;"></div>
+    </div>
+  </section>
+
+  <!-- Partners -->
+  <section style="padding:var(--space-8) 0; border-top:1px solid var(--border-on-light); border-bottom:1px solid var(--border-on-light);">
+    <div class="ac-container">
+      <p style="text-align:center; font:var(--text-caption); color:var(--text-on-light-muted); text-transform:uppercase; letter-spacing:var(--tracking-eyebrow); margin-bottom:24px;">Нам довіряють</p>
+      <div class="partners-row" style="width:100%; display:flex; align-items:center; justify-content:space-between; flex-wrap:nowrap;">
+        <a href="https://gigatrans.ua" target="_blank" rel="noopener noreferrer">
+          <img class="partner-logo" src="../../assets/logo/gigatrans.svg" alt="GigaTrans" width="133" height="61" style="max-width:100%; height:auto;">
+        </a>
+        <img class="partner-logo" src="../../assets/logo/ix-partner.svg" alt="IX" width="59" height="39" style="max-width:100%; height:auto;">
+        <a href="https://galcom.net.ua" target="_blank" rel="noopener noreferrer">
+          <img class="partner-logo" src="../../assets/logo/galcom.png" alt="Галком" width="133" height="59" style="max-width:100%; height:auto;">
+        </a>
+        <a href="https://www.turktelekomint.com" target="_blank" rel="noopener noreferrer">
+          <img class="partner-logo" src="../../assets/logo/turk-telekom-intl.png" alt="Türk Telekom International" width="133" height="44" style="max-width:100%; height:auto;">
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services (VPS / Colocation / Dedicated — full-width split cards) -->
+  <section style="padding:var(--section-padding-y) 0;">
+    <div class="ac-container">
+      <h2 style="font:var(--text-display-lg); color:var(--text-on-light); text-align:center; margin:0 0 var(--space-4);">Наші послуги</h2>
+      <p style="font:var(--text-body-lg); color:var(--text-on-light-muted); text-align:center; max-width:560px; margin:0 auto var(--space-10);">Все, що потрібно для реалізації Ваших проектів.</p>
+
+      <div style="display:flex; flex-direction:column; gap:calc(var(--section-padding-y) / 3);">
+
+        <div id="vps" class="service-card" style="border:1px solid var(--brand-primary); border-radius:var(--radius-lg); background:var(--white); display:grid; grid-template-columns:1fr 1fr; gap:var(--space-16); align-items:center; padding:var(--space-8);">
+          <div style="display:flex; flex-direction:column; gap:var(--space-4);">
+            <span style="font:var(--text-eyebrow); letter-spacing:var(--tracking-eyebrow); color:var(--brand-primary); text-transform:uppercase;">Масштабується</span>
+            <h3 style="font:var(--text-display-sm); color:var(--text-on-light);">VPS / VDS сервери</h3>
+            <p style="font:var(--text-body-sm); color:var(--text-on-light-muted);">Виділені ресурси без витрат на фізичне обладнання — від тестових середовищ до продакшн-сервісів.</p>
+            <ul style="margin:0; padding-left:18px; font:var(--text-body-sm); color:var(--text-on-light-muted); display:flex; flex-direction:column; gap:6px;">
+              <li>Швидкий запуск сервера за кілька хвилин</li>
+              <li>Ізольоване середовище з гарантованими ресурсами</li>
+              <li>Оптимальне співвідношення ціни та продуктивності</li>
+            </ul>
+            <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Button" hint-size="160px,44px" variant="primary" style="margin-top:8px;">Дізнатися більше</x-import>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="flex:none; width:24px; height:24px; border-radius:50%; background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; line-height:1;">✓</span>
+              <span style="font:var(--text-body-sm); color:var(--text-on-light);">30-денна гарантія повернення грошей</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="flex:none; width:24px; height:24px; border-radius:50%; background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; line-height:1;">✓</span>
+              <span style="font:var(--text-body-sm); color:var(--text-on-light);">Компетентна техпідтримка</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="flex:none; width:24px; height:24px; border-radius:50%; background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; line-height:1;">✓</span>
+              <span style="font:var(--text-body-sm); color:var(--text-on-light);">NVMe-диски для максимальної швидкодії</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="flex:none; width:24px; height:24px; border-radius:50%; background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; line-height:1;">✓</span>
+              <span style="font:var(--text-body-sm); color:var(--text-on-light);">Контроль серверів у реальному часі</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="flex:none; width:24px; height:24px; border-radius:50%; background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; line-height:1;">✓</span>
+              <span style="font:var(--text-body-sm); color:var(--text-on-light);">Швидка активація VPS</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="flex:none; width:24px; height:24px; border-radius:50%; background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; line-height:1;">✓</span>
+              <span style="font:var(--text-body-sm); color:var(--text-on-light);">Автоматичне резервне копіювання</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="colocation" class="service-card" style="border:1px solid var(--brand-primary); border-radius:var(--radius-lg); background:var(--white); display:grid; grid-template-columns:1fr 1fr; gap:var(--space-16); align-items:center; padding:var(--space-8);">
+          <div style="display:flex; flex-direction:column; gap:var(--space-4);">
+            <span style="font:var(--text-eyebrow); letter-spacing:var(--tracking-eyebrow); color:var(--brand-primary); text-transform:uppercase;">Розміщуйте обладнання в нас</span>
+            <h3 style="font:var(--text-display-sm); color:var(--text-on-light);">Колокація</h3>
+            <p style="font:var(--text-body-sm); color:var(--text-on-light-muted);">Розмістіть власне серверне обладнання в професійному дата-центрі та забудьте про ризики, пов'язані з перебоями електроживлення, нестабільним інтернетом чи перегрівом обладнання.</p>
+            <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Button" hint-size="160px,44px" variant="primary" style="margin-top:8px;">Дізнатися більше</x-import>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="flex:none; width:24px; height:24px; border-radius:50%; background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; line-height:1;">✓</span>
+              <span style="font:var(--text-body-sm); color:var(--text-on-light);">Резервоване електроживлення з ДБЖ та генераторами</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="flex:none; width:24px; height:24px; border-radius:50%; background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; line-height:1;">✓</span>
+              <span style="font:var(--text-body-sm); color:var(--text-on-light);">Підтримання оптимальної температури та вологості</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="flex:none; width:24px; height:24px; border-radius:50%; background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; line-height:1;">✓</span>
+              <span style="font:var(--text-body-sm); color:var(--text-on-light);">Високошвидкісний доступ до мережі Інтернет</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="flex:none; width:24px; height:24px; border-radius:50%; background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; line-height:1;">✓</span>
+              <span style="font:var(--text-body-sm); color:var(--text-on-light);">Фізична безпека та контроль доступу</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="flex:none; width:24px; height:24px; border-radius:50%; background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; line-height:1;">✓</span>
+              <span style="font:var(--text-body-sm); color:var(--text-on-light);">Цілодобовий моніторинг інфраструктури</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="flex:none; width:24px; height:24px; border-radius:50%; background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; line-height:1;">✓</span>
+              <span style="font:var(--text-body-sm); color:var(--text-on-light);">Технічна підтримка 24/7</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="dedicated" class="service-card" style="border:1px solid var(--brand-primary); border-radius:var(--radius-lg); background:var(--white); display:grid; grid-template-columns:1fr 1fr; gap:var(--space-16); align-items:center; padding:var(--space-8);">
+          <div style="display:flex; flex-direction:column; gap:var(--space-4);">
+            <span style="font:var(--text-eyebrow); letter-spacing:var(--tracking-eyebrow); color:var(--brand-primary); text-transform:uppercase;">Повний контроль</span>
+            <h3 style="font:var(--text-display-sm); color:var(--text-on-light);">Оренда виділеного сервера</h3>
+            <p style="font:var(--text-body-sm); color:var(--text-on-light-muted);">Отримайте продуктивний фізичний сервер без витрат на купівлю та обслуговування обладнання. Ми забезпечуємо інфраструктуру, моніторинг і підтримку, а ви зосереджуєтесь на розвитку свого бізнесу.</p>
+            <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Button" hint-size="160px,44px" variant="primary" style="margin-top:8px;">Дізнатися більше</x-import>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="flex:none; width:24px; height:24px; border-radius:50%; background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; line-height:1;">✓</span>
+              <span style="font:var(--text-body-sm); color:var(--text-on-light);">Виділена продуктивність</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="flex:none; width:24px; height:24px; border-radius:50%; background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; line-height:1;">✓</span>
+              <span style="font:var(--text-body-sm); color:var(--text-on-light);">Повний контроль</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="flex:none; width:24px; height:24px; border-radius:50%; background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; line-height:1;">✓</span>
+              <span style="font:var(--text-body-sm); color:var(--text-on-light);">Висока стабільність</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="flex:none; width:24px; height:24px; border-radius:50%; background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; line-height:1;">✓</span>
+              <span style="font:var(--text-body-sm); color:var(--text-on-light);">Готовність до зростання</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="flex:none; width:24px; height:24px; border-radius:50%; background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; line-height:1;">✓</span>
+              <span style="font:var(--text-body-sm); color:var(--text-on-light);">Професійна підтримка</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="flex:none; width:24px; height:24px; border-radius:50%; background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; line-height:1;">✓</span>
+              <span style="font:var(--text-body-sm); color:var(--text-on-light);">Надійна інфраструктура</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Advantages #1 -->
+  <section style="background:var(--gradient-navy); padding:var(--section-padding-y) 0;">
+    <div class="ac-container">
+      <div>
+        <span style="font:var(--text-eyebrow); letter-spacing:var(--tracking-eyebrow); color:var(--accent-cyan); text-transform:uppercase;">Чому обирають Astra Cloud</span>
+        <h2 style="font:var(--text-display-lg); color:var(--text-on-dark); margin:14px 0 20px;">Надійна інфраструктура для вашого бізнесу 24/7</h2>
+        <p style="font:var(--text-body-md); color:var(--text-on-dark-muted); margin:0 0 20px;">Ми забезпечуємо стабільну роботу серверного обладнання власного сучасного дата-центру, що гарантує високу відмовостійкість і безперервну доступність сервісів.</p>
+        <ul style="margin:0 0 20px; padding-left:20px; display:flex; flex-direction:column; gap:10px; font:var(--text-body-md); color:var(--text-on-dark);">
+          <li>Резервне електроживлення та автономні системи живлення</li>
+          <li>Ефективне охолодження серверної зали та точний клімат-контроль</li>
+          <li>Дубльовані канали зв'язку з високою пропускною здатністю</li>
+          <li>Постійний моніторинг інфраструктури 24/7</li>
+        </ul>
+        <p style="font:600 1.0625rem/1.5 var(--font-display); color:var(--text-on-dark);">Ваші сервіси працюють — ми гарантуємо їхню стабільність.</p>
+      </div>
+
+      <div class="advantages-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:var(--space-8); margin-top:var(--space-12);">
+        <sc-for list="{{ bottomAdvantages }}" as="adv" hint-placeholder-count="6">
+          <div style="padding:var(--space-6); border-radius:var(--radius-lg); background:var(--white); border:1px solid var(--border-on-light); display:flex; flex-direction:column; gap:10px;">
+            <div style="width:44px; height:44px; border-radius:var(--radius-md); background:rgba(255,112,22,0.1); display:flex; align-items:center; justify-content:center; font-size:20px;">{{ adv.icon }}</div>
+            <h4 style="font:var(--text-ui-label); color:var(--text-on-light); font-size:17px;">{{ adv.title }}</h4>
+            <p style="font:var(--text-body-sm); color:var(--text-on-light-muted); margin:0;">{{ adv.text }}</p>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section style="padding:var(--section-padding-y) 0;">
+    <div class="ac-container">
+      <div style="text-align:center; margin-bottom:var(--space-12);">
+        <h2 style="font:var(--text-display-lg); color:var(--text-on-light);">Ціни нижчі, профіт вище</h2>
+        <p style="font:var(--text-body-md); color:var(--text-on-light-muted); margin-top:12px;">Прозорі тарифи без прихованих платежів — оберіть конфігурацію під ваш проєкт.</p>
+      </div>
+
+      <div style="display:flex; justify-content:center; margin-bottom:var(--space-8);">
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Tabs" hint-size="360px,52px" tabs="{{ serviceTabs }}" active="{{ activeService }}" on-change="{{ setActiveService }}"></x-import>
+      </div>
+
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:var(--space-8);">
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Tag" hint-size="90px,40px" selected="{{ true }}">Львів</x-import>
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Tag" hint-size="90px,40px" selected="{{ false }}">Варшава</x-import>
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Tag" hint-size="90px,40px" selected="{{ false }}">IPv4</x-import>
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Tag" hint-size="90px,40px" selected="{{ true }}">IPv6</x-import>
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Tag" hint-size="120px,40px" selected="{{ false }}">Щорічна оплата</x-import>
+      </div>
+
+      <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.PricingTable" hint-size="100%,320px" columns="{{ pricingColumns }}" rows="{{ pricingRows }}" highlight-row="N-BASIC"></x-import>
+
+      <div style="text-align:center; margin-top:var(--space-10);">
+        <p style="font:var(--text-caption); color:var(--text-on-light-muted); text-transform:uppercase; letter-spacing:var(--tracking-eyebrow); margin-bottom:20px;">Способи оплати</p>
+        <div style="display:flex; justify-content:center; align-items:center; gap:14px; flex-wrap:wrap;">
+          <sc-for list="{{ paymentMethods }}" as="pm" hint-placeholder-count="4">
+            <span style="display:flex; align-items:center; justify-content:center; height:44px; padding:0 20px; border:1px solid var(--border-on-light); border-radius:var(--radius-md); background:var(--white);">
+              <img src="{{ pm.logo }}" alt="{{ pm.name }}" style="height:24px; width:auto;">
+            </span>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section style="padding:var(--section-padding-y) 0; background:var(--paper);">
+    <div class="ac-container">
+      <h2 style="font:var(--text-display-lg); color:var(--text-on-light); text-align:center; margin-bottom:var(--space-10);">Питання та відповіді</h2>
+      <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Accordion" hint-size="100%,400px" items="{{ faqItems }}"></x-import>
+    </div>
+  </section>
+
+  <!-- Consultation -->
+  <section style="background:var(--gradient-navy); padding:var(--section-padding-y) 0;">
+    <div class="ac-container" style="text-align:center;">
+      <h2 style="font:var(--text-display-lg); color:var(--text-on-dark);">Потрібна допомога з вибором?</h2>
+      <p style="font:var(--text-body-md); color:var(--text-on-dark-muted); margin:16px auto 0; max-width:420px;">Наші менеджери допоможуть підібрати оптимальне рішення для вашого проєкту.</p>
+      <div style="margin-top:30px;">
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Button" hint-size="240px,52px" variant="primary" size="lg">Отримати консультацію</x-import>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background:var(--navy-950); padding:var(--space-16) 0 var(--space-10);">
+    <div class="ac-container">
+      <div class="footer-grid" style="display:grid; grid-template-columns:1.3fr 1fr 1fr 1fr; gap:var(--space-10); padding-bottom:var(--space-10); border-bottom:1px solid var(--border-on-dark);">
+        <div>
+          <img src="../../assets/logo/astra-cloud-logo.png" alt="Astra Cloud" style="height:28px; margin-bottom:14px;">
+          <p style="font:var(--text-body-sm); color:var(--text-on-dark-muted);">Україна, м. Львів.</p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; font:var(--text-body-sm); color:var(--text-on-dark-muted);">
+          <span style="color:var(--text-on-dark); font:var(--text-ui-label); margin-bottom:4px;">Клієнтам</span>
+          <a href="#" style="color:inherit; text-decoration:none;">Про нас</a>
+          <a href="#" style="color:inherit; text-decoration:none;">Умови користування</a>
+          <a href="#" style="color:inherit; text-decoration:none;">Політика конфіденційності</a>
+          <a href="#" style="color:inherit; text-decoration:none;">Політика повернення коштів</a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; font:var(--text-body-sm); color:var(--text-on-dark-muted);">
+          <span style="color:var(--text-on-dark); font:var(--text-ui-label); margin-bottom:4px;">Legal</span>
+          <a href="#" style="color:inherit; text-decoration:none;">SLA</a>
+          <a href="#" style="color:inherit; text-decoration:none;">Legal Section</a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; font:var(--text-body-sm); color:var(--text-on-dark-muted);">
+          <span style="color:var(--text-on-dark); font:var(--text-ui-label); margin-bottom:4px;">Контакти</span>
+          <span>063 636 3448</span>
+          <span>cloud@astra.in.ua</span>
+          <span>abuse@astra.in.ua</span>
+        </div>
+      </div>
+      <p style="font:var(--text-caption); color:var(--gray-500); text-align:center; padding-top:var(--space-6);">© 2026 Astra Cloud. Всі права захищені.</p>
+    </div>
+  </footer>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { activeService: "vps", activeLanguage: "ua", activeCurrency: "uah" };
+
+  componentDidMount() {
+    const init = () => {
+      if (window.tsParticles && document.getElementById("hero-tsparticles")) {
+        window.tsParticles.load("hero-tsparticles", {
+          fullScreen: { enable: false },
+          fpsLimit: 60,
+          interactivity: {
+            events: { onHover: { enable: true, mode: "repulse" } },
+            modes: { repulse: { distance: 80, duration: 0.8, factor: 1, speed: 1 } },
+          },
+          particles: {
+            color: { value: "#ffffff" },
+            move: { enable: true, direction: "none", random: false, straight: false, outModes: { default: "out" }, speed: { min: 0.1, max: 0.6 } },
+            number: { density: { enable: true, width: 400, height: 400 }, value: 60 },
+            opacity: { value: { min: 0.1, max: 0.8 }, animation: { enable: true, speed: 3, sync: false, startValue: "random" } },
+            shape: { type: "circle" },
+            size: { value: { min: 0.4, max: 1.2 } },
+          },
+          detectRetina: true,
+        });
+      }
+    };
+
+    if (!window.tsParticles) {
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/tsparticles@3.3.0/tsparticles.bundle.min.js";
+      script.async = true;
+      script.onload = init;
+      document.head.appendChild(script);
+    } else {
+      init();
+    }
+  }
+
+  renderVals() {
+    return {
+      serviceTabs: [
+        { value: "vps", label: "VPS" },
+        { value: "dedicated", label: "Виділений сервер" },
+        { value: "colo", label: "Колокація" },
+      ],
+      activeService: this.state.activeService,
+      setActiveService: (v) => this.setState({ activeService: v }),
+      languageOptions: [
+        { value: "ua", label: "UA", flag: "../../assets/logo/flags/ua.svg" },
+        { value: "en", label: "GB", flag: "../../assets/logo/flags/gb.svg" },
+        { value: "pl", label: "PL", flag: "../../assets/logo/flags/pl.svg" },
+      ],
+      activeLanguage: this.state.activeLanguage,
+      setActiveLanguage: (v) => this.setState({ activeLanguage: v }),
+      currencyOptions: [
+        { value: "uah", label: "UAH" },
+        { value: "usd", label: "USD" },
+        { value: "eur", label: "EUR" },
+      ],
+      activeCurrency: this.state.activeCurrency,
+      setActiveCurrency: (v) => this.setState({ activeCurrency: v }),
+      pricingColumns: [
+        { key: "plan", label: "Тариф" },
+        { key: "cpu", label: "CPU" },
+        { key: "ram", label: "RAM" },
+        { key: "disk", label: "Диск" },
+        { key: "price", label: "Ціна" },
+      ],
+      pricingRows: [
+        { plan: "N-START", cpu: "1 vCPU", ram: "1 GB", disk: "20 GB NVMe", price: "99₴/міс" },
+        { plan: "N-BASIC", cpu: "2 vCPU", ram: "2 GB", disk: "40 GB NVMe", price: "189₴/міс" },
+        { plan: "N-LIGHT", cpu: "2 vCPU", ram: "4 GB", disk: "60 GB NVMe", price: "289₴/міс" },
+        { plan: "N-SMART", cpu: "4 vCPU", ram: "8 GB", disk: "100 GB NVMe", price: "489₴/міс" },
+      ],
+      bottomAdvantages: [
+        { icon: "💸", title: "30-денна гарантія повернення грошей", text: "Якщо щось не сподобається — повернемо гроші протягом перших 30 днів." },
+        { icon: "🛠️", title: "Компетентна техпідтримка", text: "Кваліфіковані спеціалісти цілодобово контролюють роботу інфраструктури." },
+        { icon: "⚡", title: "NVMe-диски для максимальної швидкості", text: "Миттєвий доступ до даних і висока продуктивність навіть під навантаженням." },
+        { icon: "📊", title: "Контроль серверів у реальному часі", text: "Продуктивність, ресурси та доступність — прямо в особистому кабінеті." },
+        { icon: "🚀", title: "Швидка активація VPS", text: "Сервер готовий до роботи вже через кілька хвилин після оплати." },
+        { icon: "🗄️", title: "Автоматичне резервне копіювання", text: "Регулярні резервні копії дозволяють швидко відновити систему." },
+      ],
+      paymentMethods: [
+        { name: "Mastercard", logo: "../../assets/logo/mastercard.svg" },
+        { name: "VISA", logo: "../../assets/logo/visa.svg" },
+        { name: "Bitcoin", logo: "../../assets/logo/bitcoin.svg" },
+        { name: "PayPal", logo: "../../assets/logo/paypal.svg" },
+      ],
+      faqItems: [
+        { question: "Що таке виділений сервер?", answer: "Фізичний сервер у повному розпорядженні одного клієнта — без поділу ресурсів з іншими." },
+        { question: "Яка різниця між VPS та виділеним сервером?", answer: "VPS — віртуальний розділ фізичного сервера; виділений сервер — окрема фізична машина цілком." },
+        { question: "Чи надаєте ви тестовий період?", answer: "Так, діє 30-денна гарантія повернення грошей на VDS-сервери." },
+        { question: "Як швидко активується сервер після оплати?", answer: "Сервер готовий до роботи вже через кілька хвилин після оплати." },
+        { question: "Яка операційна система доступна для встановлення?", answer: "Основні дистрибутиви Linux та Windows Server — деталі уточнюйте в кабінеті." },
+        { question: "Чи є у вас технічна підтримка?", answer: "Так, технічна підтримка доступна 24/7." },
+        { question: "Що таке колокація (Colocation)?", answer: "Розміщення власного серверного обладнання клієнта в нашому дата-центрі." },
+        { question: "Які способи оплати ви приймаєте?", answer: "Mastercard, VISA, Bitcoin та PayPal." },
+        { question: "Як здійснюється резервне копіювання?", answer: "Автоматично, за регулярним розкладом, з можливістю швидкого відновлення." },
+      ],
+    };
+  }
+}
+
+</script>
+</body>
+</html>

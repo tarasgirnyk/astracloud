@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Astra Cloud — VPS Checkout" description="VPS order checkout: 3-step wizard (configuration, credentials, payment), left-column server configuration form, right sticky order-summary card." -->
+<helmet>
+  <script src="./ds-base.js"></script>
+  <style>
+    .nav-dropdown { position:relative; }
+    .nav-dropdown .nav-dropdown-menu { display:none; }
+    .nav-dropdown:hover .nav-dropdown-menu { display:flex; }
+    .nav-dropdown-menu a:hover { background:var(--surface-light); }
+
+    /* Mobile nav */
+    .nav-burger { display:none; flex-direction:column; justify-content:center; gap:5px; width:26px; height:20px; cursor:pointer; background:none; border:none; padding:0; margin-left:auto; }
+    .nav-burger span { display:block; height:2px; width:100%; background:var(--text-on-light); border-radius:2px; }
+    .mobile-nav-toggle { display:none; }
+    .mobile-nav-panel { display:none; flex-direction:column; padding:8px var(--container-padding) 20px; background:var(--white); border-top:1px solid var(--border-on-light); }
+    .mobile-nav-panel a { color:var(--text-on-light); text-decoration:none; font:var(--text-ui-label); padding:12px 4px; border-bottom:1px solid var(--border-on-light); }
+    #mobile-nav-toggle:checked ~ .mobile-nav-panel { display:flex; }
+
+    /* Wizard steps */
+    .wizard-steps { display:flex; align-items:flex-start; justify-content:center; gap:0; max-width:560px; margin:0 auto; }
+    .wizard-step { display:flex; flex-direction:column; align-items:center; gap:8px; flex:0 0 auto; width:130px; }
+    .wizard-connector { flex:1 1 auto; height:2px; margin-top:17px; min-width:24px; }
+
+    /* Checkout layout */
+    .checkout-grid { display:grid; grid-template-columns:1fr 380px; gap:var(--space-10); align-items:start; }
+    .addon-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:var(--space-4); }
+    .addon-desc:empty { display:none; margin:0; }
+
+    @media (max-width: 900px) {
+      .checkout-grid { grid-template-columns:1fr !important; }
+      .checkout-summary { position:static !important; }
+    }
+
+    @media (max-width: 640px) {
+      .addon-grid { grid-template-columns:1fr !important; }
+      .wizard-step { width:88px; }
+      .wizard-step-label { font-size:11px !important; }
+    }
+
+    @media (max-width: 768px) {
+      .main-nav { display:none !important; }
+      .nav-burger { display:flex; }
+
+      .footer-grid { grid-template-columns:1fr !important; gap:var(--space-8) !important; }
+
+      h1 { font-size:1.75rem !important; }
+    }
+  </style>
+</helmet>
+
+<div style="background:var(--surface-light); overflow-x:hidden;">
+
+  <!-- Header -->
+  <header style="position:sticky; top:0; z-index:50; background:rgba(250,249,245,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--border-on-light);">
+    <input type="checkbox" id="mobile-nav-toggle" class="mobile-nav-toggle">
+    <div class="ac-container" style="display:flex; align-items:center; justify-content:space-between; min-height:76px; padding-top:14px; padding-bottom:14px; gap:16px 24px; flex-wrap:wrap;">
+      <img src="../../assets/logo/astra-cloud-logo.png" alt="Astra Cloud" style="height:50px; filter:invert(1) brightness(0.3) sepia(1) hue-rotate(190deg) saturate(0);">
+      <nav class="main-nav" style="display:flex; align-items:center; gap:24px; flex-wrap:wrap; font:var(--text-ui-label); color:var(--text-on-light);">
+        <a href="../vps/vps.html" style="color:inherit; text-decoration:none;">VPS сервери</a>
+        <a href="#dedicated" style="color:inherit; text-decoration:none;">Виділений сервер</a>
+        <a href="#colocation" style="color:inherit; text-decoration:none;">Колокація</a>
+        <div class="nav-dropdown">
+          <span style="display:flex; align-items:center; gap:4px; cursor:pointer;">Компанія <span style="font-size:10px;">▾</span></span>
+          <div class="nav-dropdown-menu" style="flex-direction:column; position:absolute; top:100%; left:0; margin-top:0; padding-top:12px; min-width:240px; z-index:20;">
+            <div style="background:var(--white); border:1px solid var(--border-on-light); border-radius:var(--radius-md); box-shadow:0 8px 24px rgba(0,0,0,0.12); padding:8px; display:flex; flex-direction:column;">
+            <a href="#" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Про нас</a>
+            <a href="../simple/simple.html" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Умови користування</a>
+            <a href="../simple/simple.html" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Політика конфіденційності</a>
+            <a href="#" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Політика повернення коштів</a>
+            </div>
+          </div>
+        </div>
+        <a href="#" style="color:inherit; text-decoration:none;">Блог</a>
+      </nav>
+      <div style="display:flex; align-items:center; gap:16px; font:var(--text-caption); color:var(--text-on-light-muted); flex-wrap:wrap;">
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Select" hint-size="90px,44px" options="{{ languageOptions }}" value="{{ activeLanguage }}" on-change="{{ setActiveLanguage }}"></x-import>
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Select" hint-size="100px,44px" options="{{ currencyOptions }}" value="{{ activeCurrency }}" on-change="{{ setActiveCurrency }}"></x-import>
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Button" hint-size="140px,40px" variant="primary" size="sm">Кабінет</x-import>
+      </div>
+      <label for="mobile-nav-toggle" class="nav-burger" aria-label="Меню">
+        <span></span><span></span><span></span>
+      </label>
+    </div>
+    <div class="mobile-nav-panel">
+      <a href="../vps/vps.html">VPS сервери</a>
+      <a href="#dedicated">Виділений сервер</a>
+      <a href="#colocation">Колокація</a>
+      <a href="#">Про нас</a>
+      <a href="../simple/simple.html">Умови користування</a>
+      <a href="../simple/simple.html">Політика конфіденційності</a>
+      <a href="#">Політика повернення коштів</a>
+      <a href="#">Блог</a>
+    </div>
+  </header>
+
+  <!-- Page title + wizard -->
+  <section style="padding:var(--space-10) 0 var(--space-8); background:var(--gray-100); border-bottom:1px solid var(--border-on-light);">
+    <div class="ac-container">
+      <h1 style="font:800 2.25rem/1.15 var(--font-display); letter-spacing:var(--tracking-display); color:var(--text-on-light); margin:0 0 var(--space-8); text-align:center;">Оформлення замовлення</h1>
+
+      <div class="wizard-steps">
+        <div class="wizard-step">
+          <span style="width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font:var(--text-ui-label); background:var(--brand-primary); color:var(--white);">1</span>
+          <span class="wizard-step-label" style="font:var(--text-caption); color:var(--text-on-light); text-align:center;">Конфігурація</span>
+        </div>
+        <div class="wizard-connector" style="background:var(--brand-primary);"></div>
+        <div class="wizard-step">
+          <span style="width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font:var(--text-ui-label); background:var(--white); color:var(--text-on-light-muted); border:1.5px solid var(--border-on-light);">2</span>
+          <span class="wizard-step-label" style="font:var(--text-caption); color:var(--text-on-light-muted); text-align:center;">Облікові дані</span>
+        </div>
+        <div class="wizard-connector" style="background:var(--border-on-light);"></div>
+        <div class="wizard-step">
+          <span style="width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font:var(--text-ui-label); background:var(--white); color:var(--text-on-light-muted); border:1.5px solid var(--border-on-light);">3</span>
+          <span class="wizard-step-label" style="font:var(--text-caption); color:var(--text-on-light-muted); text-align:center;">Оплата</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Checkout configuration -->
+  <section style="padding:var(--space-10) 0 var(--section-padding-y); background:var(--paper);">
+    <div class="ac-container">
+      <div class="checkout-grid">
+
+        <!-- Left: configuration form -->
+        <div style="display:flex; flex-direction:column; gap:var(--space-8);">
+
+          <!-- Plan recap -->
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; padding:var(--space-4) var(--space-5); background:var(--white); border:1px solid var(--border-on-light); border-radius:var(--radius-lg); flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="width:40px; height:40px; flex:none; border-radius:var(--radius-md); background:rgba(255,112,22,0.1); display:flex; align-items:center; justify-content:center; font-size:18px;">🖥️</span>
+              <div>
+                <div style="font:var(--text-ui-label); color:var(--text-on-light);">TurboVPS — TurboVPS-2</div>
+                <div style="font:var(--text-caption); color:var(--text-on-light-muted);">4 vCPU · 8 GB RAM · 128 GB NVMe · Київ</div>
+              </div>
+            </div>
+            <a href="../vps/vps.html" style="font:var(--text-caption); color:var(--brand-primary); text-decoration:none; white-space:nowrap;">Змінити тариф</a>
+          </div>
+
+          <!-- OS -->
+          <div>
+            <h3 style="font:var(--text-ui-label); color:var(--text-on-light); margin:0 0 12px; font-size:17px;">Операційна система</h3>
+            <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Tabs" hint-size="220px,52px" tabs="{{ osTabs }}" active="{{ osTab }}" on-change="{{ setOsTab }}"></x-import>
+            <div style="margin-top:14px;">
+              <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Select" hint-size="100%,64px" label="Вибір версії" options="{{ osVersionOptions }}" value="{{ osVersion }}" on-change="{{ setOsVersion }}" style="width:100%;"></x-import>
+            </div>
+          </div>
+
+          <!-- Панель керування -->
+          <div>
+            <h3 style="font:var(--text-ui-label); color:var(--text-on-light); margin:0 0 12px; font-size:17px;">Панель керування</h3>
+            <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Select" hint-size="340px,44px" options="{{ controlPanelOptions }}" value="{{ controlPanel }}" on-change="{{ setControlPanel }}" style="width:100%; max-width:340px;"></x-import>
+          </div>
+
+          <!-- Додаткові IP -->
+          <div>
+            <h3 style="font:var(--text-ui-label); color:var(--text-on-light); margin:0 0 12px; font-size:17px;">Додаткові IP</h3>
+            <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Select" hint-size="340px,44px" options="{{ ipOptions }}" value="{{ additionalIp }}" on-change="{{ setAdditionalIp }}" style="width:100%; max-width:340px;"></x-import>
+          </div>
+
+          <!-- Auto Installer -->
+          <div>
+            <h3 style="font:var(--text-ui-label); color:var(--text-on-light); margin:0 0 12px; font-size:17px;">Auto Installer</h3>
+            <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Select" hint-size="340px,44px" options="{{ installerOptions }}" value="{{ autoInstaller }}" on-change="{{ setAutoInstaller }}" style="width:100%; max-width:340px;"></x-import>
+          </div>
+
+          <!-- Додаткові сервіси -->
+          <div>
+            <h3 style="font:var(--text-ui-label); color:var(--text-on-light); margin:0 0 16px; font-size:17px;">Додаткові сервіси</h3>
+            <div class="addon-grid">
+              <sc-for list="{{ addons }}" as="addon" hint-placeholder-count="6">
+                <div style="border:1px solid var(--border-on-light); border-radius:var(--radius-lg); background:var(--white); padding:var(--space-5); display:flex; flex-direction:column; gap:10px;">
+                  <div style="display:flex; align-items:flex-start; gap:10px;">
+                    <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Checkbox" hint-size="20px,20px" checked="{{ addon.checked }}" on-change="{{ addon.onToggle }}" style="margin-top:2px;"></x-import>
+                    <div style="display:flex; flex-direction:column; gap:2px;">
+                      <span style="font:600 15px/1.3 var(--font-body); color:var(--text-on-light);">{{ addon.title }}</span>
+                      <span style="font:var(--text-caption); color:var(--text-on-light-muted);">{{ addon.priceLabel }} {{ addon.period }}</span>
+                    </div>
+                  </div>
+                  <p class="addon-desc" style="font:400 12.5px/1.45 var(--font-body); color:var(--text-on-light-muted); margin:0; padding-left:30px;">{{ addon.description }}</p>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right: order summary -->
+        <div class="checkout-summary" style="position:sticky; top:100px;">
+          <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Card" hint-size="380px,540px" padding="28px">
+            <h3 style="font:var(--text-display-sm); color:var(--text-on-light); margin:0 0 18px;">Всього до оплати</h3>
+
+            <div style="display:flex; flex-direction:column; gap:9px;">
+              <sc-for list="{{ summaryLines }}" as="line" hint-placeholder-count="6">
+                <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px;">
+                  <span style="font:400 13px/1.5 var(--font-body); color:var(--text-on-light-muted);">{{ line.label }}</span>
+                  <span style="font:400 13px/1.5 var(--font-body); color:var(--text-on-light-muted); white-space:nowrap;">{{ line.value }}</span>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="height:1px; background:var(--border-on-light); margin:20px 0;"></div>
+
+            <div style="display:flex; flex-direction:column; gap:9px;">
+              <span style="font:600 13px/1.3 var(--font-body); color:var(--text-on-light);">Наступний платіж</span>
+              <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px;">
+                <span style="font:400 13px/1.5 var(--font-body); color:var(--text-on-light-muted);">На півроку</span>
+                <span style="font:400 13px/1.5 var(--font-body); color:var(--text-on-light-muted);">{{ nextPaymentValue }}</span>
+              </div>
+            </div>
+
+            <div style="height:1px; background:var(--border-on-light); margin:20px 0;"></div>
+
+            <div style="text-align:right; margin-bottom:22px;">
+              <div style="font:var(--text-caption); color:var(--text-on-light-muted); margin-bottom:4px;">Всього до оплати сьогодні</div>
+              <div style="font:800 1.625rem/1 var(--font-display); color:var(--text-on-light);">{{ totalTodayValue }}</div>
+            </div>
+
+            <div style="display:flex; justify-content:center;">
+              <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Button" hint-size="200px,52px" variant="primary" size="lg" on-click="{{ goToNextStep }}">Продовжити</x-import>
+            </div>
+          </x-import>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background:var(--navy-950); padding:var(--space-16) 0 var(--space-10);">
+    <div class="ac-container">
+      <div class="footer-grid" style="display:grid; grid-template-columns:1.3fr 1fr 1fr 1fr; gap:var(--space-10); padding-bottom:var(--space-10); border-bottom:1px solid var(--border-on-dark);">
+        <div>
+          <img src="../../assets/logo/astra-cloud-logo.png" alt="Astra Cloud" style="height:28px; margin-bottom:14px;">
+          <p style="font:var(--text-body-sm); color:var(--text-on-dark-muted);">Україна, м. Львів.</p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; font:var(--text-body-sm); color:var(--text-on-dark-muted);">
+          <span style="color:var(--text-on-dark); font:var(--text-ui-label); margin-bottom:4px;">Клієнтам</span>
+          <a href="#" style="color:inherit; text-decoration:none;">Про нас</a>
+          <a href="../simple/simple.html" style="color:inherit; text-decoration:none;">Умови користування</a>
+          <a href="../simple/simple.html" style="color:inherit; text-decoration:none;">Політика конфіденційності</a>
+          <a href="#" style="color:inherit; text-decoration:none;">Політика повернення коштів</a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; font:var(--text-body-sm); color:var(--text-on-dark-muted);">
+          <span style="color:var(--text-on-dark); font:var(--text-ui-label); margin-bottom:4px;">Legal</span>
+          <a href="#" style="color:inherit; text-decoration:none;">SLA</a>
+          <a href="#" style="color:inherit; text-decoration:none;">Legal Section</a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; font:var(--text-body-sm); color:var(--text-on-dark-muted);">
+          <span style="color:var(--text-on-dark); font:var(--text-ui-label); margin-bottom:4px;">Контакти</span>
+          <span>063 636 3448</span>
+          <span>cloud@astra.in.ua</span>
+          <span>abuse@astra.in.ua</span>
+        </div>
+      </div>
+      <p style="font:var(--text-caption); color:var(--gray-500); text-align:center; padding-top:var(--space-6);">© 2026 Astra Cloud. Всі права захищені.</p>
+    </div>
+  </footer>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    activeLanguage: "ua",
+    activeCurrency: "eur",
+    osTab: "linux",
+    osVersion: "almalinux86",
+    controlPanel: "none",
+    additionalIp: "none",
+    autoInstaller: "none",
+    addonState: {
+      cpanel_premier: false,
+      imunify: false,
+      litespeed: false,
+      wpg10: false,
+      wpg30: false,
+      wpg100: false,
+    },
+  };
+
+  toggleAddon(key) {
+    this.setState({ addonState: { ...this.state.addonState, [key]: !this.state.addonState[key] } });
+  }
+
+  renderVals() {
+    const fmt = (n) => `€${n.toFixed(2)}`;
+    const basePrice = 180.0;
+
+    const osVersionsByTab = {
+      linux: [
+        { value: "almalinux86", label: "AlmaLinux 8.6" },
+        { value: "ubuntu2404", label: "Ubuntu 24.04 LTS" },
+        { value: "debian12", label: "Debian 12" },
+        { value: "rocky9", label: "Rocky Linux 9" },
+      ],
+      windows: [
+        { value: "win2022", label: "Windows Server 2022" },
+        { value: "win2019", label: "Windows Server 2019" },
+      ],
+    };
+    const osVersionOptions = osVersionsByTab[this.state.osTab];
+    const osVersionLabel = (osVersionOptions.find((o) => o.value === this.state.osVersion) || osVersionOptions[0]).label;
+
+    const controlPanelOptions = [
+      { value: "none", label: "Немає", price: 0 },
+      { value: "cpanel", label: "cPanel", price: 15.0 },
+      { value: "plesk", label: "Plesk", price: 12.0 },
+      { value: "directadmin", label: "DirectAdmin", price: 8.0 },
+    ];
+    const ipOptions = [
+      { value: "none", label: "Немає", price: 0 },
+      { value: "ipv4_1", label: "+1 IPv4", price: 2.0 },
+      { value: "ipv4_2", label: "+2 IPv4", price: 4.0 },
+    ];
+    const installerOptions = [
+      { value: "none", label: "Немає", price: 0 },
+      { value: "softaculous", label: "Softaculous", price: 3.0 },
+      { value: "installatron", label: "Installatron", price: 3.0 },
+    ];
+
+    const cp = controlPanelOptions.find((o) => o.value === this.state.controlPanel);
+    const ip = ipOptions.find((o) => o.value === this.state.additionalIp);
+    const inst = installerOptions.find((o) => o.value === this.state.autoInstaller);
+
+    const wpGuardianDesc = "Блокуйте зловмисні запити та зменшуйте вразливості, не змінюючи код веб-сайту та не впливаючи на продуктивність сайту. Захистіть сервери та сайти WordPress без встановлення оновлень.";
+
+    const addonDefs = [
+      { key: "cpanel_premier", title: "cPanel Premier Cloud 150", price: 79.99, description: "" },
+      { key: "imunify", title: "Imunify AV+", price: 7.0, description: "ImunifyAV+ виявляє всі види шкідливих програм у всіх типах файлів, більше 97% з яких можна очистити автоматично." },
+      { key: "litespeed", title: "Litespeed Site Owner Plus", price: 22.5, description: "5-DOMAIN 1-WORKER UNLIMITED MEMORY LSCACHE" },
+      { key: "wpg10", title: "WP Guardian (cPanel Addon) 10 сайтів", price: 15.0, description: wpGuardianDesc },
+      { key: "wpg30", title: "WP Guardian (cPanel Addon) 30 сайтів", price: 29.85, description: wpGuardianDesc },
+      { key: "wpg100", title: "WP Guardian (cPanel Addon) 100 сайтів", price: 74.85, description: wpGuardianDesc },
+    ];
+
+    const addons = addonDefs.map((a) => ({
+      ...a,
+      checked: !!this.state.addonState[a.key],
+      priceLabel: fmt(a.price),
+      period: "Щомісячно",
+      onToggle: () => this.toggleAddon(a.key),
+    }));
+
+    const selectedAddons = addons.filter((a) => a.checked);
+    const addonsTotal = selectedAddons.reduce((sum, a) => sum + a.price, 0);
+    const extrasTotal = cp.price + ip.price + inst.price;
+    const totalToday = basePrice + extrasTotal + addonsTotal;
+
+    const summaryLines = [
+      { label: "TurboVPS - TurboVPS-2", value: fmt(basePrice) },
+      { label: "Дата-Центр: Київ", value: fmt(0) },
+      { label: `Операційна система: ${osVersionLabel}`, value: fmt(0) },
+      { label: `Панель керування: ${cp.label}`, value: fmt(cp.price) },
+      { label: `Додаткові IP: ${ip.label}`, value: fmt(ip.price) },
+      { label: `Auto Installer: ${inst.label}`, value: fmt(inst.price) },
+      ...selectedAddons.map((a) => ({ label: a.title, value: fmt(a.price) })),
+    ];
+
+    return {
+      languageOptions: [
+        { value: "ua", label: "UA", flag: "../../assets/logo/flags/ua.svg" },
+        { value: "en", label: "GB", flag: "../../assets/logo/flags/gb.svg" },
+        { value: "pl", label: "PL", flag: "../../assets/logo/flags/pl.svg" },
+      ],
+      activeLanguage: this.state.activeLanguage,
+      setActiveLanguage: (v) => this.setState({ activeLanguage: v }),
+      currencyOptions: [
+        { value: "eur", label: "EUR" },
+        { value: "uah", label: "UAH" },
+        { value: "usd", label: "USD" },
+      ],
+      activeCurrency: this.state.activeCurrency,
+      setActiveCurrency: (v) => this.setState({ activeCurrency: v }),
+
+      osTabs: [
+        { value: "linux", label: "Linux" },
+        { value: "windows", label: "Windows" },
+      ],
+      osTab: this.state.osTab,
+      setOsTab: (v) => this.setState({ osTab: v, osVersion: osVersionsByTab[v][0].value }),
+      osVersionOptions,
+      osVersion: this.state.osVersion,
+      setOsVersion: (v) => this.setState({ osVersion: v }),
+
+      controlPanelOptions,
+      controlPanel: this.state.controlPanel,
+      setControlPanel: (v) => this.setState({ controlPanel: v }),
+
+      ipOptions,
+      additionalIp: this.state.additionalIp,
+      setAdditionalIp: (v) => this.setState({ additionalIp: v }),
+
+      installerOptions,
+      autoInstaller: this.state.autoInstaller,
+      setAutoInstaller: (v) => this.setState({ autoInstaller: v }),
+
+      addons,
+      summaryLines,
+      nextPaymentValue: fmt(basePrice),
+      totalTodayValue: fmt(totalToday),
+      goToNextStep: () => {},
+    };
+  }
+}
+
+</script>
+</body>
+</html>

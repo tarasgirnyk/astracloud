@@ -1,0 +1,80 @@
+/* Astra Cloud — color tokens
+   Base palette + semantic aliases. Dark navy sections and light warm sections
+   alternate down the page; orange is the single, consistent CTA color across both. */
+
+:root {
+  /* ---- Navy (dark section base, deep gradient) ---- */
+  --navy-950: #05070f;
+  --navy-900: #0a0e1f;
+  --navy-800: #10162e;
+  --navy-700: #171f42;
+  --navy-600: #212b57;
+  --navy-500: #2d3a70;
+
+  /* ---- Neon accents (dark-section decoration, gradients, illustration glow) ---- */
+  --cyan-300: #7cf3ea;
+  --cyan-400: #3ee6d8;
+  --cyan-500: #1fc9bd;
+
+  --violet-300: #b6a3ff;
+  --violet-400: #8b6cf7;
+  --violet-500: #6d45e8;
+
+  /* ---- Orange (primary CTA / accent, works on light or dark) ---- */
+  --orange-300: #ffb37a;
+  --orange-400: #ff8a3d;
+  --orange-500: #ff7016;
+  --orange-600: #e85c05;
+  --orange-700: #c04a02;
+
+  /* ---- Neutrals ---- */
+  --black: #0b0c10;
+  --white: #ffffff;
+  --paper: #faf9f5;       /* warm off-white — light section background */
+  --paper-raised: #ffffff; /* cards on paper */
+
+  --gray-900: #17181c;
+  --gray-700: #43454d;
+  --gray-500: #6c6e78;
+  --gray-300: #c8c8d0;
+  --gray-200: #e3e2dc;
+  --gray-100: #efeee8;
+
+  /* ---- Semantic: surfaces ---- */
+  --surface-dark: var(--navy-900);
+  --surface-dark-raised: var(--navy-800);
+  --surface-light: var(--paper);
+  --surface-card: var(--paper-raised);
+  --surface-card-dark: var(--navy-800);
+
+  /* ---- Semantic: text ---- */
+  --text-on-light: var(--gray-900);
+  --text-on-light-muted: var(--gray-500);
+  --text-on-dark: var(--white);
+  --text-on-dark-muted: #aeb3c8;
+
+  /* ---- Semantic: borders ---- */
+  --border-on-light: var(--gray-200);
+  --border-on-dark: rgba(255, 255, 255, 0.12);
+
+  /* ---- Semantic: brand / action ---- */
+  --brand-primary: var(--orange-500);
+  --brand-primary-hover: var(--orange-600);
+  --brand-primary-active: var(--orange-700);
+  --brand-primary-text: var(--white);
+
+  --accent-cyan: var(--cyan-400);
+  --accent-violet: var(--violet-400);
+
+  /* ---- Semantic: status ---- */
+  --status-success: #29c46a;
+  --status-warning: var(--orange-400);
+  --status-danger: #ef4757;
+  --status-info: var(--cyan-500);
+
+  /* ---- Gradients ---- */
+  --gradient-navy: linear-gradient(180deg, var(--navy-800) 0%, var(--navy-950) 100%);
+  --gradient-hero: radial-gradient(120% 140% at 15% 0%, var(--navy-700) 0%, var(--navy-900) 45%, var(--navy-950) 100%);
+  --gradient-accent: linear-gradient(120deg, var(--violet-400) 0%, var(--cyan-400) 100%);
+  --gradient-orange: linear-gradient(135deg, var(--orange-400) 0%, var(--orange-600) 100%);
+}

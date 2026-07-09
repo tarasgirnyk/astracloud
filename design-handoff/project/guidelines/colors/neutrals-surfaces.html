@@ -1,0 +1,27 @@
+<!-- @dsCard group="Colors" viewport="700x200" name="Neutrals + surfaces" subtitle="Warm paper for light sections, navy for dark sections" -->
+<html>
+<head>
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body{margin:0;padding:20px;background:#fff;font-family:var(--font-body)}
+  .row{display:flex;gap:8px}
+  .sw{flex:1;height:60px;border-radius:var(--radius-md);display:flex;align-items:flex-end;padding:8px;font:600 12px/1 var(--font-body)}
+  .surfaces{display:flex;gap:12px;margin-top:14px}
+  .s{flex:1;height:70px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font:var(--text-caption);border:1px solid var(--border-on-light)}
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="sw" style="background:var(--black);color:#fff">black</div>
+    <div class="sw" style="background:var(--gray-700);color:#fff">gray 700</div>
+    <div class="sw" style="background:var(--gray-500);color:#fff">gray 500</div>
+    <div class="sw" style="background:var(--gray-300)">gray 300</div>
+    <div class="sw" style="background:var(--gray-100)">gray 100</div>
+    <div class="sw" style="background:var(--white);border:1px solid #eee">white</div>
+  </div>
+  <div class="surfaces">
+    <div class="s" style="background:var(--paper)">surface-light (paper)</div>
+    <div class="s" style="background:var(--navy-900);color:#fff;border:none">surface-dark</div>
+  </div>
+</body>
+</html>

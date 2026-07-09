@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Astra Cloud — Privacy Policy" description="Simple text page: page header, single-column policy content, footer." -->
+<helmet>
+  <script src="./ds-base.js"></script>
+  <style>
+    .nav-dropdown { position:relative; }
+    .nav-dropdown .nav-dropdown-menu { display:none; }
+    .nav-dropdown:hover .nav-dropdown-menu { display:flex; }
+    .nav-dropdown-menu a:hover { background:var(--surface-light); }
+
+    /* Mobile nav */
+    .nav-burger { display:none; flex-direction:column; justify-content:center; gap:5px; width:26px; height:20px; cursor:pointer; background:none; border:none; padding:0; margin-left:auto; }
+    .nav-burger span { display:block; height:2px; width:100%; background:var(--text-on-light); border-radius:2px; }
+    .mobile-nav-toggle { display:none; }
+    .mobile-nav-panel { display:none; flex-direction:column; padding:8px var(--container-padding) 20px; background:var(--white); border-top:1px solid var(--border-on-light); }
+    .mobile-nav-panel a { color:var(--text-on-light); text-decoration:none; font:var(--text-ui-label); padding:12px 4px; border-bottom:1px solid var(--border-on-light); }
+    #mobile-nav-toggle:checked ~ .mobile-nav-panel { display:flex; }
+
+    .policy-content h3 { font:var(--text-display-sm); color:var(--text-on-light); margin:var(--space-10) 0 12px; }
+    .policy-content p { font:var(--text-body-md); color:var(--text-on-light-muted); margin:0 0 16px; }
+    .policy-content ul { margin:0 0 16px; padding-left:20px; font:var(--text-body-md); color:var(--text-on-light-muted); display:flex; flex-direction:column; gap:6px; }
+    .policy-content a { color:var(--brand-primary); }
+
+    @media (max-width: 768px) {
+      .main-nav { display:none !important; }
+      .nav-burger { display:flex; }
+
+      .footer-grid { grid-template-columns:1fr !important; gap:var(--space-8) !important; }
+
+      h1 { font-size:2rem !important; }
+      h2 { font-size:1.75rem !important; }
+    }
+  </style>
+</helmet>
+
+<div style="background:var(--surface-light); overflow-x:hidden;">
+
+  <!-- Header -->
+  <header style="position:sticky; top:0; z-index:50; background:rgba(250,249,245,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--border-on-light);">
+    <input type="checkbox" id="mobile-nav-toggle" class="mobile-nav-toggle">
+    <div class="ac-container" style="display:flex; align-items:center; justify-content:space-between; min-height:76px; padding-top:14px; padding-bottom:14px; gap:16px 24px; flex-wrap:wrap;">
+      <img src="../../assets/logo/astra-cloud-logo.png" alt="Astra Cloud" style="height:50px; filter:invert(1) brightness(0.3) sepia(1) hue-rotate(190deg) saturate(0);">
+      <nav class="main-nav" style="display:flex; align-items:center; gap:24px; flex-wrap:wrap; font:var(--text-ui-label); color:var(--text-on-light);">
+        <a href="#vps" style="color:inherit; text-decoration:none;">VPS сервери</a>
+        <a href="#dedicated" style="color:inherit; text-decoration:none;">Виділений сервер</a>
+        <a href="#colocation" style="color:inherit; text-decoration:none;">Колокація</a>
+        <div class="nav-dropdown">
+          <span style="display:flex; align-items:center; gap:4px; cursor:pointer;">Компанія <span style="font-size:10px;">▾</span></span>
+          <div class="nav-dropdown-menu" style="flex-direction:column; position:absolute; top:100%; left:0; margin-top:0; padding-top:12px; min-width:240px; z-index:20;">
+            <div style="background:var(--white); border:1px solid var(--border-on-light); border-radius:var(--radius-md); box-shadow:0 8px 24px rgba(0,0,0,0.12); padding:8px; display:flex; flex-direction:column;">
+            <a href="#" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Про нас</a>
+            <a href="./simple.html" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Умови користування</a>
+            <a href="./simple.html" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Політика конфіденційності</a>
+            <a href="#" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Політика повернення коштів</a>
+            </div>
+          </div>
+        </div>
+        <a href="#" style="color:inherit; text-decoration:none;">Блог</a>
+      </nav>
+      <div style="display:flex; align-items:center; gap:16px; font:var(--text-caption); color:var(--text-on-light-muted); flex-wrap:wrap;">
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Select" hint-size="90px,44px" options="{{ languageOptions }}" value="{{ activeLanguage }}" on-change="{{ setActiveLanguage }}"></x-import>
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Select" hint-size="100px,44px" options="{{ currencyOptions }}" value="{{ activeCurrency }}" on-change="{{ setActiveCurrency }}"></x-import>
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Button" hint-size="140px,40px" variant="primary" size="sm">Кабінет</x-import>
+      </div>
+      <label for="mobile-nav-toggle" class="nav-burger" aria-label="Меню">
+        <span></span><span></span><span></span>
+      </label>
+    </div>
+    <div class="mobile-nav-panel">
+      <a href="#vps">VPS сервери</a>
+      <a href="#dedicated">Виділений сервер</a>
+      <a href="#colocation">Колокація</a>
+      <a href="#">Про нас</a>
+      <a href="./simple.html">Умови користування</a>
+      <a href="./simple.html">Політика конфіденційності</a>
+      <a href="#">Політика повернення коштів</a>
+      <a href="#">Блог</a>
+    </div>
+  </header>
+
+  <!-- Page title -->
+  <section style="padding:var(--space-16) 0; background:var(--paper); border-bottom:1px solid var(--border-on-light);">
+    <div class="ac-container">
+      <h1 style="font:800 2.75rem/1.15 var(--font-display); letter-spacing:var(--tracking-display); color:var(--text-on-light); margin:0;">Політика конфіденційності</h1>
+    </div>
+  </section>
+
+  <!-- Policy content -->
+  <section style="padding:calc(var(--section-padding-y) / 2) 0 var(--section-padding-y);">
+    <div class="ac-container">
+      <div class="policy-content">
+
+        <p>Astra Cloud поважає право користувачів на конфіденційність та забезпечує захист персональних даних відповідно до чинного законодавства України.</p>
+        <p>Користуючись сервісами Astra Cloud, ви погоджуєтесь з умовами цієї політики.</p>
+
+        <h3>Які дані ми збираємо</h3>
+        <p>Ми можемо збирати наступні дані:</p>
+        <ul>
+          <li>ім'я та контактні дані (email, телефон)</li>
+          <li>платіжну інформацію (через платіжні системи)</li>
+          <li>IP-адресу та технічні дані підключення</li>
+          <li>дані облікового запису та історію використання сервісів</li>
+        </ul>
+
+        <h3>Як ми використовуємо дані</h3>
+        <p>Зібрані дані використовуються для:</p>
+        <ul>
+          <li>надання та підтримки сервісів</li>
+          <li>обробки платежів</li>
+          <li>зв'язку з клієнтом</li>
+          <li>забезпечення безпеки та запобігання зловживанням</li>
+          <li>покращення якості послуг</li>
+        </ul>
+
+        <h3>Захист даних</h3>
+        <p>Astra Cloud застосовує технічні та організаційні заходи для захисту інформації від несанкціонованого доступу, втрати або зміни.</p>
+
+        <h3>Передача даних третім особам</h3>
+        <p>Ми можемо передавати дані третім сторонам виключно у таких випадках:</p>
+        <ul>
+          <li>для обробки платежів</li>
+          <li>на вимогу законодавства України</li>
+          <li>для забезпечення роботи сервісів</li>
+        </ul>
+        <p>Ми не продаємо персональні дані третім особам.</p>
+
+        <h3>Зберігання даних</h3>
+        <p>Дані зберігаються протягом строку, необхідного для надання послуг та виконання зобов'язань.</p>
+
+        <h3>Права користувача</h3>
+        <p>Користувач має право:</p>
+        <ul>
+          <li>отримати інформацію про свої дані</li>
+          <li>вимагати їх зміну або видалення</li>
+          <li>обмежити обробку даних у передбачених законом випадках</li>
+        </ul>
+
+        <h3>Контакти</h3>
+        <p>З питань конфіденційності ви можете звернутися за адресою: <a href="mailto:support@astra.in.ua">support@astra.in.ua</a></p>
+
+        <p>Astra Cloud залишає за собою право змінювати цю політику з попереднім повідомленням.</p>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background:var(--navy-950); padding:var(--space-16) 0 var(--space-10);">
+    <div class="ac-container">
+      <div class="footer-grid" style="display:grid; grid-template-columns:1.3fr 1fr 1fr 1fr; gap:var(--space-10); padding-bottom:var(--space-10); border-bottom:1px solid var(--border-on-dark);">
+        <div>
+          <img src="../../assets/logo/astra-cloud-logo.png" alt="Astra Cloud" style="height:28px; margin-bottom:14px;">
+          <p style="font:var(--text-body-sm); color:var(--text-on-dark-muted);">Україна, м. Львів.</p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; font:var(--text-body-sm); color:var(--text-on-dark-muted);">
+          <span style="color:var(--text-on-dark); font:var(--text-ui-label); margin-bottom:4px;">Клієнтам</span>
+          <a href="#" style="color:inherit; text-decoration:none;">Про нас</a>
+          <a href="./simple.html" style="color:inherit; text-decoration:none;">Умови користування</a>
+          <a href="./simple.html" style="color:inherit; text-decoration:none;">Політика конфіденційності</a>
+          <a href="#" style="color:inherit; text-decoration:none;">Політика повернення коштів</a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; font:var(--text-body-sm); color:var(--text-on-dark-muted);">
+          <span style="color:var(--text-on-dark); font:var(--text-ui-label); margin-bottom:4px;">Legal</span>
+          <a href="#" style="color:inherit; text-decoration:none;">SLA</a>
+          <a href="#" style="color:inherit; text-decoration:none;">Legal Section</a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; font:var(--text-body-sm); color:var(--text-on-dark-muted);">
+          <span style="color:var(--text-on-dark); font:var(--text-ui-label); margin-bottom:4px;">Контакти</span>
+          <span>063 636 3448</span>
+          <span>cloud@astra.in.ua</span>
+          <span>abuse@astra.in.ua</span>
+        </div>
+      </div>
+      <p style="font:var(--text-caption); color:var(--gray-500); text-align:center; padding-top:var(--space-6);">© 2026 Astra Cloud. Всі права захищені.</p>
+    </div>
+  </footer>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { activeLanguage: "ua", activeCurrency: "uah" };
+
+  renderVals() {
+    return {
+      languageOptions: [
+        { value: "ua", label: "UA", flag: "../../assets/logo/flags/ua.svg" },
+        { value: "en", label: "GB", flag: "../../assets/logo/flags/gb.svg" },
+        { value: "pl", label: "PL", flag: "../../assets/logo/flags/pl.svg" },
+      ],
+      activeLanguage: this.state.activeLanguage,
+      setActiveLanguage: (v) => this.setState({ activeLanguage: v }),
+      currencyOptions: [
+        { value: "uah", label: "UAH" },
+        { value: "usd", label: "USD" },
+        { value: "eur", label: "EUR" },
+      ],
+      activeCurrency: this.state.activeCurrency,
+      setActiveCurrency: (v) => this.setState({ activeCurrency: v }),
+    };
+  }
+}
+
+</script>
+</body>
+</html>
