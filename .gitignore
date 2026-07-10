@@ -5,6 +5,9 @@ node_modules/
 .env.*.local
 dist/
 build/
+coverage/
 *.log
 .DS_Store
 Thumbs.db
+src/payload-types.ts
+*.tsbuildinfo
