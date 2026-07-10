@@ -57,14 +57,18 @@ export async function callHostbill<T>(
     const errorMessage =
       'error' in json && typeof (json as { error: unknown }).error === 'string'
         ? (json as { error: string }).error
-        : // HostBill returns { success: false } with no "error" field when the
-          // calling API key isn't allowed to use this method (or is IP-
-          // restricted to an address that doesn't match the caller) — it
-          // doesn't say which, for security reasons. Point at both causes
+        : // HostBill returns { success: false } with no "error" field for
+          // several unrelated reasons — confirmed against the real API: a
+          // missing required parameter for this specific call (e.g.
+          // getProducts needs a category "id") behaves identically to the
+          // calling key not being allowed to use this method, or being
+          // IP-restricted to an address that doesn't match the caller. It
+          // doesn't say which, for security reasons — list all three
           // rather than reporting a bare "unknown error".
-          `no error detail returned — check that "${call}" is enabled on this ` +
-          'API key in HostBill (Settings → Security settings) and that the key ' +
-          'has no IP restriction blocking this machine'
+          `no error detail returned — check (1) all required parameters for ` +
+          `"${call}" were passed, (2) "${call}" is enabled on this API key in ` +
+          'HostBill (Settings → Security settings), and (3) the key has no IP ' +
+          'restriction blocking this machine'
     throw new BillingAdapterError('invalid_response', `HostBill call "${call}" failed: ${errorMessage}`)
   }
 

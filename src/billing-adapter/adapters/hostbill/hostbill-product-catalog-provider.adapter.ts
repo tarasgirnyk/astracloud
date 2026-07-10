@@ -2,6 +2,7 @@ import { BillingAdapterError } from '../../ports/errors.ts'
 import type {
   CurrencyOption,
   ProductCatalogProvider,
+  ProductCategory,
   ProductDetails,
   ProductSummary,
 } from '../../ports/product-catalog-provider.port.ts'
@@ -11,11 +12,23 @@ import { getHostbillReadonlyConfig } from './hostbill.config.ts'
 interface HostbillProductRaw {
   id: string
   name: string
-  pricing?: Record<string, { monthly?: string }>
+  /** Monthly price, as a decimal string (HostBill's own field name). */
+  m?: string
+  description?: string
 }
 
 interface HostbillGetProductsResponse {
   products?: Record<string, HostbillProductRaw>
+}
+
+interface HostbillCategoryRaw {
+  id: string
+  name: string
+  slug: string
+}
+
+interface HostbillGetOrderPagesResponse {
+  categories?: HostbillCategoryRaw[]
 }
 
 interface HostbillGetCurrenciesResponse {
@@ -23,30 +36,57 @@ interface HostbillGetCurrenciesResponse {
 }
 
 function toProductSummary(raw: HostbillProductRaw): ProductSummary {
-  const firstCurrency = raw.pricing ? Object.entries(raw.pricing)[0] : undefined
-  const amount = firstCurrency?.[1]?.monthly ? Number.parseFloat(firstCurrency[1].monthly) : 0
-  const currency = firstCurrency?.[0] ?? 'UAH'
-
+  const amount = raw.m ? Number.parseFloat(raw.m) : 0
   return {
     id: raw.id,
     name: raw.name,
-    fromPrice: { amount, currency },
+    // HostBill returns pricing in the account's base currency, not a
+    // per-currency breakdown — multi-currency display (UAH/USD/EUR
+    // switcher) is a separate concern for whichever feature actually
+    // renders prices, not this connectivity-proving adapter.
+    fromPrice: { amount, currency: 'UAH' },
   }
 }
 
 /**
  * The only HostBill-backed port implementation this feature exercises
- * end-to-end (User Story 3). Everything HostBill-shaped (the `products`
- * object keyed by ID, raw pricing strings, etc.) is translated into the
- * port's own domain shape here and never leaks past this file.
+ * end-to-end (User Story 3). Everything HostBill-shaped (categories as an
+ * array, products keyed by ID, raw pricing field names like `m`) is
+ * translated into the port's own domain shape here and never leaks past
+ * this file.
+ *
+ * Confirmed against the real HostBill instance: `getProducts` is scoped by
+ * category — it requires an `id` parameter (a category ID, from
+ * `getOrderPages`) and returns `{ success: false }` with no error detail if
+ * called without one. That is not a permissions problem; it looks like one
+ * because HostBill doesn't say why a call failed.
  */
 export function createHostbillProductCatalogProvider(): ProductCatalogProvider {
   const config = getHostbillReadonlyConfig()
 
   return {
-    async listProducts({ groupSlug }) {
+    async listCategories() {
+      const response = await callHostbill<HostbillGetOrderPagesResponse>(config, 'getOrderPages')
+
+      if (!response.categories) {
+        throw new BillingAdapterError(
+          'invalid_response',
+          'HostBill getOrderPages response had no "categories" field',
+        )
+      }
+
+      return response.categories.map(
+        (category): ProductCategory => ({
+          id: category.id,
+          name: category.name,
+          slug: category.slug,
+        }),
+      )
+    },
+
+    async listProducts({ categoryId }) {
       const response = await callHostbill<HostbillGetProductsResponse>(config, 'getProducts', {
-        ...(groupSlug ? { groupname: groupSlug } : {}),
+        id: categoryId,
       })
 
       if (!response.products) {
@@ -56,21 +96,30 @@ export function createHostbillProductCatalogProvider(): ProductCatalogProvider {
       return Object.values(response.products).map(toProductSummary)
     },
 
-    async getProductDetails(productId) {
+    async getProductDetails({ categoryId, productId }) {
       const response = await callHostbill<HostbillGetProductsResponse>(config, 'getProducts', {
-        id: productId,
+        id: categoryId,
       })
 
-      const raw = response.products ? Object.values(response.products)[0] : undefined
+      const raw = response.products?.[productId]
       if (!raw) {
-        throw new BillingAdapterError('not_found', `HostBill has no product with id "${productId}"`)
+        throw new BillingAdapterError(
+          'not_found',
+          `HostBill has no product "${productId}" in category "${categoryId}"`,
+        )
       }
 
       const summary = toProductSummary(raw)
+      const specs: Record<string, string> = {}
+      if (raw.description) {
+        specs.description = raw.description
+      }
       return {
         ...summary,
-        specs: {},
-        billingCycles: raw.pricing ? Object.keys(raw.pricing) : [],
+        specs,
+        // Per-cycle pricing (quarterly/annual/etc.) is left empty here —
+        // refine when the VPS-page feature actually needs it.
+        billingCycles: [],
       } satisfies ProductDetails
     },
 

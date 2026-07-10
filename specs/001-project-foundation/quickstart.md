@@ -55,14 +55,22 @@ This validates FR-005, FR-006 and SC-002, SC-003.
 ## Validate User Story 3 — billing connectivity smoke test (P3)
 
 ```bash
-pnpm run billing:check   # or the equivalent script wired to
-                          # hostbill-connectivity-check.ts
+pnpm billing:check
 ```
 
-- **Expected (valid credentials)**: the command prints a non-empty list of
-  products retrieved from HostBill and exits successfully.
-- **Expected (invalid/missing credentials)**: the command exits with a clear
-  failure message — it MUST NOT report success.
+- **Expected (valid credentials, `getProducts` enabled on the
+  `portal-readonly` key)**: prints the category count, then a non-empty list
+  of products retrieved from the first category, e.g.:
+  ```
+  ✔ Connected. Retrieved 4 categories from HostBill.
+  ✔ Retrieved 1 product(s) from category "Windows VPS":
+    - VDS Micro (id: 18) — from 375 UAH
+  ```
+- **Expected (invalid/missing credentials, or a required HostBill method not
+  enabled on the key)**: the command exits with a clear failure message
+  naming the failed call — it MUST NOT report success. Confirmed live: with
+  `getProducts` not yet enabled, HostBill returns `{"success": false}` with
+  no error detail, and the script reports exactly that (not a silent pass).
 
 This validates FR-008 and SC-004.
 

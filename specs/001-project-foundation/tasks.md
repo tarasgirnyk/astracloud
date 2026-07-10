@@ -246,11 +246,16 @@ With more than one person/agent available:
   `node --experimental-strip-types`, which doesn't resolve path aliases or
   TS-only syntax like constructor parameter properties (see
   `BillingAdapterError` in `src/billing-adapter/ports/errors.ts`).
-- **T029 — real-world result**: the connectivity check runs successfully
-  against `https://cp.astra.in.ua/admin/api.php` but HostBill currently
-  returns `{"success": false}` with no error detail for `getProducts`. This
-  almost always means the `portal-readonly` API key doesn't have
-  `getProducts` enabled yet (or has an IP restriction blocking this
-  machine) — action item for whoever manages the HostBill API key
-  settings, not a code defect. The check correctly reports this as a clear
-  failure (FR-008), which is exactly what it's for.
+- **T029 — real-world result, now passing**: the connectivity check first
+  failed against `https://cp.astra.in.ua/admin/api.php` with
+  `{"success": false}` and no error detail for `getProducts`. Diagnosed live
+  by comparing a working call (`getOrderPages`) against the failing one with
+  the same key: the actual cause was **not** permissions or IP restriction —
+  `getProducts` requires a `categoryId` parameter (HostBill scopes it by
+  category) and returns the same bare failure whether the real problem is a
+  missing parameter, a disabled method, or an IP block. Fixed by adding
+  `listCategories()` to `ProductCatalogProvider` (wrapping `getOrderPages`)
+  and making `listProducts`/`getProductDetails` require a `categoryId`
+  discovered from it — see the updated `contracts/billing-adapter-ports.md`.
+  The check now succeeds end-to-end against the real HostBill instance,
+  returning real category and product data.

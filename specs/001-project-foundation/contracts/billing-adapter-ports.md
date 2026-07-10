@@ -16,9 +16,16 @@ HostBill error payloads or field names.
 ## `ProductCatalogProvider` (implemented and exercised in this feature)
 
 ```ts
+interface ProductCategory {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 interface ProductCatalogProvider {
-  listProducts(params: { groupSlug?: string }): Promise<ProductSummary[]>;
-  getProductDetails(productId: string): Promise<ProductDetails>;
+  listCategories(): Promise<ProductCategory[]>;
+  listProducts(params: { categoryId: string }): Promise<ProductSummary[]>;
+  getProductDetails(params: { categoryId: string; productId: string }): Promise<ProductDetails>;
   listCurrencies(): Promise<CurrencyOption[]>;
 }
 
@@ -39,9 +46,20 @@ interface CurrencyOption {
 }
 ```
 
+**Confirmed against the real HostBill instance (not assumed)**: `getProducts`
+is scoped by category — calling it without an `id` (category ID) returns
+`{ success: false }` with no error detail, which looks exactly like a
+permissions failure but isn't one. `categoryId` is therefore **required** on
+`listProducts`/`getProductDetails`, discovered via `listCategories()`
+(HostBill's `getOrderPages` call). Pricing comes back as a flat monthly
+figure in the account's base currency, not a per-currency breakdown —
+multi-currency display (UAH/USD/EUR) is a separate concern for whichever
+feature actually renders prices to a visitor.
+
 **Used by this feature for**: the read-only connectivity smoke test (US3) —
-calling `listProducts({})` and confirming a non-error, non-empty response
-proves the `portal-readonly` credentials and adapter wiring work end-to-end.
+calling `listCategories()` then `listProducts({ categoryId })` for the first
+category and confirming a non-error, non-empty response proves the
+`portal-readonly` credentials and adapter wiring work end-to-end.
 
 ## `ClientProvider` (defined, not yet called by this feature)
 

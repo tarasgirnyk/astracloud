@@ -1,3 +1,9 @@
+export interface ProductCategory {
+  id: string
+  name: string
+  slug: string
+}
+
 export interface ProductSummary {
   id: string
   name: string
@@ -17,9 +23,16 @@ export interface CurrencyOption {
 /**
  * The only port this feature actually implements and exercises end-to-end
  * (User Story 3's connectivity smoke test) — see contracts/billing-adapter-ports.md.
+ *
+ * `listProducts` requires a `categoryId` because HostBill's `getProducts`
+ * call is scoped by category — calling it with no category returns
+ * `{ success: false }` with no error detail, confirmed against the real
+ * HostBill instance. `listCategories()` (HostBill's `getOrderPages` call)
+ * is how a caller discovers which category IDs exist.
  */
 export interface ProductCatalogProvider {
-  listProducts(params: { groupSlug?: string }): Promise<ProductSummary[]>
-  getProductDetails(productId: string): Promise<ProductDetails>
+  listCategories(): Promise<ProductCategory[]>
+  listProducts(params: { categoryId: string }): Promise<ProductSummary[]>
+  getProductDetails(params: { categoryId: string; productId: string }): Promise<ProductDetails>
   listCurrencies(): Promise<CurrencyOption[]>
 }
