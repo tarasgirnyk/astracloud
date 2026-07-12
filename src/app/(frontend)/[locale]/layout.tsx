@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import Image from 'next/image'
+import { Link } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
 import { SUPPORTED_CURRENCIES, SUPPORTED_LOCALES } from '@/globals/SiteChrome'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
@@ -30,12 +31,43 @@ export default async function LocaleLayout({
 
   const messages = await getMessages()
   const payload = await getPayload({ config })
-  const siteChrome = await payload.findGlobal({ slug: 'site-chrome' })
+  const siteChrome = await payload.findGlobal({ slug: 'site-chrome', locale: locale as 'ua' | 'en' | 'pl' })
+
+  const navLinks = siteChrome.navLinks ?? []
+  const footerColumns = siteChrome.footerColumns ?? []
 
   return (
     <html lang={locale}>
       <body style={{ margin: 0 }}>
         <NextIntlClientProvider locale={locale} messages={messages}>
+          <style>{`
+            .nav-dropdown { position: relative; }
+            .nav-dropdown .nav-dropdown-menu { display: none; }
+            .nav-dropdown:hover .nav-dropdown-menu { display: flex; }
+            .nav-dropdown-menu a:hover { background: var(--surface-light); }
+            .nav-burger { display: none; }
+            .mobile-nav-toggle { display: none; }
+            .mobile-nav-panel { display: none; }
+            #mobile-nav-toggle:checked ~ .mobile-nav-panel { display: flex; }
+            @media (max-width: 768px) {
+              .main-nav { display: none !important; }
+              .nav-burger {
+                display: flex; flex-direction: column; justify-content: center; gap: 5px;
+                width: 26px; height: 20px; cursor: pointer; background: none; border: none;
+                padding: 0; margin-left: auto;
+              }
+              .nav-burger span { display: block; height: 2px; width: 100%; background: var(--text-on-light); border-radius: 2px; }
+              .mobile-nav-panel {
+                flex-direction: column; padding: 8px var(--container-padding) 20px;
+                background: var(--white); border-top: 1px solid var(--border-on-light);
+              }
+              .mobile-nav-panel a {
+                color: var(--text-on-light); text-decoration: none; font: var(--text-ui-label);
+                padding: 12px 4px; border-bottom: 1px solid var(--border-on-light);
+              }
+            }
+          `}</style>
+
           <header
             style={{
               position: 'sticky',
@@ -46,86 +78,222 @@ export default async function LocaleLayout({
               borderBottom: '1px solid var(--border-on-light)',
             }}
           >
+            <input type="checkbox" id="mobile-nav-toggle" className="mobile-nav-toggle" />
             <div
               className="ac-container"
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 'var(--space-8)',
-                padding: 'var(--space-3) 0',
+                justifyContent: 'space-between',
+                minHeight: 76,
+                paddingTop: 14,
+                paddingBottom: 14,
+                gap: '16px 24px',
+                flexWrap: 'wrap',
               }}
             >
-              <Image
-                src="/images/astra-cloud-logo.png"
-                alt="Astra Cloud"
-                width={150}
-                height={50}
+              <Link href="/" style={{ display: 'flex', lineHeight: 0 }}>
+                <Image
+                  src="/images/astra-cloud-logo.png"
+                  alt="Astra Cloud"
+                  width={150}
+                  height={50}
+                  style={{
+                    height: 40,
+                    width: 'auto',
+                    filter: 'invert(1) brightness(0.3) sepia(1) hue-rotate(190deg) saturate(0)',
+                  }}
+                />
+              </Link>
+              <nav
+                className="main-nav"
                 style={{
-                  height: 40,
-                  width: 'auto',
-                  filter: 'invert(1) brightness(0.3) sepia(1) hue-rotate(190deg) saturate(0)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 24,
+                  flexWrap: 'wrap',
+                  font: 'var(--text-ui-label)',
+                  color: 'var(--text-on-light)',
                 }}
-              />
-              <nav style={{ display: 'flex', gap: 'var(--space-6)', flex: 1 }}>
-                {(siteChrome.navLinks ?? []).map((link) => (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    style={{
-                      font: 'var(--text-ui-label)',
-                      color: 'var(--text-on-light)',
-                      textDecoration: 'none',
-                    }}
-                  >
-                    {link.label}
-                  </a>
-                ))}
+              >
+                {navLinks.map((link, navIndex) =>
+                  link.children?.length ? (
+                    <div className="nav-dropdown" key={`nav-${navIndex}`}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer' }}>
+                        {link.label} <span style={{ fontSize: 10 }}>▾</span>
+                      </span>
+                      <div
+                        className="nav-dropdown-menu"
+                        style={{
+                          flexDirection: 'column',
+                          position: 'absolute',
+                          top: '100%',
+                          left: 0,
+                          paddingTop: 12,
+                          minWidth: 240,
+                          zIndex: 20,
+                        }}
+                      >
+                        <div
+                          style={{
+                            background: 'var(--white)',
+                            border: '1px solid var(--border-on-light)',
+                            borderRadius: 'var(--radius-md)',
+                            boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                            padding: 8,
+                            display: 'flex',
+                            flexDirection: 'column',
+                          }}
+                        >
+                          {link.children.map((child, childIndex) => (
+                            <a
+                              key={`nav-${navIndex}-child-${childIndex}`}
+                              href={child.href}
+                              style={{
+                                color: 'var(--text-on-light)',
+                                textDecoration: 'none',
+                                padding: '8px 12px',
+                                borderRadius: 'var(--radius-sm)',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {child.label}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <a
+                      key={`nav-${navIndex}`}
+                      href={link.href}
+                      style={{ color: 'inherit', textDecoration: 'none' }}
+                    >
+                      {link.label}
+                    </a>
+                  ),
+                )}
               </nav>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 16,
+                  font: 'var(--text-caption)',
+                  color: 'var(--text-on-light-muted)',
+                  flexWrap: 'wrap',
+                }}
+              >
                 <div style={{ color: 'var(--text-on-light)' }}>
                   <LanguageSwitcher locales={SUPPORTED_LOCALES} />
                 </div>
                 <CurrencySwitcher currencies={SUPPORTED_CURRENCIES} />
+                {siteChrome.cabinetLabel && siteChrome.cabinetHref ? (
+                  <a
+                    href={siteChrome.cabinetHref}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '8px 16px',
+                      borderRadius: 'var(--radius-pill)',
+                      font: '600 14px/1 var(--font-body)',
+                      backgroundImage: 'var(--gradient-orange)',
+                      color: 'var(--brand-primary-text)',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    {siteChrome.cabinetLabel}
+                  </a>
+                ) : null}
               </div>
+              <label htmlFor="mobile-nav-toggle" className="nav-burger" aria-label="Меню">
+                <span></span>
+                <span></span>
+                <span></span>
+              </label>
+            </div>
+            <div className="mobile-nav-panel">
+              {navLinks.flatMap((link, navIndex) => [
+                <a key={`mobile-nav-${navIndex}`} href={link.href}>
+                  {link.label}
+                </a>,
+                ...(link.children ?? []).map((child, childIndex) => (
+                  <a key={`mobile-nav-${navIndex}-child-${childIndex}`} href={child.href}>
+                    {child.label}
+                  </a>
+                )),
+              ])}
             </div>
           </header>
 
           <main>{children}</main>
 
           <footer style={{ background: 'var(--navy-950)', padding: 'var(--space-16) 0 var(--space-10)' }}>
-            <div
-              className="ac-container"
-              style={{
-                display: 'grid',
-                gridTemplateColumns: `repeat(${Math.max(siteChrome.footerColumns?.length ?? 1, 1)}, 1fr)`,
-                gap: 'var(--space-10)',
-              }}
-            >
-              {(siteChrome.footerColumns ?? []).map((column) => (
-                <div key={column.title}>
-                  <h4
+            <div className="ac-container">
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: `1.3fr repeat(${Math.max(footerColumns.length, 1)}, 1fr)`,
+                  gap: 'var(--space-10)',
+                  paddingBottom: 'var(--space-10)',
+                  borderBottom: '1px solid var(--border-on-dark)',
+                }}
+              >
+                <div>
+                  <Link href="/" style={{ display: 'inline-flex', lineHeight: 0 }}>
+                    <Image
+                      src="/images/astra-cloud-logo.png"
+                      alt="Astra Cloud"
+                      width={100}
+                      height={28}
+                      style={{ height: 28, width: 'auto', marginBottom: 14 }}
+                    />
+                  </Link>
+                  {siteChrome.footerAddress ? (
+                    <p style={{ font: 'var(--text-body-sm)', color: 'var(--text-on-dark-muted)' }}>
+                      {siteChrome.footerAddress}
+                    </p>
+                  ) : null}
+                </div>
+                {footerColumns.map((column, columnIndex) => (
+                  <div
+                    key={`footer-col-${columnIndex}`}
                     style={{
-                      font: 'var(--text-ui-label)',
-                      color: 'var(--text-on-dark)',
-                      marginBottom: 'var(--space-3)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 10,
+                      font: 'var(--text-body-sm)',
+                      color: 'var(--text-on-dark-muted)',
                     }}
                   >
-                    {column.title}
-                  </h4>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 'var(--space-2)' }}>
-                    {(column.links ?? []).map((link) => (
-                      <li key={link.href}>
-                        <a
-                          href={link.href}
-                          style={{ font: 'var(--text-body-sm)', color: 'var(--text-on-dark-muted)' }}
-                        >
-                          {link.label}
-                        </a>
-                      </li>
+                    <span style={{ color: 'var(--text-on-dark)', font: 'var(--text-ui-label)', marginBottom: 4 }}>
+                      {column.title}
+                    </span>
+                    {(column.links ?? []).map((link, linkIndex) => (
+                      <a
+                        key={`footer-col-${columnIndex}-link-${linkIndex}`}
+                        href={link.href}
+                        style={{ color: 'inherit', textDecoration: 'none' }}
+                      >
+                        {link.label}
+                      </a>
                     ))}
-                  </ul>
-                </div>
-              ))}
+                  </div>
+                ))}
+              </div>
+              {siteChrome.copyrightText ? (
+                <p
+                  style={{
+                    font: 'var(--text-caption)',
+                    color: 'var(--gray-500)',
+                    textAlign: 'center',
+                    paddingTop: 'var(--space-6)',
+                  }}
+                >
+                  {siteChrome.copyrightText}
+                </p>
+              ) : null}
             </div>
           </footer>
         </NextIntlClientProvider>

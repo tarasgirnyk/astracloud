@@ -1,16 +1,21 @@
+import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { PageBlocks, type PageBlock } from '@/components/PageBlocks'
 
-export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params
+export default async function GenericPage({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>
+}) {
+  const { locale, slug } = await params
   const payload = await getPayload({ config })
 
   const result = await payload.find({
     collection: 'pages',
     where: {
       and: [
-        { slug: { equals: 'home' } },
+        { slug: { equals: slug } },
         { locale: { equals: locale } },
         { publicationStatus: { equals: 'published' } },
       ],
@@ -19,7 +24,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   })
 
   const page = result.docs[0]
-  const blocks = (page?.blocks ?? []) as PageBlock[]
+  if (!page) {
+    notFound()
+  }
+
+  const blocks = (page.blocks ?? []) as PageBlock[]
 
   return <PageBlocks blocks={blocks} />
 }

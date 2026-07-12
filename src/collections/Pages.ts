@@ -1,11 +1,21 @@
 import type { CollectionConfig } from 'payload'
 import { HeroBlock } from '@/blocks/hero/config'
+import { PartnersBlock } from '@/blocks/partners/config'
+import { ServicesBlock } from '@/blocks/services/config'
+import { AdvantagesBlock } from '@/blocks/advantages/config'
+import { PricingBlock } from '@/blocks/pricing/config'
+import { FaqBlock } from '@/blocks/faq/config'
+import { ConsultationBlock } from '@/blocks/consultation/config'
+import { SimpleContentBlock } from '@/blocks/simple-content/config'
+import { DocumentsBlock } from '@/blocks/documents/config'
+import { ArchitectureBlock } from '@/blocks/architecture/config'
+import { VpsPricingCardsBlock } from '@/blocks/vps-pricing-cards/config'
 import { routing } from '@/i18n/routing'
 
 /**
- * Content pages. `blocks` is intentionally restricted to HeroBlock only —
- * the curated list grows as later features add their own approved block
- * types (constitution Principle VIII); it never becomes "any block anywhere".
+ * Content pages. `blocks` is a curated list — it grows as features add their
+ * own approved block types (constitution Principle VIII); it never becomes
+ * "any block anywhere".
  */
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -50,7 +60,19 @@ export const Pages: CollectionConfig = {
     {
       name: 'blocks',
       type: 'blocks',
-      blocks: [HeroBlock],
+      blocks: [
+        HeroBlock,
+        PartnersBlock,
+        ServicesBlock,
+        AdvantagesBlock,
+        PricingBlock,
+        FaqBlock,
+        ConsultationBlock,
+        SimpleContentBlock,
+        DocumentsBlock,
+        ArchitectureBlock,
+        VpsPricingCardsBlock,
+      ],
     },
     {
       name: 'publicationStatus',

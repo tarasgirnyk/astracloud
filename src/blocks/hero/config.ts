@@ -37,6 +37,26 @@ export const HeroBlock: Block = {
       type: 'text',
     },
     {
+      name: 'tagline',
+      type: 'text',
+      admin: { description: 'Optional short second line under the subheading.' },
+    },
+    {
+      name: 'imageSrc',
+      type: 'text',
+      defaultValue: '/images/hero3.png',
+      admin: { description: 'Path under /images/.' },
+    },
+    {
+      name: 'imageFit',
+      type: 'select',
+      defaultValue: 'cover',
+      options: [
+        { label: 'Cover', value: 'cover' },
+        { label: 'Contain', value: 'contain' },
+      ],
+    },
+    {
       name: 'ctaLabel',
       type: 'text',
     },

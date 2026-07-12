@@ -19,6 +19,14 @@ export default buildConfig({
   editor: lexicalEditor(),
   collections: [Users, Pages],
   globals: [SiteChrome],
+  // Site-wide chrome (SiteChrome global) is localized via Payload's native
+  // field localization — distinct from Pages, which model locale as
+  // separate documents (research.md §2: the two mechanisms are meant to be
+  // used together, not as alternatives to each other).
+  localization: {
+    locales: ['ua', 'en', 'pl'],
+    defaultLocale: 'ua',
+  },
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URL,
