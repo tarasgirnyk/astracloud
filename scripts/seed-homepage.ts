@@ -10,6 +10,7 @@
  */
 import { getPayload } from 'payload'
 import config from '../payload.config.ts'
+import { seedLocalizedDoc } from './seed-locale-helpers.ts'
 
 type Locale = 'ua' | 'en' | 'pl'
 
@@ -841,34 +842,27 @@ async function main() {
     console.log(`✔ site-chrome updated (${locale})`)
   }
 
-  for (const locale of locales) {
-    const existing = await payload.find({
-      collection: 'pages',
-      where: { and: [{ slug: { equals: 'home' } }, { locale: { equals: locale } }] },
-      limit: 1,
-    })
-
-    // Block shapes here are built dynamically per locale (see the
-    // `*Ua`/`*En`/`*Pl` factories above) rather than typed against Payload's
-    // generated discriminated union — a type assertion is the pragmatic
-    // choice for a one-off seed script, not app code.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data: any = {
-      title: 'Home',
-      slug: 'home',
-      locale,
-      blocks: pagesByLocale[locale],
-      publicationStatus: 'published' as const,
-    }
-
-    if (existing.docs[0]) {
-      await payload.update({ collection: 'pages', id: existing.docs[0].id, data })
-      console.log(`✔ home page updated (${locale})`)
-    } else {
-      await payload.create({ collection: 'pages', data })
-      console.log(`✔ home page created (${locale})`)
-    }
-  }
+  // Block shapes here are built dynamically per locale (see the
+  // `*Ua`/`*En`/`*Pl` factories above) rather than typed against Payload's
+  // generated discriminated union — a type assertion is the pragmatic
+  // choice for a one-off seed script, not app code.
+  await seedLocalizedDoc(
+    payload,
+    'pages',
+    'home',
+    Object.fromEntries(
+      locales.map((locale) => [
+        locale,
+        {
+          title: 'Home', // admin-only label, not localized — see Pages.ts
+          slug: 'home',
+          blocks: pagesByLocale[locale],
+          publicationStatus: 'published' as const,
+        },
+      ]),
+    ) as unknown as Record<Locale, Record<string, unknown>>,
+  )
+  console.log('✔ home page (ua/en/pl)')
 
   console.log('Done.')
 }

@@ -12,6 +12,7 @@
  */
 import { getPayload } from 'payload'
 import config from '../payload.config.ts'
+import { seedLocalizedDoc } from './seed-locale-helpers.ts'
 
 type Locale = 'ua' | 'en' | 'pl'
 
@@ -78,30 +79,23 @@ async function main() {
   const payload = await getPayload({ config })
   const locales: Locale[] = ['ua', 'en', 'pl']
 
-  for (const locale of locales) {
-    const existing = await payload.find({
-      collection: 'pages',
-      where: { and: [{ slug: { equals: SLUG } }, { locale: { equals: locale } }] },
-      limit: 1,
-    })
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data: any = {
-      title: titleByLocale[locale],
-      slug: SLUG,
-      locale,
-      blocks: [contentByLocale[locale]],
-      publicationStatus: 'published' as const,
-    }
-
-    if (existing.docs[0]) {
-      await payload.update({ collection: 'pages', id: existing.docs[0].id, data })
-      console.log(`✔ documents page updated (${locale}, /${SLUG})`)
-    } else {
-      await payload.create({ collection: 'pages', data })
-      console.log(`✔ documents page created (${locale}, /${SLUG})`)
-    }
-  }
+  await seedLocalizedDoc(
+    payload,
+    'pages',
+    SLUG,
+    Object.fromEntries(
+      locales.map((locale) => [
+        locale,
+        {
+          title: titleByLocale.ua, // admin-only label, not localized — see Pages.ts
+          slug: SLUG,
+          blocks: [contentByLocale[locale]],
+          publicationStatus: 'published' as const,
+        },
+      ]),
+    ) as unknown as Record<Locale, Record<string, unknown>>,
+  )
+  console.log(`✔ documents page (/${SLUG}, ua/en/pl)`)
 
   console.log('Done.')
 }

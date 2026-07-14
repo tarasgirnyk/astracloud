@@ -8,31 +8,27 @@ import { FaqBlock } from '@/blocks/faq/config'
 import { ConsultationBlock } from '@/blocks/consultation/config'
 import { SimpleContentBlock } from '@/blocks/simple-content/config'
 import { DocumentsBlock } from '@/blocks/documents/config'
-import { ArchitectureBlock } from '@/blocks/architecture/config'
-import { VpsPricingCardsBlock } from '@/blocks/vps-pricing-cards/config'
-import { routing } from '@/i18n/routing'
 
 /**
- * Content pages. `blocks` is a curated list — it grows as features add their
- * own approved block types (constitution Principle VIII); it never becomes
- * "any block anywhere".
+ * Generic content pages (homepage, About, legal pages, Documents) — one
+ * document per slug, translated via Payload's native field localization
+ * (`localized: true` on each block's text fields), not one document per
+ * locale. Product pages tied to HostBill (VPS, Colocation) live in the
+ * separate `ServicePages` collection instead — see its own file for why.
+ *
+ * `blocks` is a curated list — it grows as features add their own approved
+ * block types (constitution Principle VIII); it never becomes "any block
+ * anywhere".
  */
 export const Pages: CollectionConfig = {
   slug: 'pages',
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'slug', 'locale', 'publicationStatus'],
+    defaultColumns: ['title', 'slug', 'publicationStatus'],
   },
   access: {
     read: () => true,
   },
-  indexes: [
-    {
-      // slug MUST be unique per locale, not globally — see data-model.md
-      fields: ['slug', 'locale'],
-      unique: true,
-    },
-  ],
   fields: [
     {
       name: 'title',
@@ -46,16 +42,10 @@ export const Pages: CollectionConfig = {
       name: 'slug',
       type: 'text',
       required: true,
+      unique: true,
       admin: {
-        description: 'Used to resolve the page\'s address, e.g. "home".',
+        description: 'Used to resolve the page\'s address, e.g. "home". Same for every locale.',
       },
-    },
-    {
-      name: 'locale',
-      type: 'select',
-      required: true,
-      defaultValue: routing.defaultLocale,
-      options: routing.locales.map((locale) => ({ label: locale.toUpperCase(), value: locale })),
     },
     {
       name: 'blocks',
@@ -70,8 +60,6 @@ export const Pages: CollectionConfig = {
         ConsultationBlock,
         SimpleContentBlock,
         DocumentsBlock,
-        ArchitectureBlock,
-        VpsPricingCardsBlock,
       ],
     },
     {
@@ -79,6 +67,10 @@ export const Pages: CollectionConfig = {
       type: 'select',
       required: true,
       defaultValue: 'draft',
+      // Shared across all locales (not localized) — publishing this
+      // document publishes every locale at once. Untranslated localized
+      // fields fall back to `defaultLocale` (ua) rather than rendering
+      // empty — see payload.config.ts's `localization.fallback`.
       options: [
         { label: 'Draft', value: 'draft' },
         { label: 'Published', value: 'published' },

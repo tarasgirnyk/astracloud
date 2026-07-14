@@ -21,17 +21,18 @@ export const AdvantagesBlock: Block = {
         { label: 'Light (gray)', value: 'light' },
       ],
     },
-    { name: 'eyebrow', type: 'text' },
-    { name: 'heading', type: 'text', required: true },
-    { name: 'description', type: 'textarea' },
+    { name: 'eyebrow', type: 'text', localized: true },
+    { name: 'heading', type: 'text', required: true, localized: true },
+    { name: 'description', type: 'textarea', localized: true },
     {
       name: 'bullets',
       type: 'array',
-      fields: [{ name: 'text', type: 'text', required: true }],
+      fields: [{ name: 'text', type: 'text', required: true, localized: true }],
     },
     {
       name: 'tagline',
       type: 'text',
+      localized: true,
       admin: { description: 'Short bold closing line under the bullet list.' },
     },
     {
@@ -40,8 +41,8 @@ export const AdvantagesBlock: Block = {
       admin: { description: '6-item icon+title+text grid rendered below the intro copy.' },
       fields: [
         { name: 'icon', type: 'text', admin: { description: 'Emoji glyph, e.g. 💸' } },
-        { name: 'title', type: 'text', required: true },
-        { name: 'text', type: 'textarea', required: true },
+        { name: 'title', type: 'text', required: true, localized: true },
+        { name: 'text', type: 'textarea', required: true, localized: true },
       ],
     },
   ],

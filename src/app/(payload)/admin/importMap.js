@@ -22,6 +22,9 @@ import { BlockquoteFeatureClient as BlockquoteFeatureClient_e70f5e05f09f93e00b99
 import { UploadFeatureClient as UploadFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { HorizontalRuleFeatureClient as HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { InlineToolbarFeatureClient as InlineToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { HostbillCategorySelect as HostbillCategorySelect_fd8acdbb2ea9c88fa2156c30b7500b57 } from '@/blocks/vps-pricing-cards/HostbillCategorySelect'
+import { RecommendedProductSelect as RecommendedProductSelect_eb3fd6f289e299bf4691aa4ad97dbe57 } from '@/blocks/vps-pricing-cards/RecommendedProductSelect'
+import { RevalidatePricingButton as RevalidatePricingButton_54ed8cd5400578efffffe4747957f3cd } from '@/blocks/vps-pricing-cards/RevalidatePricingButton'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -50,5 +53,8 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#UploadFeatureClient": UploadFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#HorizontalRuleFeatureClient": HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#InlineToolbarFeatureClient": InlineToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "@/blocks/vps-pricing-cards/HostbillCategorySelect#HostbillCategorySelect": HostbillCategorySelect_fd8acdbb2ea9c88fa2156c30b7500b57,
+  "@/blocks/vps-pricing-cards/RecommendedProductSelect#RecommendedProductSelect": RecommendedProductSelect_eb3fd6f289e299bf4691aa4ad97dbe57,
+  "@/blocks/vps-pricing-cards/RevalidatePricingButton#RevalidatePricingButton": RevalidatePricingButton_54ed8cd5400578efffffe4747957f3cd,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

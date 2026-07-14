@@ -7,13 +7,13 @@ export const FaqBlock: Block = {
     plural: 'FAQ sections',
   },
   fields: [
-    { name: 'heading', type: 'text', required: true },
+    { name: 'heading', type: 'text', required: true, localized: true },
     {
       name: 'items',
       type: 'array',
       fields: [
-        { name: 'question', type: 'text', required: true },
-        { name: 'answer', type: 'textarea', required: true },
+        { name: 'question', type: 'text', required: true, localized: true },
+        { name: 'answer', type: 'textarea', required: true, localized: true },
       ],
     },
   ],

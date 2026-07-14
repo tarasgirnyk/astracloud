@@ -8,6 +8,10 @@ import * as migration_20260712_184208_documents_view_link_label from './20260712
 import * as migration_20260712_190500_documents_view_download from './20260712_190500_documents_view_download';
 import * as migration_20260712_195528_vps_page from './20260712_195528_vps_page';
 import * as migration_20260712_201547_colocation_page from './20260712_201547_colocation_page';
+import * as migration_20260713_094442_vps_pricing_cards_hostbill_mapping from './20260713_094442_vps_pricing_cards_hostbill_mapping';
+import * as migration_20260714_090341_native_localization_and_service_pages from './20260714_090341_native_localization_and_service_pages';
+import * as migration_20260714_090527_pages_drop_locale_field from './20260714_090527_pages_drop_locale_field';
+import * as migration_20260714_111709_vps_pricing_cards_live_only from './20260714_111709_vps_pricing_cards_live_only';
 
 export const migrations = [
   {
@@ -58,6 +62,26 @@ export const migrations = [
   {
     up: migration_20260712_201547_colocation_page.up,
     down: migration_20260712_201547_colocation_page.down,
-    name: '20260712_201547_colocation_page'
+    name: '20260712_201547_colocation_page',
+  },
+  {
+    up: migration_20260713_094442_vps_pricing_cards_hostbill_mapping.up,
+    down: migration_20260713_094442_vps_pricing_cards_hostbill_mapping.down,
+    name: '20260713_094442_vps_pricing_cards_hostbill_mapping',
+  },
+  {
+    up: migration_20260714_090341_native_localization_and_service_pages.up,
+    down: migration_20260714_090341_native_localization_and_service_pages.down,
+    name: '20260714_090341_native_localization_and_service_pages',
+  },
+  {
+    up: migration_20260714_090527_pages_drop_locale_field.up,
+    down: migration_20260714_090527_pages_drop_locale_field.down,
+    name: '20260714_090527_pages_drop_locale_field',
+  },
+  {
+    up: migration_20260714_111709_vps_pricing_cards_live_only.up,
+    down: migration_20260714_111709_vps_pricing_cards_live_only.down,
+    name: '20260714_111709_vps_pricing_cards_live_only'
   },
 ];

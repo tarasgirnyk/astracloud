@@ -13,14 +13,14 @@ export const PricingBlock: Block = {
     plural: 'Pricing sections',
   },
   fields: [
-    { name: 'heading', type: 'text', required: true },
-    { name: 'subheading', type: 'text' },
+    { name: 'heading', type: 'text', required: true, localized: true },
+    { name: 'subheading', type: 'text', localized: true },
     {
       name: 'tabs',
       type: 'array',
       fields: [
         { name: 'value', type: 'text', required: true },
-        { name: 'label', type: 'text', required: true },
+        { name: 'label', type: 'text', required: true, localized: true },
       ],
     },
     {
@@ -28,7 +28,7 @@ export const PricingBlock: Block = {
       type: 'array',
       admin: { description: 'Decorative filter chips (location/IP/billing period) — display-only.' },
       fields: [
-        { name: 'label', type: 'text', required: true },
+        { name: 'label', type: 'text', required: true, localized: true },
         { name: 'selected', type: 'checkbox', defaultValue: false },
       ],
     },
@@ -37,7 +37,7 @@ export const PricingBlock: Block = {
       type: 'array',
       fields: [
         { name: 'key', type: 'text', required: true },
-        { name: 'label', type: 'text', required: true },
+        { name: 'label', type: 'text', required: true, localized: true },
       ],
     },
     {
@@ -50,11 +50,11 @@ export const PricingBlock: Block = {
           name: 'rows',
           type: 'array',
           fields: [
-            { name: 'plan', type: 'text', required: true },
-            { name: 'cpu', type: 'text', required: true },
-            { name: 'ram', type: 'text', required: true },
-            { name: 'disk', type: 'text', required: true },
-            { name: 'price', type: 'text', required: true },
+            { name: 'plan', type: 'text', required: true, localized: true },
+            { name: 'cpu', type: 'text', required: true, localized: true },
+            { name: 'ram', type: 'text', required: true, localized: true },
+            { name: 'disk', type: 'text', required: true, localized: true },
+            { name: 'price', type: 'text', required: true, localized: true },
             { name: 'highlighted', type: 'checkbox', defaultValue: false },
           ],
         },
@@ -63,9 +63,10 @@ export const PricingBlock: Block = {
     {
       name: 'noDataMessage',
       type: 'text',
+      localized: true,
       admin: { description: 'Shown when the active tab has no pricing rows yet.' },
     },
-    { name: 'paymentMethodsLabel', type: 'text' },
+    { name: 'paymentMethodsLabel', type: 'text', localized: true },
     {
       name: 'paymentMethods',
       type: 'array',

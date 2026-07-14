@@ -8,6 +8,7 @@ import type {
 } from '../../ports/product-catalog-provider.port.ts'
 import { callHostbill } from './hostbill-client.ts'
 import { getHostbillReadonlyConfig } from './hostbill.config.ts'
+import { parseHostbillDescription } from './parse-description.ts'
 
 interface HostbillProductRaw {
   id: string
@@ -15,6 +16,8 @@ interface HostbillProductRaw {
   /** Monthly price, as a decimal string (HostBill's own field name). */
   m?: string
   description?: string
+  /** "1" or "0" — whether this product is visible/active in HostBill. */
+  visible?: string
 }
 
 interface HostbillGetProductsResponse {
@@ -45,6 +48,7 @@ function toProductSummary(raw: HostbillProductRaw): ProductSummary {
     // switcher) is a separate concern for whichever feature actually
     // renders prices, not this connectivity-proving adapter.
     fromPrice: { amount, currency: 'UAH' },
+    specs: parseHostbillDescription(raw.description),
   }
 }
 
@@ -84,7 +88,12 @@ export function createHostbillProductCatalogProvider(): ProductCatalogProvider {
       )
     },
 
-    async listProducts({ categoryId }) {
+    async listProducts({ categoryId, visible }) {
+      // HostBill's `visible` request param is documented as a server-side
+      // filter but does nothing in practice against the real instance
+      // (confirmed: identical response with or without it) — every product
+      // does carry its own `visible: "0"|"1"` field in the response,
+      // though, so filtering happens here instead.
       const response = await callHostbill<HostbillGetProductsResponse>(config, 'getProducts', {
         id: categoryId,
       })
@@ -93,7 +102,11 @@ export function createHostbillProductCatalogProvider(): ProductCatalogProvider {
         throw new BillingAdapterError('invalid_response', 'HostBill getProducts response had no "products" field')
       }
 
-      return Object.values(response.products).map(toProductSummary)
+      const rawProducts = Object.values(response.products)
+      const filtered =
+        visible === undefined ? rawProducts : rawProducts.filter((raw) => (raw.visible === '1') === visible)
+
+      return filtered.map(toProductSummary)
     },
 
     async getProductDetails({ categoryId, productId }) {
@@ -109,14 +122,8 @@ export function createHostbillProductCatalogProvider(): ProductCatalogProvider {
         )
       }
 
-      const summary = toProductSummary(raw)
-      const specs: Record<string, string> = {}
-      if (raw.description) {
-        specs.description = raw.description
-      }
       return {
-        ...summary,
-        specs,
+        ...toProductSummary(raw),
         // Per-cycle pricing (quarterly/annual/etc.) is left empty here —
         // refine when the VPS-page feature actually needs it.
         billingCycles: [],

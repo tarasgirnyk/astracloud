@@ -6,6 +6,7 @@ import { buildConfig } from 'payload'
 
 import { Users } from '@/collections/Users'
 import { Pages } from '@/collections/Pages'
+import { ServicePages } from '@/collections/ServicePages'
 import { SiteChrome } from '@/globals/SiteChrome'
 
 const filename = fileURLToPath(import.meta.url)
@@ -17,15 +18,18 @@ export default buildConfig({
     user: Users.slug,
   },
   editor: lexicalEditor(),
-  collections: [Users, Pages],
+  collections: [Users, Pages, ServicePages],
   globals: [SiteChrome],
-  // Site-wide chrome (SiteChrome global) is localized via Payload's native
-  // field localization — distinct from Pages, which model locale as
-  // separate documents (research.md §2: the two mechanisms are meant to be
-  // used together, not as alternatives to each other).
+  // All content collections (Pages, ServicePages) and SiteChrome use
+  // Payload's native field localization (`localized: true` per field) — one
+  // document per slug, not one document per locale.
   localization: {
     locales: ['ua', 'en', 'pl'],
     defaultLocale: 'ua',
+    // `fallback` defaults to true: a localized field with no EN/PL value yet
+    // falls back to the `defaultLocale` (ua) value instead of rendering
+    // empty — relied on deliberately since `publicationStatus` is shared
+    // across all locales (one document, not one per locale).
   },
   db: postgresAdapter({
     pool: {

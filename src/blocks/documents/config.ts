@@ -15,13 +15,13 @@ export const DocumentsBlock: Block = {
     plural: 'Documents pages',
   },
   fields: [
-    { name: 'heading', type: 'text', required: true },
-    { name: 'intro', type: 'textarea' },
+    { name: 'heading', type: 'text', required: true, localized: true },
+    { name: 'intro', type: 'textarea', localized: true },
     {
       name: 'items',
       type: 'array',
       fields: [
-        { name: 'title', type: 'text', required: true },
+        { name: 'title', type: 'text', required: true, localized: true },
         {
           name: 'fileUrl',
           type: 'text',
@@ -33,11 +33,13 @@ export const DocumentsBlock: Block = {
     {
       name: 'viewLinkLabel',
       type: 'text',
+      localized: true,
       admin: { description: 'Label for each document\'s "view" link, e.g. "View".' },
     },
     {
       name: 'downloadLinkLabel',
       type: 'text',
+      localized: true,
       admin: { description: 'Label for each document\'s "download" link, e.g. "Download".' },
     },
   ],

@@ -21,11 +21,12 @@ export const SimpleContentBlock: Block = {
     plural: 'Simple content pages',
   },
   fields: [
-    { name: 'pageTitle', type: 'text' },
+    { name: 'pageTitle', type: 'text', localized: true },
     {
       name: 'content',
       type: 'richText',
       required: true,
+      localized: true,
       editor: lexicalEditor({
         features: ({ defaultFeatures }) => [...defaultFeatures, EXPERIMENTAL_TableFeature()],
       }),

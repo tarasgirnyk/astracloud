@@ -12,14 +12,14 @@ export const ArchitectureBlock: Block = {
     plural: 'Architecture sections',
   },
   fields: [
-    { name: 'heading', type: 'text', required: true },
-    { name: 'subheading', type: 'text' },
-    { name: 'description', type: 'textarea' },
-    { name: 'checklistLabel', type: 'text' },
+    { name: 'heading', type: 'text', required: true, localized: true },
+    { name: 'subheading', type: 'text', localized: true },
+    { name: 'description', type: 'textarea', localized: true },
+    { name: 'checklistLabel', type: 'text', localized: true },
     {
       name: 'checklist',
       type: 'array',
-      fields: [{ name: 'text', type: 'text', required: true }],
+      fields: [{ name: 'text', type: 'text', required: true, localized: true }],
     },
   ],
 }

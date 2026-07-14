@@ -31,14 +31,17 @@ export const HeroBlock: Block = {
       name: 'heading',
       type: 'text',
       required: true,
+      localized: true,
     },
     {
       name: 'subheading',
       type: 'text',
+      localized: true,
     },
     {
       name: 'tagline',
       type: 'text',
+      localized: true,
       admin: { description: 'Optional short second line under the subheading.' },
     },
     {
@@ -59,6 +62,7 @@ export const HeroBlock: Block = {
     {
       name: 'ctaLabel',
       type: 'text',
+      localized: true,
     },
     {
       name: 'ctaHref',

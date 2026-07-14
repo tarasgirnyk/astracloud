@@ -2,18 +2,29 @@
  * Seeds the VPS product page at /vps (ua/en/pl — unified slug).
  * Follows design-handoff/project/templates/vps/vps.html block-by-block.
  *
- * The pricing-cards block is intentionally static (no fields, no per-locale
- * content) — a placeholder for a future HostBill-driven pricing widget, per
- * explicit instruction; it's inserted identically on every locale page.
+ * The pricing-cards block is fully live now — no per-plan CMS content at
+ * all (constitution Principle VIII). It only stores which HostBill category
+ * to list (id "1", the real "Linux VPS" category, confirmed against the
+ * live HostBill instance) and, optionally, which product to badge as
+ * recommended. Name, price, and specs all come from HostBill at render
+ * time — see Component.tsx / get-live-products.ts.
  *
  * Run with: pnpm payload run scripts/seed-vps.ts
  */
 import { getPayload } from 'payload'
 import config from '../payload.config.ts'
+import { seedLocalizedDoc } from './seed-locale-helpers.ts'
 
 type Locale = 'ua' | 'en' | 'pl'
 
 const SLUG = 'vps'
+
+function vpsPricingCardsBlock() {
+  return {
+    blockType: 'vps-pricing-cards',
+    hostbillCategoryId: '1',
+  }
+}
 
 const partners = [
   { name: 'GigaTrans', href: 'https://gigatrans.ua' },
@@ -34,7 +45,7 @@ const pagesByLocale: Record<Locale, Record<string, unknown>[]> = {
       imageFit: 'contain',
     },
     { blockType: 'partners', title: 'Нам довіряють', partners },
-    { blockType: 'vps-pricing-cards' },
+    vpsPricingCardsBlock(),
     {
       blockType: 'consultation',
       tone: 'light',
@@ -172,7 +183,7 @@ const pagesByLocale: Record<Locale, Record<string, unknown>[]> = {
       imageFit: 'contain',
     },
     { blockType: 'partners', title: 'Trusted by', partners },
-    { blockType: 'vps-pricing-cards' },
+    vpsPricingCardsBlock(),
     {
       blockType: 'consultation',
       tone: 'light',
@@ -310,7 +321,7 @@ const pagesByLocale: Record<Locale, Record<string, unknown>[]> = {
       imageFit: 'contain',
     },
     { blockType: 'partners', title: 'Zaufali nam', partners },
-    { blockType: 'vps-pricing-cards' },
+    vpsPricingCardsBlock(),
     {
       blockType: 'consultation',
       tone: 'light',
@@ -449,30 +460,23 @@ async function main() {
   const payload = await getPayload({ config })
   const locales: Locale[] = ['ua', 'en', 'pl']
 
-  for (const locale of locales) {
-    const existing = await payload.find({
-      collection: 'pages',
-      where: { and: [{ slug: { equals: SLUG } }, { locale: { equals: locale } }] },
-      limit: 1,
-    })
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data: any = {
-      title: titleByLocale[locale],
-      slug: SLUG,
-      locale,
-      blocks: pagesByLocale[locale],
-      publicationStatus: 'published' as const,
-    }
-
-    if (existing.docs[0]) {
-      await payload.update({ collection: 'pages', id: existing.docs[0].id, data })
-      console.log(`✔ vps page updated (${locale}, /${SLUG})`)
-    } else {
-      await payload.create({ collection: 'pages', data })
-      console.log(`✔ vps page created (${locale}, /${SLUG})`)
-    }
-  }
+  await seedLocalizedDoc(
+    payload,
+    'service-pages',
+    SLUG,
+    Object.fromEntries(
+      locales.map((locale) => [
+        locale,
+        {
+          title: titleByLocale.ua, // admin-only label, not localized — see ServicePages.ts
+          slug: SLUG,
+          blocks: pagesByLocale[locale],
+          publicationStatus: 'published' as const,
+        },
+      ]),
+    ) as unknown as Record<Locale, Record<string, unknown>>,
+  )
+  console.log(`✔ vps page (/${SLUG}, ua/en/pl)`)
 
   console.log('Done.')
 }

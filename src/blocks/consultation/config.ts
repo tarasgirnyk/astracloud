@@ -17,9 +17,9 @@ export const ConsultationBlock: Block = {
         { label: 'Light (gray)', value: 'light' },
       ],
     },
-    { name: 'heading', type: 'text', required: true },
-    { name: 'subheading', type: 'text' },
-    { name: 'ctaLabel', type: 'text' },
+    { name: 'heading', type: 'text', required: true, localized: true },
+    { name: 'subheading', type: 'text', localized: true },
+    { name: 'ctaLabel', type: 'text', localized: true },
     {
       name: 'ctaHref',
       type: 'text',

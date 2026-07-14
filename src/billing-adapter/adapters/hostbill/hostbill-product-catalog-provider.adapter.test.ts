@@ -59,7 +59,76 @@ describe('HostBill ProductCatalogProvider adapter', () => {
     const provider = createHostbillProductCatalogProvider()
     const products = await provider.listProducts({ categoryId: '1' })
 
-    expect(products).toEqual([{ id: '7', name: 'VPS Standart', fromPrice: { amount: 750, currency: 'UAH' } }])
+    expect(products).toEqual([
+      { id: '7', name: 'VPS Standart', fromPrice: { amount: 750, currency: 'UAH' }, specs: [] },
+    ])
+  })
+
+  it('parses the raw "Label:Value<br>..." description into specs, dropping malformed segments', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        jsonResponse({
+          success: true,
+          products: {
+            5: {
+              id: '5',
+              name: 'VPS Nano',
+              m: '150.00',
+              description: 'CPU:1 Core<br>RAM:1 Gb<br><ul></ul>',
+            },
+          },
+        }),
+      ),
+    )
+
+    const provider = createHostbillProductCatalogProvider()
+    const [product] = await provider.listProducts({ categoryId: '1' })
+
+    expect(product?.specs).toEqual([
+      { label: 'CPU', value: '1 Core' },
+      { label: 'RAM', value: '1 Gb' },
+    ])
+  })
+
+  it('filters out products with visible:"0" when visible:true is requested (client-side — HostBill\'s own visible request param is a no-op)', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        jsonResponse({
+          success: true,
+          products: {
+            5: { id: '5', name: 'VPS Nano', m: '150.00', visible: '1' },
+            22: { id: '22', name: 'VPS Custom', m: '0.00', visible: '0' },
+          },
+        }),
+      ),
+    )
+
+    const provider = createHostbillProductCatalogProvider()
+    const visibleOnly = await provider.listProducts({ categoryId: '1', visible: true })
+
+    expect(visibleOnly.map((p) => p.id)).toEqual(['5'])
+  })
+
+  it('returns every product, visible or not, when visible is omitted', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        jsonResponse({
+          success: true,
+          products: {
+            5: { id: '5', name: 'VPS Nano', m: '150.00', visible: '1' },
+            22: { id: '22', name: 'VPS Custom', m: '0.00', visible: '0' },
+          },
+        }),
+      ),
+    )
+
+    const provider = createHostbillProductCatalogProvider()
+    const all = await provider.listProducts({ categoryId: '1' })
+
+    expect(all.map((p) => p.id).sort()).toEqual(['22', '5'])
   })
 
   it('throws a BillingAdapterError (not a raw HostBill payload) when HostBill reports failure', async () => {

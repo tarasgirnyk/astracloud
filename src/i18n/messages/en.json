@@ -2,5 +2,16 @@
   "chrome": {
     "languageLabel": "Language",
     "currencyLabel": "Currency"
+  },
+  "vpsPricingCards": {
+    "specLabels": {
+      "CPU": "CPU",
+      "RAM": "RAM",
+      "NVME": "NVMe",
+      "Internet": "Bandwith",
+      "Traffic": "Traffic",
+      "Backup": "Backups"
+    },
+    "recommendedBadge": "Recommended"
   }
 }

@@ -1,1 +1,13 @@
-{}
+{
+  "vpsPricingCards": {
+    "specLabels": {
+      "CPU": "CPU",
+      "RAM": "RAM",
+      "NVME": "NVMe",
+      "Internet": "Bandwith",
+      "Traffic": "Traffic",
+      "Backup": "Kopie zapasowe"
+    },
+    "recommendedBadge": "Zalecany"
+  }
+}

@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { PageBlocks, type PageBlock } from '@/components/PageBlocks'
+import { findContentPage } from '@/lib/find-content-page'
 
 export default async function GenericPage({
   params,
@@ -11,19 +12,7 @@ export default async function GenericPage({
   const { locale, slug } = await params
   const payload = await getPayload({ config })
 
-  const result = await payload.find({
-    collection: 'pages',
-    where: {
-      and: [
-        { slug: { equals: slug } },
-        { locale: { equals: locale } },
-        { publicationStatus: { equals: 'published' } },
-      ],
-    },
-    limit: 1,
-  })
-
-  const page = result.docs[0]
+  const page = await findContentPage(payload, slug, locale)
   if (!page) {
     notFound()
   }

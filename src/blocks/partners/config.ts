@@ -16,6 +16,7 @@ export const PartnersBlock: Block = {
     {
       name: 'title',
       type: 'text',
+      localized: true,
     },
     {
       name: 'partners',

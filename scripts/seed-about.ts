@@ -1,9 +1,9 @@
 /**
  * Seeds the "About Us" page at /about (ua, no prefix), /en/about, /pl/about.
- * The slug is intentionally the SAME across all three locales — matching
- * the "home" page's convention — because LanguageSwitcher swaps only the
- * locale segment of the current path, not the slug; per-locale slugs (e.g.
- * ua "pro-nas" vs en "about") made switching languages 404.
+ * One document (native Payload localization — see payload.config.ts's
+ * `localization` and Pages.ts), written once per locale via `payload.create`/
+ * `update({ locale, data })` so each locale's translated text lands in its
+ * own slot on the same document; the slug itself is shared across locales.
  *
  * Copy is original prose written from the factual claims on
  * https://cloud.astra.in.ua/pro-nas-2/ (services offered, infrastructure
@@ -16,19 +16,16 @@
 import { getPayload } from 'payload'
 import config from '../payload.config.ts'
 import { bulletListNode, headingNode, paragraphNode, richTextDoc } from './lexical-helpers.ts'
+import { seedLocalizedDoc } from './seed-locale-helpers.ts'
 
 type Locale = 'ua' | 'en' | 'pl'
 type Section = { heading?: string; paragraphs: string[]; listItems?: string[] }
 
 const SLUG = 'about'
 
-// Previous (locale-specific) slugs this script used before the fix above —
-// kept only so this run can clean up the stray docs it created.
-const staleSlugByLocale: Record<Locale, string | null> = {
-  ua: 'pro-nas',
-  en: null,
-  pl: 'o-nas',
-}
+// Previous (locale-specific) slugs this script used before "About" moved to
+// a unified slug — kept only so this run cleans up the stray docs it made.
+const STALE_SLUGS = ['pro-nas', 'o-nas']
 
 function block(pageTitle: string, sections: Section[]) {
   return {
@@ -164,53 +161,23 @@ const contentByLocale: Record<Locale, ReturnType<typeof block>> = {
   pl: aboutPl,
 }
 
-const titleByLocale: Record<Locale, string> = {
-  ua: 'Про нас',
-  en: 'About Us',
-  pl: 'O nas',
-}
-
 async function main() {
   const payload = await getPayload({ config })
-  const locales: Locale[] = ['ua', 'en', 'pl']
 
-  for (const locale of locales) {
-    const staleSlug = staleSlugByLocale[locale]
-    if (staleSlug) {
-      const stale = await payload.find({
-        collection: 'pages',
-        where: { and: [{ slug: { equals: staleSlug } }, { locale: { equals: locale } }] },
-        limit: 1,
-      })
-      if (stale.docs[0]) {
-        await payload.delete({ collection: 'pages', id: stale.docs[0].id })
-        console.log(`  (removed stale /${staleSlug} doc for ${locale})`)
-      }
-    }
-
-    const existing = await payload.find({
-      collection: 'pages',
-      where: { and: [{ slug: { equals: SLUG } }, { locale: { equals: locale } }] },
-      limit: 1,
-    })
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data: any = {
-      title: titleByLocale[locale],
-      slug: SLUG,
-      locale,
-      blocks: [contentByLocale[locale]],
-      publicationStatus: 'published' as const,
-    }
-
-    if (existing.docs[0]) {
-      await payload.update({ collection: 'pages', id: existing.docs[0].id, data })
-      console.log(`✔ about page updated (${locale}, /${SLUG})`)
-    } else {
-      await payload.create({ collection: 'pages', data })
-      console.log(`✔ about page created (${locale}, /${SLUG})`)
+  for (const staleSlug of STALE_SLUGS) {
+    const stale = await payload.find({ collection: 'pages', where: { slug: { equals: staleSlug } }, limit: 1 })
+    if (stale.docs[0]) {
+      await payload.delete({ collection: 'pages', id: stale.docs[0].id })
+      console.log(`  (removed stale /${staleSlug} doc)`)
     }
   }
+
+  await seedLocalizedDoc(payload, 'pages', SLUG, {
+    ua: { title: 'Про нас', slug: SLUG, blocks: [contentByLocale.ua], publicationStatus: 'published' },
+    en: { title: 'Про нас', slug: SLUG, blocks: [contentByLocale.en], publicationStatus: 'published' },
+    pl: { title: 'Про нас', slug: SLUG, blocks: [contentByLocale.pl], publicationStatus: 'published' },
+  })
+  console.log(`✔ about page (/${SLUG}, ua/en/pl)`)
 
   console.log('Done.')
 }
