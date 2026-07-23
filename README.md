@@ -8,7 +8,9 @@ hosting), trilingual (UA default, EN, PL). See `docs/GRILL_NOTES.md` and
 
 - Node.js ≥ 20
 - pnpm (`npm install -g pnpm` if missing)
-- Docker Desktop (running)
+- Docker Desktop (running) — **local dev only**, runs Postgres in a
+  container; production does **not** use Docker, see "Production
+  deployment" below
 - Git, with SSH access to this repo already configured on the machine
 
 ## First-time setup on a new machine
@@ -196,8 +198,168 @@ pnpm build            # production build
 All four of `lint`/`typecheck`/`test`/`build` must pass before pushing — CI
 runs the same checks on every push to `main` (`.github/workflows/ci.yml`).
 
-## Deploy note
+## Production deployment
 
-No production deploy target is configured yet — this repo has only been
-run locally so far. `docs/GRILL_NOTES.md` has the original deployment
-strategy discussion if you're picking that up next.
+Self-hosted on our own server (not a PaaS), no staging environment — only
+local and production. Unlike local dev, **production Postgres is a native
+install, not a Docker container** — Docker is dev-only (see Prerequisites
+above). The app itself runs "bare" under a process manager, behind Nginx
+as reverse proxy + TLS terminator. There's no `deploy.yml` GitHub Actions
+workflow yet, so treat the steps below as a manual runbook.
+
+### 1. Server prerequisites
+
+- Ubuntu/Debian (or equivalent) with root/sudo access
+- Node.js ≥ 20 (CI/dev use Node 24 — matching that avoids version drift)
+- pnpm 11 (`corepack enable && corepack prepare pnpm@11 --activate`)
+- PostgreSQL 16, installed natively (**not** Docker):
+  ```bash
+  sudo apt update
+  sudo apt install -y postgresql-16
+  sudo systemctl enable --now postgresql
+  ```
+- Nginx (`sudo apt install -y nginx`)
+- Certbot for Let's Encrypt (`sudo apt install -y certbot python3-certbot-nginx`)
+- Git
+
+### 2. Create the database
+
+```bash
+sudo -u postgres psql <<'SQL'
+CREATE USER astracloud WITH PASSWORD 'CHANGE_ME';
+CREATE DATABASE astracloud OWNER astracloud;
+SQL
+```
+
+Postgres listens on its default port `5432` here (the `5433` mapping in
+`docker-compose.yml` only exists to dodge a port clash with another local
+project's container — irrelevant on a dedicated server).
+
+### 3. Clone and configure the app
+
+```bash
+git clone git@github.com:tarasgirnyk/astracloud.git
+cd astracloud
+cp .env.example .env
+```
+
+Fill in `.env` for production:
+- `DATABASE_URL=postgres://astracloud:CHANGE_ME@localhost:5432/astracloud`
+- `PAYLOAD_SECRET` — a fresh random string (**do not** reuse the local-dev
+  one): `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+- `AGENT_ADMIN_EMAIL` / `AGENT_ADMIN_PASSWORD` — real admin credentials for
+  the first `/admin` login
+- `HOSTBILL_API_URL`, `HOSTBILL_STOREFRONT_URL` (`https://cp.astra.in.ua/`,
+  with the trailing slash), `HOSTBILL_PORTAL_READONLY_API_ID/KEY`,
+  `HOSTBILL_WEBHOOK_SECRET` — real HostBill values, not placeholders
+- `REVALIDATE_SECRET` — a fresh random string
+- `GMAIL_SMTP_USER`, `GMAIL_SMTP_APP_PASSWORD`, `CONSULTATION_RECIPIENT_EMAIL`
+  — see the comments in `.env.example` for how to generate the Gmail app
+  password
+
+### 4. Install, migrate, build
+
+```bash
+pnpm install --frozen-lockfile
+pnpm payload migrate      # applies src/migrations/ against the live DB
+pnpm build                # production build into .next/
+```
+
+If the database is fresh, run the seed scripts (see "Seed scripts" above)
+after migrating.
+
+### 5. Run as a service (systemd)
+
+`next start` (not `next dev`) serves the production build; by default it
+listens on port 3000. Run it under a systemd unit so it survives reboots
+and restarts on crash:
+
+`/etc/systemd/system/astracloud.service`:
+```ini
+[Unit]
+Description=Astra Cloud (Next.js + Payload)
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=astracloud
+WorkingDirectory=/srv/astracloud
+EnvironmentFile=/srv/astracloud/.env
+Environment=NODE_ENV=production
+Environment=PORT=3000
+ExecStart=/usr/bin/pnpm start
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now astracloud
+sudo systemctl status astracloud     # verify it's up on :3000
+```
+
+(Run the app as a dedicated non-root `astracloud` user, not root —
+`sudo useradd -r -s /bin/false astracloud` and `chown` the deploy
+directory to it before enabling the unit.)
+
+### 6. Nginx reverse proxy + TLS
+
+`/etc/nginx/sites-available/astracloud`:
+```nginx
+server {
+    listen 80;
+    server_name astra.in.ua www.astra.in.ua;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Next.js static assets are content-hashed — cache them hard.
+    location /_next/static/ {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host $host;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+}
+```
+
+```bash
+sudo ln -s /etc/nginx/sites-available/astracloud /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+sudo certbot --nginx -d astra.in.ua -d www.astra.in.ua   # provisions TLS,
+                                                            # rewrites the
+                                                            # server block
+                                                            # to redirect
+                                                            # :80 → :443
+```
+
+Swap `astra.in.ua` / `www.astra.in.ua` for the real production hostname(s)
+before running this.
+
+### 7. Deploying an update
+
+Always migrate **before** restarting the process, never restart first:
+
+```bash
+cd /srv/astracloud
+git pull
+pnpm install --frozen-lockfile
+pnpm payload migrate
+pnpm build
+sudo systemctl restart astracloud
+```
+
+`docs/GRILL_NOTES.md` has the original deployment strategy discussion
+(point 12) if you're picking up CI/CD automation (`deploy.yml`) next.
