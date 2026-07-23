@@ -44,11 +44,10 @@ export function SimpleContent({ pageTitle, content }: SimpleContentBlockProps) {
           .simple-content a { color: var(--brand-primary); }
           .simple-content .lexical-table-container { overflow-x: auto; margin: 0 0 var(--space-8); border-radius: var(--radius-lg); border: 1px solid var(--border-on-light); }
           .simple-content table.lexical-table { width: 100%; border-collapse: collapse; font: var(--text-body-sm); }
-          .simple-content .lexical-table-cell { border: 1px solid var(--border-on-light); padding: 12px 16px !important; color: var(--text-on-light-muted); text-align: left; }
+          .simple-content .lexical-table-cell { border: 1px solid var(--border-on-light); padding: 12px 16px !important; color: var(--text-on-light-muted); text-align: left; background: var(--white); }
           .simple-content .lexical-table-cell p { margin: 0; color: inherit; font: inherit; }
           .simple-content .lexical-table-cell-header-1,
           .simple-content .lexical-table-cell-header-3 { background: var(--navy-950); color: var(--white) !important; font-weight: 700 !important; }
-          .simple-content .lexical-table-row:nth-child(even) .lexical-table-cell:not(.lexical-table-cell-header-1):not(.lexical-table-cell-header-3) { background: var(--paper); }
         `}</style>
         <div className="ac-container">
           <RichText data={content} />

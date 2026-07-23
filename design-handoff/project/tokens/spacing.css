@@ -20,7 +20,7 @@
 
   /* ---- Layout ---- */
   --container-max: 1200px;
-  --container-padding: clamp(20px, 5vw, 80px);
+  --container-padding: 20px;
   --section-padding-y: clamp(64px, 9vw, 128px);
   --section-gap: var(--space-32);
 

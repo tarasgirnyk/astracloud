@@ -16,6 +16,11 @@ export function Architecture({
 }: ArchitectureBlockProps) {
   return (
     <section style={{ background: 'var(--gradient-navy)', padding: 'var(--section-padding-y) 0' }}>
+      <style>{`
+        @media (max-width: 768px) {
+          .architecture-checklist { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
       <div className="ac-container">
         <h2 style={{ font: 'var(--text-display-lg)', color: 'var(--text-on-dark)', margin: '0 0 24px' }}>
           {heading}
@@ -36,7 +41,10 @@ export function Architecture({
           </h4>
         ) : null}
         {checklist?.length ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px 32px' }}>
+          <div
+            className="architecture-checklist"
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px 32px' }}
+          >
             {checklist.map((item, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <span

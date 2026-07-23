@@ -3,9 +3,8 @@ import type { GlobalConfig } from 'payload'
 /**
  * Header/Footer are site-wide singletons, not repeatable content — modeled
  * as a Payload Global, not a block (see research.md §5). `supportedLocales`
- * and `supportedCurrencies` are fixed lists in this feature (display-only
- * selectors); they become editor-configurable only if a real need for that
- * shows up later.
+ * is a fixed list in this feature (display-only selector); it becomes
+ * editor-configurable only if a real need for that shows up later.
  */
 export const SiteChrome: GlobalConfig = {
   slug: 'site-chrome',
@@ -85,4 +84,3 @@ export const SiteChrome: GlobalConfig = {
 
 /** Fixed, not editor-configurable in this feature — see FR-005. */
 export const SUPPORTED_LOCALES = ['ua', 'en', 'pl'] as const
-export const SUPPORTED_CURRENCIES = ['UAH', 'USD', 'EUR'] as const

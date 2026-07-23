@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Потрібна індивідуальна конфігурація? — Consultation component (Dedicated Server page)</title>
+<!--
+  Standalone export of ONE content block for restyling.
+
+  Source component: src/blocks/consultation/Component.tsx (tone="light" variant)
+  Source content:    scripts/seed-dedicated.ts — the "consultation" block on
+                     the /dedicated page ("Потрібна індивідуальна конфігурація?")
+  Live route:        /dedicated (ua)
+
+  The CTA button here is a static stand-in for src/components/ConsultationModal.tsx,
+  which opens a contact-form dialog on click (name/phone/email/message ->
+  /api/consultation-request). Restyle the button/section freely; if you also
+  want to redesign the modal itself, ask for a separate handoff file for it.
+
+  This file is self-contained (fonts + tokens inlined) so it can be opened
+  and restyled on its own. Once a new look is settled, port the styles back
+  into src/blocks/consultation/Component.tsx.
+-->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root {
+    /* Neutrals used by this block */
+    --gray-900: #17181c;
+    --gray-500: #6c6e78;
+    --gray-100: #efeee8;
+    --white: #ffffff;
+    --text-on-light: var(--gray-900);
+    --text-on-light-muted: var(--gray-500);
+    --brand-primary-text: var(--white);
+
+    /* Orange (CTA gradient) */
+    --orange-400: #ff8a3d;
+    --orange-600: #e85c05;
+    --gradient-orange: linear-gradient(135deg, var(--orange-400) 0%, var(--orange-600) 100%);
+
+    /* Typography */
+    --font-display: "Unbounded", "Manrope", sans-serif;
+    --font-body: "Inter", "Golos Text", sans-serif;
+    --size-display-md: clamp(1.75rem, 1.5rem + 1vw, 2.375rem);
+    --text-display-md: 600 var(--size-display-md)/1.15 var(--font-display);
+    --text-body-md: 400 1.0625rem/1.6 var(--font-body);
+    --tracking-display: -0.01em;
+
+    /* Spacing / layout */
+    --container-max: 1200px;
+    --container-padding: 20px;
+    --section-padding-y: clamp(64px, 9vw, 128px);
+    --radius-pill: 999px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    font: var(--text-body-md);
+    color: var(--text-on-light);
+    background: var(--white);
+    -webkit-font-smoothing: antialiased;
+  }
+  h2 { margin: 0; font-family: var(--font-display); letter-spacing: var(--tracking-display); color: inherit; }
+  p { margin: 0; }
+
+  .ac-container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
+  }
+
+  .consultation-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 32px;
+    border-radius: var(--radius-pill);
+    font: 600 17px/1 var(--font-body);
+    background-image: var(--gradient-orange);
+    color: var(--brand-primary-text);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+<section style="background: var(--gray-100); padding: calc(var(--section-padding-y) / 2) 0;">
+  <div class="ac-container" style="text-align: center;">
+    <h2 style="font: var(--text-display-md); color: var(--text-on-light);">
+      Потрібна індивідуальна конфігурація?
+    </h2>
+    <p style="font: var(--text-body-md); color: var(--text-on-light-muted); margin: 16px auto 0; max-width: 460px;">
+      Створимо серверне рішення під ваші задачі
+    </p>
+    <div style="margin-top: 30px; display: flex; justify-content: center;">
+      <button type="button" class="consultation-cta">Отримати консультацію</button>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

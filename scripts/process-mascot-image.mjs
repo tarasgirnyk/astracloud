@@ -5,8 +5,8 @@
 // edge), then resize to 500x500. Run with: node scripts/process-mascot-image.mjs
 import sharp from 'sharp'
 
-const SRC = 'public/images/colocation.png'
-const OUT = 'public/images/mascot-colocation.png'
+const SRC = 'public/images/contact_us.png'
+const OUT = 'public/images/mascot-contact-us.png'
 const WHITE_THRESHOLD = 235 // pixel counts as "background white" if r,g,b all >= this
 const TOLERANCE = 18 // max channel delta from the seed color to keep flood-filling
 

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Переваги для вашого бізнесу — Advantages component (Dedicated Server page)</title>
+<!--
+  Standalone export of ONE content block for restyling.
+
+  Source component: src/blocks/advantages/Component.tsx (tone="light" variant)
+  Source content:    scripts/seed-dedicated.ts — the "advantages" block on
+                     the /dedicated page ("Переваги для вашого бізнесу")
+  Live route:        /dedicated (ua)
+
+  This file is self-contained (fonts + tokens inlined) so it can be opened
+  and restyled on its own. Once a new look is settled, port the styles back
+  into src/blocks/advantages/Component.tsx (and its --gray-100/etc. tokens
+  in src/components/tokens.css) rather than replacing the component with
+  this static markup.
+-->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root {
+    /* Neutrals used by this block */
+    --gray-900: #17181c;
+    --gray-500: #6c6e78;
+    --gray-200: #e3e2dc;
+    --gray-100: #efeee8;
+    --white: #ffffff;
+    --text-on-light: var(--gray-900);
+    --text-on-light-muted: var(--gray-500);
+    --text-on-dark-muted: #aeb3c8;
+    --border-on-light: var(--gray-200);
+
+    /* Typography */
+    --font-display: "Unbounded", "Manrope", sans-serif;
+    --font-body: "Inter", "Golos Text", sans-serif;
+    --size-display-lg: clamp(2.25rem, 1.8rem + 1.8vw, 3.375rem);
+    --text-display-lg: 700 var(--size-display-lg)/1.08 var(--font-display);
+    --text-body-md: 400 1.0625rem/1.6 var(--font-body);
+    --text-ui-label: 600 0.9375rem/1.3 var(--font-body);
+    --text-body-sm: 400 0.9375rem/1.5 var(--font-body);
+    --tracking-display: -0.01em;
+
+    /* Spacing / layout */
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-12: 48px;
+    --container-max: 1200px;
+    --container-padding: 20px;
+    --section-padding-y: clamp(64px, 9vw, 128px);
+    --radius-lg: 16px;
+    --radius-md: 10px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    font: var(--text-body-md);
+    color: var(--text-on-light);
+    background: var(--white);
+    -webkit-font-smoothing: antialiased;
+  }
+  h2, h4 { margin: 0; font-family: var(--font-display); letter-spacing: var(--tracking-display); color: inherit; }
+  p { margin: 0; }
+
+  .ac-container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
+  }
+
+  .advantages-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-8);
+    margin-top: var(--space-12);
+  }
+  @media (max-width: 768px) {
+    .advantages-grid { grid-template-columns: 1fr; }
+  }
+
+  .advantages-card {
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--white);
+    border: 1px solid var(--border-on-light);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .advantages-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: rgba(255, 112, 22, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .advantages-card-title { font: var(--text-ui-label); color: var(--text-on-light); font-size: 17px; }
+  .advantages-card-text { font: var(--text-body-sm); color: var(--text-on-light-muted); }
+</style>
+</head>
+<body>
+
+<section style="background: var(--gray-100); padding: var(--section-padding-y) 0;">
+  <div class="ac-container">
+    <div style="text-align: center;">
+      <h2 style="font: var(--text-display-lg); color: var(--text-on-light); margin: 0 0 20px;">
+        Переваги для вашого бізнесу
+      </h2>
+      <p style="font: var(--text-body-md); color: var(--text-on-dark-muted); margin: 0 0 20px;">
+        На відміну від віртуальних серверів, виділений сервер забезпечує повний доступ до фізичного обладнання.
+        Усі процесорні ресурси, оперативна пам'ять та дискова підсистема працюють виключно для вашого проєкту.
+        Це особливо важливо для баз даних, CRM та ERP-систем, віртуалізації, інтернет-магазинів і сервісів із
+        постійним навантаженням, де критичними є стабільність роботи, швидкодія та можливість гнучкого
+        налаштування інфраструктури.
+      </p>
+    </div>
+
+    <div class="advantages-grid">
+      <div class="advantages-card">
+        <div class="advantages-card-icon">🎯</div>
+        <h4 class="advantages-card-title">Виділена продуктивність</h4>
+        <p class="advantages-card-text">Усі ресурси сервера належать тільки вашому проєкту — без оверсейлінгу та впливу інших користувачів.</p>
+      </div>
+      <div class="advantages-card">
+        <div class="advantages-card-icon">🔐</div>
+        <h4 class="advantages-card-title">Повний контроль</h4>
+        <p class="advantages-card-text">Повний root-доступ і можливість налаштувати сервер під будь-які задачі та середовище.</p>
+      </div>
+      <div class="advantages-card">
+        <div class="advantages-card-icon">⚙️</div>
+        <h4 class="advantages-card-title">Висока стабільність</h4>
+        <p class="advantages-card-text">Сервер працює передбачувано навіть під навантаженням завдяки ізольованій інфраструктурі.</p>
+      </div>
+      <div class="advantages-card">
+        <div class="advantages-card-icon">📈</div>
+        <h4 class="advantages-card-title">Готовність до зростання</h4>
+        <p class="advantages-card-text">Легке масштабування конфігурації під ріст проєкту та збільшення навантаження.</p>
+      </div>
+      <div class="advantages-card">
+        <div class="advantages-card-icon">🎧</div>
+        <h4 class="advantages-card-title">Професійна підтримка</h4>
+        <p class="advantages-card-text">Допомога з налаштуванням, міграцією та вирішенням технічних питань у будь-який час.</p>
+      </div>
+      <div class="advantages-card">
+        <div class="advantages-card-icon">🛡️</div>
+        <h4 class="advantages-card-title">Надійна інфраструктура</h4>
+        <p class="advantages-card-text">Розміщення в дата-центрі з резервним живленням, охолодженням і цілодобовим моніторингом.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

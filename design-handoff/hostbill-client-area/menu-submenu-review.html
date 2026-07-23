@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Кабінетне меню — фінальна структура — Astra Cloud</title>
+<link rel="stylesheet" href="../project/styles.css">
+<style>
+  /* ---- Menu component styles (з Claude Design, проєкт "Структурування меню дизайну") ---- */
+
+  /* Mobile nav (гамбургер — єдиний мобільний вхід у все меню) */
+  .nav-burger { display:none; flex-direction:column; justify-content:center; gap:5px; width:26px; height:20px; cursor:pointer; background:none; border:none; padding:0; margin-left:auto; }
+  .nav-burger span { display:block; height:2px; width:100%; background:var(--text-on-light); border-radius:2px; }
+  .mobile-nav-toggle { display:none; }
+  .mobile-nav-panel { display:none; flex-direction:column; padding:8px 28px 20px; background:var(--white); border-top:1px solid var(--border-on-light); }
+  .mobile-nav-top-links > a { color:var(--text-on-light); text-decoration:none; font:var(--text-ui-label); padding:12px 4px; border-bottom:1px solid var(--border-on-light); display:block; }
+  .mobile-nav-divider { height:1px; background:var(--border-on-light); margin:14px 0; }
+  #mobile-nav-toggle:checked ~ .mobile-nav-panel { display:flex; }
+
+  /* Navbar-menu (кабінетна панель дій у хедері: кошик, сповіщення, мова, баланс, користувач) */
+  .navbar-menu { display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+  .navbar-icon-btn { position:relative; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:transparent; border:none; cursor:pointer; color:var(--text-on-light-muted); transition:background var(--duration-fast) var(--ease-standard); }
+  .navbar-icon-btn:hover { background:var(--gray-100); }
+  .navbar-icon-btn .navbar-badge { position:absolute; top:2px; right:2px; min-width:14px; height:14px; padding:0 3px; border-radius:var(--radius-pill); background:var(--brand-primary); color:var(--white); font:700 9px/14px var(--font-body); text-align:center; }
+  .navbar-balance { display:flex; flex-direction:column; line-height:1.25; font:var(--text-caption); color:var(--text-on-light-muted); white-space:nowrap; }
+  .navbar-balance strong { color:var(--status-success); font:var(--text-ui-label); }
+  .navbar-lang-wrap { display:flex; align-items:center; gap:6px; font:var(--text-caption); color:var(--text-on-light-muted); cursor:pointer; }
+  .navbar-lang { border:none; background:transparent; font:var(--text-caption); color:var(--text-on-light-muted); cursor:pointer; }
+  .navbar-user { display:flex; flex-direction:column; line-height:1.25; text-align:right; white-space:nowrap; cursor:pointer; }
+  .navbar-user small { font:var(--text-caption); color:var(--text-on-light-muted); }
+  .navbar-user span { font:var(--text-ui-label); color:var(--text-on-light); display:flex; align-items:center; gap:4px; justify-content:flex-end; }
+
+  /* User dropdown ("Ласкаво просимо ▾ Taras") — весь список із сайдбара, з групами й роздільниками */
+  .user-dropdown { position:relative; }
+  .user-dropdown .user-dropdown-panel { display:none; }
+  .user-dropdown:hover .user-dropdown-panel { display:flex; }
+  .user-dropdown-panel { flex-direction:column; position:absolute; top:100%; right:0; margin-top:0; padding-top:12px; min-width:280px; z-index:30; }
+  .user-dropdown-panel-inner { background:var(--white); border:1px solid var(--border-on-light); border-radius:var(--radius-md); box-shadow:0 8px 24px rgba(0,0,0,0.12); padding:10px; display:flex; flex-direction:column; max-height:70vh; overflow-y:auto; }
+  .user-account-row { display:flex; align-items:center; gap:10px; padding:6px 8px 14px; margin-bottom:6px; border-bottom:1px solid var(--border-on-light); }
+  .user-avatar { flex:none; width:38px; height:38px; border-radius:var(--radius-sm); background:var(--brand-primary); color:var(--white); display:flex; align-items:center; justify-content:center; }
+  .user-account-info { display:flex; flex-direction:column; line-height:1.3; overflow:hidden; }
+  .user-account-info strong { font:var(--text-ui-label); color:var(--text-on-light); }
+  .user-account-info span { font:var(--text-caption); color:var(--text-on-light-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .menu-group-label { font:var(--text-caption); font-weight:700; color:var(--text-on-light-muted); text-transform:uppercase; letter-spacing:var(--tracking-eyebrow); padding:8px 10px 6px; }
+  .menu-divider { height:1px; background:var(--border-on-light); margin:10px 4px; }
+  .menu-link { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:var(--radius-sm); color:var(--text-on-light); text-decoration:none; font:var(--text-body-sm); white-space:nowrap; }
+  .menu-link:hover { background:var(--gray-100); }
+  .menu-link svg { flex:none; }
+  .menu-link-logout { margin-top:8px; padding:10px; border-top:1px solid var(--border-on-light); border-radius:0; color:var(--status-error, #d64545); }
+
+  /* Мобільний акордеон — три незалежні розгортні секції, чисто на CSS (checkbox + label) */
+  .mobile-accordion { border:1px solid var(--border-on-light); border-radius:var(--radius-md); background:var(--white); overflow:hidden; margin-top:8px; }
+  .mobile-accordion:first-of-type { margin-top:14px; }
+  .accordion-toggle { position:absolute; opacity:0; pointer-events:none; }
+  .mobile-accordion-trigger { width:100%; display:flex; justify-content:space-between; align-items:center; padding:16px; cursor:pointer; font:var(--text-ui-label); color:var(--text-on-light); }
+  .mobile-accordion-trigger svg { transition:transform var(--duration-standard) var(--ease-standard); }
+  .accordion-toggle:checked ~ .mobile-accordion-trigger svg { transform:rotate(180deg); }
+  .mobile-accordion-panel { display:none; flex-direction:column; padding:0 8px 12px; }
+  .accordion-toggle:checked ~ .mobile-accordion-panel { display:flex; }
+
+  @media (max-width: 1100px) {
+    .main-nav, .navbar-menu { display:none !important; }
+    .nav-burger { display:flex !important; }
+  }
+</style>
+</head>
+<body style="background:var(--paper);">
+
+<div style="max-width:1480px; margin:0 auto; padding:40px 24px 100px;">
+
+  <p style="font:var(--text-caption); color:var(--text-on-light-muted); margin:0 0 8px; text-transform:uppercase; letter-spacing:var(--tracking-eyebrow);">Design review · Кабінетне меню</p>
+  <h1 style="font:800 2rem/1.2 var(--font-display); letter-spacing:var(--tracking-display); color:var(--text-on-light); margin:0 0 18px;">Меню кабінету — фінальна структура</h1>
+  <p style="font:var(--text-body-sm); color:var(--text-on-light-muted); max-width:760px; margin:0 0 32px; line-height:1.6;">
+    Єдиний механізм навігації: у хедері — <strong>Головна</strong> (маркетинговий сайт), VPS сервери, Виділений сервер, Колокація — поточна сторінка підсвічена. Кошик, мова та баланс завжди на видноті поза випадним списком. «Ласкаво просимо ▾» розкриває весь кабінет одним списком із чіткими заголовками груп і роздільниками. На мобільному той самий список зібраний у розгортні секції по групах. Іконки — лінійний нейтральний набір замість emoji.
+  </p>
+
+  <div style="border:1px solid var(--border-on-light); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-card);">
+    <header style="position:relative; background:var(--white); border-bottom:1px solid var(--border-on-light);">
+      <input type="checkbox" id="mobile-nav-toggle" class="mobile-nav-toggle">
+      <div style="display:flex; align-items:center; justify-content:space-between; min-height:76px; padding:14px 28px; gap:16px 24px; flex-wrap:wrap;">
+        <img src="../project/assets/logo/astra-cloud-logo.png" alt="Astra Cloud" style="height:50px; filter:invert(1) brightness(0.3) sepia(1) hue-rotate(190deg) saturate(0);">
+
+        <nav class="main-nav" style="display:flex; align-items:center; gap:28px; flex-wrap:wrap; font:var(--text-ui-label); color:var(--text-on-light);">
+          <a href="https://astra.in.ua/" style="color:inherit; text-decoration:none;">Головна</a>
+          <a href="#" aria-current="page" style="color:var(--brand-primary); text-decoration:none; font-weight:700; border-bottom:2px solid var(--brand-primary); padding-bottom:4px;">VPS сервери</a>
+          <a href="#" style="color:inherit; text-decoration:none;">Виділений сервер</a>
+          <a href="#" style="color:inherit; text-decoration:none;">Колокація</a>
+        </nav>
+
+        <div class="navbar-menu">
+          <button class="navbar-icon-btn" aria-label="Кошик">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/><path d="M3 4h2l2.4 12.2a2 2 0 0 0 2 1.8h7.2a2 2 0 0 0 2-1.6L21 8H6"/></svg>
+          </button>
+          <button class="navbar-icon-btn" aria-label="Сповіщення">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 16v-5a6 6 0 0 0-12 0v5l-2 3h16z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
+            <span class="navbar-badge">0</span>
+          </button>
+
+          <label class="navbar-lang-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.7 2.5 14.3 0 17M12 3.5c-2.5 2.7-2.5 14.3 0 17"/></svg>
+            <select class="navbar-lang">
+              <option>Українська</option><option>English</option><option>Polski</option>
+            </select>
+          </label>
+
+          <div class="navbar-balance"><span>Баланс</span><strong>0.00 UAH</strong></div>
+
+          <div class="user-dropdown">
+            <div class="navbar-user">
+              <small>Ласкаво просимо</small>
+              <span>Taras <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+            </div>
+            <div class="user-dropdown-panel">
+              <div class="user-dropdown-panel-inner">
+
+                <div class="user-account-row">
+                  <div class="user-avatar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.2-3.6 4-5.5 7-5.5s5.8 1.9 7 5.5"/></svg></div>
+                  <div class="user-account-info">
+                    <strong>Taras Girnyk</strong>
+                    <span>gor@miotex.com</span>
+                  </div>
+                </div>
+
+                <div class="menu-group-label">Управління</div>
+                <a class="menu-link" href="https://cp.astra.in.ua/clientarea/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>Дашборд</a>
+                <a class="menu-link" href="#menu-services"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>Послуги</a>
+                <a class="menu-link" href="https://cp.astra.in.ua/products/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/><path d="M3 4h2l2.4 12.2a2 2 0 0 0 2 1.8h7.2a2 2 0 0 0 2-1.6L21 8H6"/></svg>Замовити</a>
+
+                <div class="menu-divider"></div>
+
+                <div class="menu-group-label">Обліковий запис</div>
+                <a class="menu-link" href="https://cp.astra.in.ua/clientarea/overview/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.2-3.6 4-5.5 7-5.5s5.8 1.9 7 5.5"/></svg>Дані облікового запису</a>
+                <a class="menu-link" href="https://cp.astra.in.ua/profiles/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M6 16.5c.7-1.4 1.8-2 3-2s2.3.6 3 2"/><path d="M14 10h4M14 14h4"/></svg>Керування контактами</a>
+                <a class="menu-link" href="https://cp.astra.in.ua/clientarea/invoices/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>Білінг</a>
+                <a class="menu-link" href="https://cp.astra.in.ua/clientarea/ipaccess/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/></svg>Безпека</a>
+                <a class="menu-link" href="https://cp.astra.in.ua/clientarea/history/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v4l3 2"/></svg>Історія</a>
+
+                <div class="menu-divider"></div>
+
+                <div class="menu-group-label">Підтримка</div>
+                <a class="menu-link" href="https://cp.astra.in.ua/knowledgebase/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 4H12v16H6.5A2.5 2.5 0 0 0 4 21z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 4H12v16h5.5a2.5 2.5 0 0 1 2.5 1.5"/></svg>База знань</a>
+                <a class="menu-link" href="https://cp.astra.in.ua/tickets/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg>Заявки</a>
+                <a class="menu-link" href="https://cp.astra.in.ua/downloads/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>Файли</a>
+                <a class="menu-link" href="mailto:cloud@astra.in.ua"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 6l9 7 9-7"/></svg>cloud@astra.in.ua</a>
+                <a class="menu-link" href="tel:+380636363448"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h3l1.5 4L9 8.5c-1 2 1 5.5 3.5 6.5l1.5-1.5 4 1.5v3c0 1-1 1.7-2 1.5-6-1-11-6-12-12-.2-1 .5-2 1.5-2z"/></svg>063 636 3448</a>
+
+                <a class="menu-link menu-link-logout" href="#logout"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v7"/><path d="M7 6a7 7 0 1 0 10 0"/></svg>Вихід</a>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <label for="mobile-nav-toggle" class="nav-burger" aria-label="Меню">
+          <span></span><span></span><span></span>
+        </label>
+      </div>
+
+      <!-- Мобільна панель — маркетингові лінки + акаунт + 3 незалежні акордеони (CSS-only) -->
+      <div class="mobile-nav-panel">
+        <div style="display:flex; align-items:center; gap:16px; padding:4px 4px 16px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-on-light-muted);"><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/><path d="M3 4h2l2.4 12.2a2 2 0 0 0 2 1.8h7.2a2 2 0 0 0 2-1.6L21 8H6"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-on-light-muted);"><path d="M18 16v-5a6 6 0 0 0-12 0v5l-2 3h16z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
+          <select class="navbar-lang" style="margin-left:auto;">
+            <option>Українська</option><option>English</option><option>Polski</option>
+          </select>
+          <div class="navbar-balance"><span>Баланс</span><strong>0.00 UAH</strong></div>
+        </div>
+        <div class="mobile-nav-divider" style="margin:0 0 14px;"></div>
+
+        <div class="mobile-nav-top-links">
+          <a href="https://astra.in.ua/">Головна</a>
+          <a href="#" aria-current="page" style="color:var(--brand-primary); font-weight:700;">VPS сервери</a>
+          <a href="#">Виділений сервер</a>
+          <a href="#">Колокація</a>
+        </div>
+
+        <div class="user-account-row" style="padding:16px 4px 14px; margin-top:6px;">
+          <div class="user-avatar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.2-3.6 4-5.5 7-5.5s5.8 1.9 7 5.5"/></svg></div>
+          <div class="user-account-info">
+            <strong>Taras Girnyk</strong>
+            <span>gor@miotex.com</span>
+          </div>
+        </div>
+
+        <div class="mobile-accordion">
+          <input type="checkbox" id="acc-mgmt" class="accordion-toggle" checked>
+          <label for="acc-mgmt" class="mobile-accordion-trigger">Управління
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </label>
+          <div class="mobile-accordion-panel">
+            <a class="menu-link" href="https://cp.astra.in.ua/clientarea/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>Дашборд</a>
+            <a class="menu-link" href="#menu-services"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>Послуги</a>
+            <a class="menu-link" href="https://cp.astra.in.ua/products/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/><path d="M3 4h2l2.4 12.2a2 2 0 0 0 2 1.8h7.2a2 2 0 0 0 2-1.6L21 8H6"/></svg>Замовити</a>
+          </div>
+        </div>
+
+        <div class="mobile-accordion">
+          <input type="checkbox" id="acc-acct" class="accordion-toggle">
+          <label for="acc-acct" class="mobile-accordion-trigger">Обліковий запис
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </label>
+          <div class="mobile-accordion-panel">
+            <a class="menu-link" href="https://cp.astra.in.ua/clientarea/overview/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.2-3.6 4-5.5 7-5.5s5.8 1.9 7 5.5"/></svg>Дані облікового запису</a>
+            <a class="menu-link" href="https://cp.astra.in.ua/profiles/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M6 16.5c.7-1.4 1.8-2 3-2s2.3.6 3 2"/><path d="M14 10h4M14 14h4"/></svg>Керування контактами</a>
+            <a class="menu-link" href="https://cp.astra.in.ua/clientarea/invoices/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>Білінг</a>
+            <a class="menu-link" href="https://cp.astra.in.ua/clientarea/ipaccess/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/></svg>Безпека</a>
+            <a class="menu-link" href="https://cp.astra.in.ua/clientarea/history/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v4l3 2"/></svg>Історія</a>
+          </div>
+        </div>
+
+        <div class="mobile-accordion">
+          <input type="checkbox" id="acc-support" class="accordion-toggle">
+          <label for="acc-support" class="mobile-accordion-trigger">Підтримка
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </label>
+          <div class="mobile-accordion-panel">
+            <a class="menu-link" href="https://cp.astra.in.ua/knowledgebase/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 4H12v16H6.5A2.5 2.5 0 0 0 4 21z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 4H12v16h5.5a2.5 2.5 0 0 1 2.5 1.5"/></svg>База знань</a>
+            <a class="menu-link" href="https://cp.astra.in.ua/tickets/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg>Заявки</a>
+            <a class="menu-link" href="https://cp.astra.in.ua/downloads/"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>Файли</a>
+            <a class="menu-link" href="mailto:cloud@astra.in.ua"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 6l9 7 9-7"/></svg>cloud@astra.in.ua</a>
+            <a class="menu-link" href="tel:+380636363448"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h3l1.5 4L9 8.5c-1 2 1 5.5 3.5 6.5l1.5-1.5 4 1.5v3c0 1-1 1.7-2 1.5-6-1-11-6-12-12-.2-1 .5-2 1.5-2z"/></svg>063 636 3448</a>
+          </div>
+        </div>
+
+        <a class="menu-link menu-link-logout" href="#logout" style="margin-top:14px;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v7"/><path d="M7 6a7 7 0 1 0 10 0"/></svg>Вихід</a>
+      </div>
+    </header>
+
+    <div style="padding:48px 24px; text-align:center; font:var(--text-caption); color:var(--text-on-light-muted); background:var(--white);">↑ desktop (≥1100px): наведіть на «Taras ▾» · нижче 1100px: тапніть ☰</div>
+  </div>
+  <p style="font:var(--text-caption); color:var(--text-on-light-muted); margin-top:10px;">Звузьте вікно нижче 1100px, щоб побачити мобільну панель (гамбургер зліва вгорі).</p>
+
+  <div style="background:var(--gray-100); border:1px solid var(--border-on-light); border-radius:var(--radius-lg); padding:24px 28px; margin-top:32px;">
+    <h3 style="font:var(--text-ui-label); font-size:16px; color:var(--text-on-light); margin:0 0 12px;">Що змінилось у цій версії (з Claude Design)</h3>
+    <ul style="margin:0; padding-left:20px; font:var(--text-body-sm); color:var(--text-on-light-muted); line-height:1.8;">
+      <li><strong>Мобільна панель</strong> — розбита на розгортні секції (Управління / Обліковий запис / Підтримка) замість одного довгого списку. «Управління» відкрита за замовчуванням.</li>
+      <li><strong>Десктопний випадний список</strong> — без accordion, лише чіткіші заголовки груп і роздільники між ними.</li>
+      <li><strong>Іконки</strong> — замінено emoji на нейтральний лінійний SVG-набір (24×24, stroke 1.75), реалізовано без залежності від рантайму Claude Design — чистий CSS/HTML (hover для десктопу, checkbox-акордеон для мобільного, без JS).</li>
+      <li><strong>Активна сторінка</strong> — приклад підсвітки поточного пункту в хедері й мобільній панелі («VPS сервери»).</li>
+      <li><strong>Вихід</strong> — внизу списку, кольором error, без діалогу підтвердження.</li>
+      <li><strong>Брейкпоінт</strong> — мобільна панель тепер вмикається на ≤1100px (було 768px) — з кошиком/мовою/балансом у хедері на це більше місця не вистачає раніше.</li>
+    </ul>
+  </div>
+</div>
+
+</body>
+</html>

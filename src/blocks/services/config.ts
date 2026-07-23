@@ -33,14 +33,34 @@ export const ServicesBlock: Block = {
           fields: [{ name: 'text', type: 'text', required: true, localized: true }],
         },
         { name: 'ctaLabel', type: 'text', localized: true },
-        { name: 'ctaHref', type: 'text' },
+        { name: 'ctaHref', type: 'text', localized: true },
         {
           name: 'checklist',
           type: 'array',
           admin: { description: 'Right-column checkmark list.' },
           fields: [{ name: 'text', type: 'text', required: true, localized: true }],
         },
+        {
+          name: 'pricingTableHostbillCategoryId',
+          type: 'text',
+          admin: {
+            description:
+              'Optional: HostBill order-page/category ID (same id used by vps-pricing-cards). When set, a live/cached price table renders directly under this card — same source data, table layout instead of cards.',
+          },
+        },
       ],
+    },
+    {
+      name: 'paymentMethodsLabel',
+      type: 'text',
+      localized: true,
+      admin: { description: 'Small caption shown above the payment-method logos, after the last card.' },
+    },
+    {
+      name: 'paymentMethods',
+      type: 'array',
+      admin: { description: 'Same logo strip as the VPS page (vps-pricing-cards) — name must match an entry in PAYMENT_LOGOS.' },
+      fields: [{ name: 'name', type: 'text', required: true }],
     },
   ],
 }

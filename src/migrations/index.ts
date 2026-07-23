@@ -12,6 +12,13 @@ import * as migration_20260713_094442_vps_pricing_cards_hostbill_mapping from '.
 import * as migration_20260714_090341_native_localization_and_service_pages from './20260714_090341_native_localization_and_service_pages';
 import * as migration_20260714_090527_pages_drop_locale_field from './20260714_090527_pages_drop_locale_field';
 import * as migration_20260714_111709_vps_pricing_cards_live_only from './20260714_111709_vps_pricing_cards_live_only';
+import * as migration_20260715_121316_vps_pricing_cards_heading from './20260715_121316_vps_pricing_cards_heading';
+import * as migration_20260722_100922_services_cta_href_localized from './20260722_100922_services_cta_href_localized';
+import * as migration_20260722_102814_services_pricing_table_category_id from './20260722_102814_services_pricing_table_category_id';
+import * as migration_20260722_105055_services_payment_methods from './20260722_105055_services_payment_methods';
+import * as migration_20260723_100419_advantages_centered_stats_bar from './20260723_100419_advantages_centered_stats_bar';
+import * as migration_20260723_101611_consultation_split_card from './20260723_101611_consultation_split_card';
+import * as migration_20260723_105056_advantages_split_layout from './20260723_105056_advantages_split_layout';
 
 export const migrations = [
   {
@@ -82,6 +89,41 @@ export const migrations = [
   {
     up: migration_20260714_111709_vps_pricing_cards_live_only.up,
     down: migration_20260714_111709_vps_pricing_cards_live_only.down,
-    name: '20260714_111709_vps_pricing_cards_live_only'
+    name: '20260714_111709_vps_pricing_cards_live_only',
+  },
+  {
+    up: migration_20260715_121316_vps_pricing_cards_heading.up,
+    down: migration_20260715_121316_vps_pricing_cards_heading.down,
+    name: '20260715_121316_vps_pricing_cards_heading',
+  },
+  {
+    up: migration_20260722_100922_services_cta_href_localized.up,
+    down: migration_20260722_100922_services_cta_href_localized.down,
+    name: '20260722_100922_services_cta_href_localized',
+  },
+  {
+    up: migration_20260722_102814_services_pricing_table_category_id.up,
+    down: migration_20260722_102814_services_pricing_table_category_id.down,
+    name: '20260722_102814_services_pricing_table_category_id',
+  },
+  {
+    up: migration_20260722_105055_services_payment_methods.up,
+    down: migration_20260722_105055_services_payment_methods.down,
+    name: '20260722_105055_services_payment_methods',
+  },
+  {
+    up: migration_20260723_100419_advantages_centered_stats_bar.up,
+    down: migration_20260723_100419_advantages_centered_stats_bar.down,
+    name: '20260723_100419_advantages_centered_stats_bar',
+  },
+  {
+    up: migration_20260723_101611_consultation_split_card.up,
+    down: migration_20260723_101611_consultation_split_card.down,
+    name: '20260723_101611_consultation_split_card',
+  },
+  {
+    up: migration_20260723_105056_advantages_split_layout.up,
+    down: migration_20260723_105056_advantages_split_layout.down,
+    name: '20260723_105056_advantages_split_layout'
   },
 ];

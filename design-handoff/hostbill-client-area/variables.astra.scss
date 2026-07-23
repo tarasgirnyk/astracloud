@@ -1,0 +1,90 @@
+// =============================================================
+// ASTRA CLOUD — блок "custom variables" для теми HostBill 2019
+// Замінює рядки 3–32 (між //Start custom variables / //End custom variables)
+// у src/scss/variables.scss клонованої теми `astra`.
+//
+// Значення взяті з дизайн-системи Astra (tokens/colors.css, typography.css,
+// spacing.css). Ці змінні експонуються в адмінку HostBill (Theme customization),
+// тож більшість можна виставити і звідти — але тут вони зафіксовані в коді,
+// щоб збірка була відтворюваною.
+//
+// ⚠️ Потребує власного SCSS-компілятора (dart-sass сумісної версії або sassc):
+//    серверний компілятор HostBill застосує лише кольори/шрифт/радіус,
+//    але не зміни поза цим блоком (pill-кнопки, градієнти, шрифт заголовків).
+// =============================================================
+
+@import "vendor/bootstrap/_functions"; //fix missing "add" function
+
+//Start custom variables
+
+// --- Бренд / акценти -----------------------------------------
+// Astra: orange — ЄДИНИЙ акцент. Синій Bootstrap прибрано звідусіль.
+$brand-primary:   #ff7016 !default;   // --orange-500  (було #3891F2)
+$brand-secondary: #6c6e78 !default;   // --gray-500 (muted); справжня secondary-кнопка — біла+бордер, робиться в main.scss
+$brand-success:   #29c46a !default;   // --status-success (було #2DC76B)
+$brand-info:      #1fc9bd !default;   // --cyan-500 / --status-info  ⚠ РОЗЧЕПЛЕНО з primary (було = синій)
+$brand-warning:   #ff8a3d !default;   // --status-warning / --orange-400
+$brand-danger:    #ef4757 !default;   // --status-danger (було #D9252E)
+
+$link-color:      #ff7016 !default;   // акцент = orange (hover рахується в каскаді нижче)
+
+// --- Верхній navbar ------------------------------------------
+$navbar-height:        72px    !default;   // лишаємо каркас теми
+$navbar-bg:            #ffffff !default;   // --surface-card (білий)
+$navbar-border-color:  #e3e2dc !default;   // --border-on-light (було #EBECF0)
+$navbar-border-width:  1px     !default;
+$navbar-item-color:    #6c6e78 !default;   // --text-on-light-muted
+
+// --- Ліве меню (sidebar) -------------------------------------
+// Astra: dark navy сайдбар добре тримає бренд. Було сіре #464851.
+$menu-width:       250px   !default;   // каркас теми
+$menu-bg:          #10162e !default;   // --navy-800 / --surface-dark-raised
+$menu-item-color:  #aeb3c8 !default;   // --text-on-dark-muted
+
+// --- Перемикачі теми -----------------------------------------
+$enable-preloader:   true !default;
+$enable-transitions: true !default;
+$enable-rounded:     true !default;
+
+// --- Типографіка ---------------------------------------------
+// Inter для тексту. ⚠ Прибрано !important (був конфлікт). Файли — у dist/fonts/,
+// оголошення @font-face — у fonts.scss. Заголовки (Unbounded) — окремо в main.scss.
+$font-family-base: "Inter", "Golos Text", Arial, sans-serif !default;
+$font-size-base:   1rem !default;      // Astra body ~1.0625rem; 1rem лишаємо базою
+
+// --- Поверхні / текст ----------------------------------------
+$body-bg:    #faf9f5 !default;   // --surface-light / --paper (ТЕПЛИЙ, не #fff!)
+$body-color: #17181c !default;   // --text-on-light / --gray-900 (було #373A3C)
+
+$section-main-max-width: 1400px !default;   // каркас теми (Astra container 1200px — можна звузити пізніше)
+
+// --- Бордери / радіус ----------------------------------------
+$border-width:  1px      !default;
+$border-radius: 0.625rem !default;   // 10px = --radius-md (інпути/база). Було 0.43rem
+$border-color:  #e3e2dc  !default;   // --border-on-light
+
+//End custom variables
+
+// =============================================================
+// НИЖЧЕ — зміни ПОЗА custom-блоком (адмінка їх не чіпає).
+// Ставити в тому ж variables.scss після //End custom variables,
+// перевизначаючи стокові значення теми.
+// =============================================================
+
+// Картки: розчепити з фоном сторінки (зараз $card-bg: $body-bg → зіллються)
+// $card-bg:            #ffffff;   // --surface-card
+// $card-border-radius: 1rem;      // 16px = --radius-lg
+// $card-border-color:  #e3e2dc;
+
+// Кнопки: pill + жирніший текст (градієнт і hower-brightness — у main.scss)
+// $btn-border-radius:    999px;   // --radius-pill
+// $btn-border-radius-lg: 999px;
+// $btn-border-radius-sm: 999px;
+// $btn-font-weight:      600;     // --text-button (було 400)
+
+// Ваги шрифту: тема вважає bold=500; Astra використовує 600/700/800
+// $font-weight-bold: 700;         // ⚠ перевір вплив на існуючі .font-weight-bold у tpl
+
+// Popover/tooltip: у темі фон = $brand-primary (orange). Astra tooltip — navy-950.
+// $tooltip-bg: #05070f;           // --navy-950
+// $popover-box-shadow: 0 12px 32px rgba(10,12,25,.18);  // --shadow-popover

@@ -204,13 +204,20 @@ function buildPriceTable(sections: PriceSection[], headers: [string, string, str
   return tableNode(rows)
 }
 
+const partners = [
+  { name: 'GigaTrans', href: 'https://gigatrans.ua' },
+  { name: 'IX' },
+  { name: 'Галком', href: 'https://galcom.net.ua' },
+  { name: 'Türk Telekom International', href: 'https://www.turktelekomint.com' },
+]
+
 function heroBlock(heading: string, subheading: string, tagline: string) {
   return {
     blockType: 'hero',
     heading,
     subheading,
     tagline,
-    imageSrc: '/images/mascot-colocation.png',
+    imageSrc: '/images/colocation_page.png',
     imageFit: 'contain',
   }
 }
@@ -222,6 +229,7 @@ function colocationUa() {
       "Розмістіть власне серверне обладнання у надійному дата-центрі — від одного пристрою до цілої стійки.",
       'Захист від перебоїв живлення, перегріву та відмов обладнання',
     ),
+    { blockType: 'partners', title: 'Нам довіряють', partners },
     {
       blockType: 'simple-content',
       content: richTextDoc([
@@ -243,6 +251,19 @@ function colocationUa() {
         buildPriceTable(SECTIONS_UA, ['Послуга', 'ДЦ Львів 2', 'ДЦ Львів 1', 'Інсталяція']),
       ]),
     },
+    {
+      blockType: 'consultation',
+      tone: 'light',
+      splitCard: true,
+      badgeLabel: '⚙️ Індивідуальний підхід',
+      heading: 'Потрібна індивідуальна конфігурація?',
+      subheading:
+        'Підберемо оптимальне рішення для розміщення вашого обладнання — від одного пристрою до цілої стійки.',
+      ctaLabel: 'Отримати консультацію',
+      ctaHref: '#contact',
+      microcopy: "Безкоштовно · без зобов'язань",
+      illustrationSrc: '/images/mascot-contact-us.png',
+    },
   ]
 }
 
@@ -254,6 +275,7 @@ function colocationEn() {
       'Host your own server hardware in a reliable data center — from a single device to a full rack.',
       'Protection from power outages, overheating, and equipment failure',
     ),
+    { blockType: 'partners', title: 'Trusted by', partners },
     {
       blockType: 'simple-content',
       content: richTextDoc([
@@ -275,6 +297,19 @@ function colocationEn() {
         buildPriceTable(sections, ['Service', 'DC Lviv 2', 'DC Lviv 1', 'Installation']),
       ]),
     },
+    {
+      blockType: 'consultation',
+      tone: 'light',
+      splitCard: true,
+      badgeLabel: '⚙️ Custom approach',
+      heading: 'Need a custom configuration?',
+      subheading:
+        "We'll help you pick the right setup for hosting your equipment — from a single device to a full rack.",
+      ctaLabel: 'Get a consultation',
+      ctaHref: '#contact',
+      microcopy: 'Free · no obligations',
+      illustrationSrc: '/images/mascot-contact-us.png',
+    },
   ]
 }
 
@@ -286,6 +321,7 @@ function colocationPl() {
       'Umieść własny sprzęt serwerowy w niezawodnym centrum danych — od jednego urządzenia po całą szafę.',
       'Ochrona przed przerwami w zasilaniu, przegrzaniem i awariami sprzętu',
     ),
+    { blockType: 'partners', title: 'Zaufali nam', partners },
     {
       blockType: 'simple-content',
       content: richTextDoc([
@@ -306,6 +342,19 @@ function colocationPl() {
         paragraphNode('Ceny podane w hrywnach ukraińskich za miesiąc, z VAT.'),
         buildPriceTable(sections, ['Usługa', 'CD Lwów 2', 'CD Lwów 1', 'Instalacja']),
       ]),
+    },
+    {
+      blockType: 'consultation',
+      tone: 'light',
+      splitCard: true,
+      badgeLabel: '⚙️ Indywidualne podejście',
+      heading: 'Potrzebujesz indywidualnej konfiguracji?',
+      subheading:
+        'Dobierzemy optymalne rozwiązanie do umieszczenia Twojego sprzętu — od jednego urządzenia po całą szafę.',
+      ctaLabel: 'Otrzymaj konsultację',
+      ctaHref: '#contact',
+      microcopy: 'Bezpłatnie · bez zobowiązań',
+      illustrationSrc: '/images/mascot-contact-us.png',
     },
   ]
 }

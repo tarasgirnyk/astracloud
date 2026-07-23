@@ -1,7 +1,6 @@
 {
   "chrome": {
-    "languageLabel": "Language",
-    "currencyLabel": "Currency"
+    "languageLabel": "Language"
   },
   "vpsPricingCards": {
     "specLabels": {
@@ -12,6 +11,32 @@
       "Traffic": "Traffic",
       "Backup": "Backups"
     },
-    "recommendedBadge": "Recommended"
+    "recommendedBadge": "Recommended",
+    "orderCta": "Order",
+    "selectCta": "Select",
+    "currencies": {
+      "UAH": "UAH"
+    },
+    "pricePeriod": "{currency} / mo",
+    "columns": {
+      "plan": "Plan",
+      "disk": "Disk",
+      "price": "Price"
+    }
+  },
+  "consultationModal": {
+    "nameLabel": "Name",
+    "phoneLabel": "Phone",
+    "emailLabel": "Email",
+    "messageLabel": "Message",
+    "namePlaceholder": "Your name",
+    "phonePlaceholder": "+1 555 123 4567",
+    "emailPlaceholder": "you@example.com",
+    "messagePlaceholder": "Tell us what you need",
+    "submitLabel": "Send",
+    "submittingLabel": "Sending...",
+    "successMessage": "Thank you! We'll get back to you shortly.",
+    "errorMessage": "Failed to send the request. Please try again.",
+    "closeLabel": "Close"
   }
 }

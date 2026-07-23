@@ -1,6 +1,4 @@
 import type { CSSProperties } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
 import { HeroParticles } from './HeroParticles'
 import { SHOOTING_STARS, STAR_GLOWS, STARS } from './starfield'
 
@@ -10,6 +8,9 @@ export interface HeroBlockProps {
   subheading?: string | null
   tagline?: string | null
   imageSrc?: string | null
+  // No longer applied — the image always renders at its own uploaded
+  // aspect ratio now (see hero-image below). Field kept on existing block
+  // data/CMS schema for backward compatibility; intentionally unread here.
   imageFit?: 'cover' | 'contain' | null
   ctaLabel?: string | null
   ctaHref?: string | null
@@ -20,7 +21,6 @@ export function Hero({
   subheading,
   tagline,
   imageSrc,
-  imageFit,
   ctaLabel,
   ctaHref,
 }: HeroBlockProps) {
@@ -28,7 +28,7 @@ export function Hero({
     <section
       style={{
         background: 'var(--gradient-hero)',
-        padding: 'var(--space-32) 0 var(--space-24)',
+        padding: '60px 0 5px 0',
         position: 'relative',
         overflow: 'hidden',
       }}
@@ -49,7 +49,6 @@ export function Hero({
         @media (max-width: 768px) {
           .hero-grid { grid-template-columns:1fr !important; }
           .hero-title { font-size:2.25rem !important; }
-          .hero-image { height:240px !important; }
         }
       `}</style>
 
@@ -153,7 +152,7 @@ export function Hero({
           ) : null}
           {ctaLabel && ctaHref ? (
             <div style={{ display: 'flex', gap: 16, marginTop: 36 }}>
-              <Link
+              <a
                 href={ctaHref}
                 style={{
                   display: 'inline-flex',
@@ -168,26 +167,21 @@ export function Hero({
                 }}
               >
                 {ctaLabel}
-              </Link>
+              </a>
             </div>
           ) : null}
         </div>
-        <div
-          className="hero-image"
-          style={{
-            position: 'relative',
-            height: 380,
-            borderRadius: 'var(--radius-xl)',
-            overflow: 'hidden',
-          }}
-        >
-          <Image
+        <div className="hero-image">
+          {/* eslint-disable-next-line @next/next/no-img-element -- must
+              render at its own uploaded aspect ratio (full width, natural
+              height), which next/image's fill+objectFit can't do without a
+              pre-sized box */}
+          <img
             src={imageSrc ?? '/images/hero3.png'}
             alt=""
-            fill
-            style={{ objectFit: imageFit ?? 'cover' }}
-            sizes="(max-width: 768px) 100vw, 45vw"
-            priority
+            style={{ display: 'block', width: '100%', height: 'auto' }}
+            fetchPriority="high"
+            loading="eager"
           />
         </div>
       </div>

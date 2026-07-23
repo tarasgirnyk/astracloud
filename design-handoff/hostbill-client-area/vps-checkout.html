@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Оформлення замовлення — Linux VPS — Astra Cloud</title>
+<link rel="stylesheet" href="../project/styles.css">
+<style>
+  /* ---- Page-specific styles (checkout wizard, plan cards, form controls) ---- */
+
+  .nav-dropdown { position:relative; }
+  .nav-dropdown .nav-dropdown-menu { display:none; }
+  .nav-dropdown:hover .nav-dropdown-menu { display:flex; }
+  .nav-dropdown-menu a:hover { background:var(--surface-light); }
+
+  /* Mobile nav */
+  .nav-burger { display:none; flex-direction:column; justify-content:center; gap:5px; width:26px; height:20px; cursor:pointer; background:none; border:none; padding:0; margin-left:auto; }
+  .nav-burger span { display:block; height:2px; width:100%; background:var(--text-on-light); border-radius:2px; }
+  .mobile-nav-toggle { display:none; }
+  .mobile-nav-panel { display:none; flex-direction:column; padding:8px var(--container-padding) 20px; background:var(--white); border-top:1px solid var(--border-on-light); }
+  .mobile-nav-panel a { color:var(--text-on-light); text-decoration:none; font:var(--text-ui-label); padding:12px 4px; border-bottom:1px solid var(--border-on-light); }
+  #mobile-nav-toggle:checked ~ .mobile-nav-panel { display:flex; }
+
+  /* Navbar-menu (кабінетна панель дій: кошик, сповіщення, баланс, мова, користувач) */
+  .navbar-menu { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .navbar-icon-btn { position:relative; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:transparent; border:none; cursor:pointer; font-size:17px; color:var(--text-on-light-muted); transition:background var(--duration-fast) var(--ease-standard); }
+  .navbar-icon-btn:hover { background:var(--gray-100); }
+  .navbar-icon-btn .navbar-badge { position:absolute; top:2px; right:2px; min-width:14px; height:14px; padding:0 3px; border-radius:var(--radius-pill); background:var(--brand-primary); color:var(--white); font:700 9px/14px var(--font-body); text-align:center; }
+  .navbar-balance { display:flex; flex-direction:column; line-height:1.25; font:var(--text-caption); color:var(--text-on-light-muted); white-space:nowrap; }
+  .navbar-balance strong { color:var(--status-success); font:var(--text-ui-label); }
+  .navbar-lang { border:none; background:transparent; font:var(--text-caption); color:var(--text-on-light-muted); padding:6px 18px 6px 4px; cursor:pointer; }
+  .navbar-user { display:flex; flex-direction:column; line-height:1.25; text-align:right; white-space:nowrap; cursor:pointer; }
+  .navbar-user small { font:var(--text-caption); color:var(--text-on-light-muted); }
+  .navbar-user span { font:var(--text-ui-label); color:var(--text-on-light); }
+
+  /* User dropdown (підменю під "Taras ▾": швидкі дії + пункти кабінету) */
+  .user-dropdown { position:relative; }
+  .user-dropdown .user-dropdown-panel { display:none; }
+  .user-dropdown:hover .user-dropdown-panel { display:flex; }
+  .user-dropdown-panel { flex-direction:column; position:absolute; top:100%; right:0; margin-top:0; padding-top:12px; min-width:270px; z-index:30; }
+  .user-dropdown-panel-inner { background:var(--white); border:1px solid var(--border-on-light); border-radius:var(--radius-md); box-shadow:0 8px 24px rgba(0,0,0,0.12); padding:10px; display:flex; flex-direction:column; }
+  .user-quick-row { display:flex; align-items:center; gap:6px; padding:4px 6px 12px; margin-bottom:8px; border-bottom:1px solid var(--border-on-light); }
+  .user-quick-row .navbar-icon-btn { width:32px; height:32px; font-size:15px; }
+  .user-quick-row .navbar-balance { margin-left:auto; text-align:right; }
+  .user-quick-row .navbar-lang { padding:6px 4px; }
+  .menu-group-label { font:var(--text-caption); color:var(--text-on-light-muted); text-transform:uppercase; letter-spacing:var(--tracking-eyebrow); padding:8px 10px 4px; }
+  .menu-link { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:var(--radius-sm); color:var(--text-on-light); text-decoration:none; font:var(--text-body-sm); white-space:nowrap; }
+  .menu-link:hover { background:var(--gray-100); }
+  .menu-icon { flex:none; width:18px; text-align:center; font-size:14px; }
+
+  @media (max-width: 640px) {
+    .navbar-lang { display:none; }
+  }
+
+  /* ---- Експеримент: друга панель (menu-sub.top) — ті самі пункти, що й у "Taras ▾", але завжди видимі ---- */
+  .submenu-bar { background:var(--white); border-bottom:1px solid var(--border-on-light); position:relative; z-index:35; }
+  .submenu-bar-inner { display:flex; align-items:center; gap:4px; padding:10px var(--container-padding); white-space:nowrap; }
+  .submenu-link { display:inline-flex; align-items:center; gap:6px; padding:7px 12px; border-radius:var(--radius-pill); color:var(--text-on-light-muted); text-decoration:none; font:var(--text-ui-label); font-size:14px; white-space:nowrap; cursor:pointer; transition:background var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard); }
+  .submenu-link:hover { background:var(--gray-100); color:var(--text-on-light); }
+  .submenu-link.is-active { background:rgba(255,112,22,0.12); color:var(--brand-primary); }
+  .submenu-quick { margin-left:auto; display:flex; align-items:center; gap:12px; padding-left:12px; }
+
+  /* Buttons (mirrors components/core/Button.jsx) */
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; border-radius:var(--radius-pill); border:none; cursor:pointer; font:var(--text-button); transition:transform var(--duration-fast) var(--ease-standard), filter var(--duration-fast) var(--ease-standard); }
+  .btn:active { transform:scale(0.97); }
+  .btn:hover { filter:brightness(1.06); }
+  .btn-primary { background-image:var(--gradient-orange); color:var(--white); }
+  .btn-secondary { background:var(--white); color:var(--text-on-light); border:1px solid var(--border-on-light); }
+  .btn-sm { padding:8px 16px; font:600 14px/1 var(--font-body); }
+  .btn-md { padding:12px 24px; }
+  .btn-lg { padding:16px 32px; font:600 17px/1 var(--font-body); width:100%; }
+
+  /* Form controls */
+  .field-label { display:block; font:var(--text-ui-label); color:var(--text-on-light); margin-bottom:8px; }
+  .ac-select, .ac-input {
+    width:100%; appearance:none; -webkit-appearance:none;
+    padding:11px 16px; border-radius:var(--radius-pill); border:1px solid var(--border-on-light);
+    font:var(--text-body-sm); color:var(--text-on-light); background:var(--white);
+    outline:none; transition:border-color var(--duration-fast) var(--ease-standard);
+  }
+  .ac-select { background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'><path d='M1 1L5 5L9 1' stroke='%236c6e78' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>"); background-repeat:no-repeat; background-position:right 16px center; padding-right:36px; }
+  .ac-select:focus, .ac-input:focus { border-color:var(--brand-primary); }
+
+  .ac-range { width:100%; accent-color:var(--brand-primary); height:4px; }
+
+  .step-heading { display:flex; align-items:center; gap:12px; margin:0 0 16px; }
+  .step-number { flex:none; width:28px; height:28px; border-radius:50%; background:var(--navy-950); color:var(--white); display:flex; align-items:center; justify-content:center; font:600 13px/1 var(--font-body); }
+  .step-title { font:var(--text-ui-label); color:var(--text-on-light); font-size:17px; }
+
+  .plan-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:var(--space-4); }
+  .plan-card { position:relative; border-radius:var(--radius-lg); border:2px solid var(--border-on-light); background:var(--white); padding:var(--space-5); cursor:pointer; transition:border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard); display:flex; flex-direction:column; gap:12px; }
+  .plan-card:hover { border-color:var(--orange-300); }
+  .plan-card.is-selected { border-color:var(--brand-primary); box-shadow:var(--shadow-card-hover); }
+  .plan-card .plan-check { position:absolute; top:14px; right:14px; width:20px; height:20px; border-radius:6px; border:1.5px solid var(--border-on-light); background:var(--white); display:flex; align-items:center; justify-content:center; }
+  .plan-card.is-selected .plan-check { background:var(--brand-primary); border-color:var(--brand-primary); }
+  .plan-card.is-selected .plan-check::after { content:""; width:10px; height:7px; border-left:2px solid var(--white); border-bottom:2px solid var(--white); transform:rotate(-45deg) translateY(-1px); }
+  .plan-name { font:var(--text-ui-label); color:var(--text-on-light); font-size:16px; }
+  .plan-price { font:800 1.5rem/1 var(--font-display); color:var(--text-on-light); }
+  .plan-price span { font:var(--text-caption); color:var(--text-on-light-muted); }
+  .plan-specs { display:flex; flex-direction:column; gap:4px; font:var(--text-caption); color:var(--text-on-light-muted); }
+  .plan-specs div { display:flex; justify-content:space-between; gap:8px; }
+
+  .checkout-grid { display:grid; grid-template-columns:1fr 380px; gap:var(--space-10); align-items:start; }
+
+  .addon-card { border:1px solid var(--border-on-light); border-radius:var(--radius-lg); background:var(--white); padding:var(--space-5); }
+
+  .summary-line { display:flex; align-items:baseline; justify-content:space-between; gap:12px; font:400 13px/1.5 var(--font-body); color:var(--text-on-light-muted); }
+  .summary-line span:last-child { white-space:nowrap; color:var(--text-on-light); }
+
+  @media (max-width: 1100px) {
+    .plan-grid { grid-template-columns:repeat(2,1fr); }
+  }
+
+  @media (max-width: 900px) {
+    .checkout-grid { grid-template-columns:1fr !important; }
+    .checkout-summary { position:static !important; }
+  }
+
+  @media (max-width: 768px) {
+    .main-nav { display:none !important; }
+    .nav-burger { display:flex; }
+    .footer-grid { grid-template-columns:1fr !important; gap:var(--space-8) !important; }
+    h1 { font-size:1.75rem !important; }
+  }
+
+  @media (max-width: 640px) {
+    .plan-grid { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div style="background:var(--surface-light); overflow-x:hidden;">
+
+  <!-- ================= Header (з маркетингового сайту) ================= -->
+  <header style="position:sticky; top:0; z-index:50; background:rgba(250,249,245,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--border-on-light);">
+    <input type="checkbox" id="mobile-nav-toggle" class="mobile-nav-toggle">
+    <div class="ac-container" style="display:flex; align-items:center; justify-content:space-between; min-height:76px; padding-top:14px; padding-bottom:14px; gap:16px 24px; flex-wrap:wrap;">
+      <img src="../project/assets/logo/astra-cloud-logo.png" alt="Astra Cloud" style="height:50px; filter:invert(1) brightness(0.3) sepia(1) hue-rotate(190deg) saturate(0);">
+      <nav class="main-nav" style="display:flex; align-items:center; gap:24px; flex-wrap:wrap; font:var(--text-ui-label); color:var(--text-on-light);">
+        <a href="#" style="color:inherit; text-decoration:none;">VPS сервери</a>
+        <a href="#" style="color:inherit; text-decoration:none;">Виділений сервер</a>
+        <a href="#" style="color:inherit; text-decoration:none;">Колокація</a>
+        <div class="nav-dropdown">
+          <span style="display:flex; align-items:center; gap:4px; cursor:pointer;">Компанія <span style="font-size:10px;">▾</span></span>
+          <div class="nav-dropdown-menu" style="flex-direction:column; position:absolute; top:100%; left:0; margin-top:0; padding-top:12px; min-width:240px; z-index:20;">
+            <div style="background:var(--white); border:1px solid var(--border-on-light); border-radius:var(--radius-md); box-shadow:0 8px 24px rgba(0,0,0,0.12); padding:8px; display:flex; flex-direction:column;">
+            <a href="#" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Про нас</a>
+            <a href="#" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Умови користування</a>
+            <a href="#" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Політика конфіденційності</a>
+            <a href="#" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Політика повернення коштів</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div class="navbar-menu">
+        <div class="user-dropdown">
+          <div class="navbar-user">
+            <small>Ласкаво просимо</small>
+            <span>Taras ▾</span>
+          </div>
+          <div class="user-dropdown-panel">
+            <div class="user-dropdown-panel-inner">
+
+              <div class="user-quick-row">
+                <button class="navbar-icon-btn" aria-label="Кошик">🛒</button>
+                <button class="navbar-icon-btn" aria-label="Сповіщення">🔔<span class="navbar-badge">0</span></button>
+                <select class="navbar-lang">
+                  <option>Українська</option><option>English</option><option>Polski</option>
+                </select>
+                <div class="navbar-balance"><span>Баланс</span><strong>0.00 UAH</strong></div>
+              </div>
+
+              <div class="menu-group-label">Управління</div>
+              <a class="menu-link" href="https://cp.astra.in.ua/clientarea/"><span class="menu-icon">🏠</span>Головна</a>
+              <a class="menu-link" href="#menu-services"><span class="menu-icon">🗂️</span>Послуги</a>
+              <a class="menu-link" href="https://cp.astra.in.ua/products/"><span class="menu-icon">🛒</span>Замовити</a>
+
+              <div class="menu-group-label">Обліковий запис</div>
+              <a class="menu-link" href="https://cp.astra.in.ua/clientarea/overview/"><span class="menu-icon">👤</span>Дані облікового запису</a>
+              <a class="menu-link" href="https://cp.astra.in.ua/profiles/"><span class="menu-icon">📇</span>Керування контактами</a>
+              <a class="menu-link" href="https://cp.astra.in.ua/clientarea/invoices/"><span class="menu-icon">💳</span>Білінг</a>
+              <a class="menu-link" href="https://cp.astra.in.ua/clientarea/ipaccess/"><span class="menu-icon">🛡️</span>Безпека</a>
+              <a class="menu-link" href="https://cp.astra.in.ua/clientarea/history/"><span class="menu-icon">🕓</span>Історія</a>
+
+              <div class="menu-group-label">Підтримка</div>
+              <a class="menu-link" href="https://cp.astra.in.ua/knowledgebase/"><span class="menu-icon">📘</span>База знань</a>
+              <a class="menu-link" href="https://cp.astra.in.ua/tickets/"><span class="menu-icon">💬</span>Заявки</a>
+              <a class="menu-link" href="https://cp.astra.in.ua/downloads/"><span class="menu-icon">📁</span>Файли</a>
+              <a class="menu-link" href="mailto:cloud@astra.in.ua"><span class="menu-icon">✉️</span>cloud@astra.in.ua</a>
+              <a class="menu-link" href="tel:+380636363448"><span class="menu-icon">📞</span>063 636 3448</a>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <label for="mobile-nav-toggle" class="nav-burger" aria-label="Меню">
+        <span></span><span></span><span></span>
+      </label>
+    </div>
+    <div class="mobile-nav-panel">
+      <a href="#">VPS сервери</a>
+      <a href="#">Виділений сервер</a>
+      <a href="#">Колокація</a>
+      <a href="#">Про нас</a>
+      <a href="#">Умови користування</a>
+      <a href="#">Політика конфіденційності</a>
+      <a href="#">Політика повернення коштів</a>
+    </div>
+  </header>
+
+  <!-- ================= Друга панель: групи пунктів кабінету випадаючими списками ================= -->
+  <div class="submenu-bar">
+    <div class="ac-container submenu-bar-inner">
+
+      <div class="nav-dropdown">
+        <span class="submenu-link is-active">Управління <span style="font-size:9px;">▾</span></span>
+        <div class="nav-dropdown-menu" style="flex-direction:column; position:absolute; top:100%; left:0; padding-top:8px; min-width:230px; z-index:20;">
+          <div style="background:var(--white); border:1px solid var(--border-on-light); border-radius:var(--radius-md); box-shadow:0 8px 24px rgba(0,0,0,0.12); padding:8px; display:flex; flex-direction:column;">
+            <a class="menu-link" href="https://cp.astra.in.ua/clientarea/"><span class="menu-icon">🏠</span>Головна</a>
+            <a class="menu-link" href="#menu-services"><span class="menu-icon">🗂️</span>Послуги</a>
+            <a class="menu-link" href="https://cp.astra.in.ua/products/"><span class="menu-icon">🛒</span>Замовити</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-dropdown">
+        <span class="submenu-link">Обліковий запис <span style="font-size:9px;">▾</span></span>
+        <div class="nav-dropdown-menu" style="flex-direction:column; position:absolute; top:100%; left:0; padding-top:8px; min-width:230px; z-index:20;">
+          <div style="background:var(--white); border:1px solid var(--border-on-light); border-radius:var(--radius-md); box-shadow:0 8px 24px rgba(0,0,0,0.12); padding:8px; display:flex; flex-direction:column;">
+            <a class="menu-link" href="https://cp.astra.in.ua/clientarea/overview/"><span class="menu-icon">👤</span>Дані облікового запису</a>
+            <a class="menu-link" href="https://cp.astra.in.ua/profiles/"><span class="menu-icon">📇</span>Керування контактами</a>
+            <a class="menu-link" href="https://cp.astra.in.ua/clientarea/invoices/"><span class="menu-icon">💳</span>Білінг</a>
+            <a class="menu-link" href="https://cp.astra.in.ua/clientarea/ipaccess/"><span class="menu-icon">🛡️</span>Безпека</a>
+            <a class="menu-link" href="https://cp.astra.in.ua/clientarea/history/"><span class="menu-icon">🕓</span>Історія</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-dropdown">
+        <span class="submenu-link">Підтримка <span style="font-size:9px;">▾</span></span>
+        <div class="nav-dropdown-menu" style="flex-direction:column; position:absolute; top:100%; left:0; padding-top:8px; min-width:230px; z-index:20;">
+          <div style="background:var(--white); border:1px solid var(--border-on-light); border-radius:var(--radius-md); box-shadow:0 8px 24px rgba(0,0,0,0.12); padding:8px; display:flex; flex-direction:column;">
+            <a class="menu-link" href="https://cp.astra.in.ua/knowledgebase/"><span class="menu-icon">📘</span>База знань</a>
+            <a class="menu-link" href="https://cp.astra.in.ua/tickets/"><span class="menu-icon">💬</span>Заявки</a>
+            <a class="menu-link" href="https://cp.astra.in.ua/downloads/"><span class="menu-icon">📁</span>Файли</a>
+            <a class="menu-link" href="mailto:cloud@astra.in.ua"><span class="menu-icon">✉️</span>cloud@astra.in.ua</a>
+            <a class="menu-link" href="tel:+380636363448"><span class="menu-icon">📞</span>063 636 3448</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="submenu-quick">
+        <button class="navbar-icon-btn" aria-label="Кошик">🛒</button>
+        <button class="navbar-icon-btn" aria-label="Сповіщення">🔔<span class="navbar-badge">0</span></button>
+        <select class="navbar-lang">
+          <option>Українська</option><option>English</option><option>Polski</option>
+        </select>
+        <div class="navbar-balance"><span>Баланс</span><strong>0.00 UAH</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= Page title ================= -->
+  <section style="padding:var(--space-10) 0 var(--space-8); background:var(--gray-100); border-bottom:1px solid var(--border-on-light);">
+    <div class="ac-container">
+      <p style="font:var(--text-caption); color:var(--text-on-light-muted); text-align:center; margin:0 0 8px; text-transform:uppercase; letter-spacing:var(--tracking-eyebrow);">Замовити → Linux VPS</p>
+      <h1 style="font:800 2.25rem/1.15 var(--font-display); letter-spacing:var(--tracking-display); color:var(--text-on-light); margin:0; text-align:center;">Зробити нове замовлення</h1>
+    </div>
+  </section>
+
+  <!-- ================= Checkout content ================= -->
+  <section style="padding:var(--space-10) 0 var(--section-padding-y); background:var(--paper);">
+    <div class="ac-container">
+
+      <!-- 1. Виберіть послугу (на всю ширину контейнера) -->
+      <div style="margin-bottom:var(--space-10);">
+        <div class="step-heading"><span class="step-number">1</span><span class="step-title">Виберіть послугу</span></div>
+        <div class="plan-grid" id="plan-grid">
+
+          <div class="plan-card" data-plan="nano" data-price="150" onclick="selectPlan('nano')">
+            <span class="plan-check"></span>
+            <div class="plan-name">VPS Nano</div>
+            <div class="plan-price">150 <span>UAH / міс</span></div>
+            <div class="plan-specs">
+              <div><span>CPU</span><span>1 Core</span></div>
+              <div><span>RAM</span><span>1 Gb</span></div>
+              <div><span>NVMe</span><span>8 Gb</span></div>
+              <div><span>Мережа</span><span>100 MBit/s</span></div>
+              <div><span>Трафік</span><span>1 TB</span></div>
+              <div><span>Backup</span><span>2 Free</span></div>
+            </div>
+          </div>
+
+          <div class="plan-card is-selected" data-plan="micro" data-price="375" onclick="selectPlan('micro')">
+            <span class="plan-check"></span>
+            <div class="plan-name">VDS Micro</div>
+            <div class="plan-price">375 <span>UAH / міс</span></div>
+            <div class="plan-specs">
+              <div><span>CPU</span><span>2 Core</span></div>
+              <div><span>RAM</span><span>4 Gb</span></div>
+              <div><span>NVMe</span><span>64 Gb</span></div>
+              <div><span>Мережа</span><span>1000 MBit/s</span></div>
+              <div><span>Трафік</span><span>4 TB</span></div>
+              <div><span>Backup</span><span>2 Free</span></div>
+            </div>
+          </div>
+
+          <div class="plan-card" data-plan="standart" data-price="750" onclick="selectPlan('standart')">
+            <span class="plan-check"></span>
+            <div class="plan-name">VPS Standart</div>
+            <div class="plan-price">750 <span>UAH / міс</span></div>
+            <div class="plan-specs">
+              <div><span>CPU</span><span>4 Core</span></div>
+              <div><span>RAM</span><span>8 Gb</span></div>
+              <div><span>NVMe</span><span>128 Gb</span></div>
+              <div><span>Мережа</span><span>1000 MBit/s</span></div>
+              <div><span>Трафік</span><span>Unlimited</span></div>
+              <div><span>Backup</span><span>2 Free</span></div>
+            </div>
+          </div>
+
+          <div class="plan-card" data-plan="premium" data-price="940" onclick="selectPlan('premium')">
+            <span class="plan-check"></span>
+            <div class="plan-name">VPS Premium</div>
+            <div class="plan-price">940 <span>UAH / міс</span></div>
+            <div class="plan-specs">
+              <div><span>CPU</span><span>8 Core</span></div>
+              <div><span>RAM</span><span>16 Gb</span></div>
+              <div><span>NVMe</span><span>256 Gb</span></div>
+              <div><span>Мережа</span><span>1000 MBit/s</span></div>
+              <div><span>Трафік</span><span>Unlimited</span></div>
+              <div><span>Backup</span><span>2 Free</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="checkout-grid">
+
+        <!-- Left: configuration form (адаптовано зі структури cp.astra.in.ua/cart/linux-vps/) -->
+        <div style="display:flex; flex-direction:column; gap:var(--space-10);">
+
+          <!-- 2. OS Template -->
+          <div>
+            <div class="step-heading"><span class="step-number">2</span><span class="step-title">OS Template</span></div>
+            <select class="ac-select" id="os-select" style="max-width:340px;">
+              <option value="debian-13-trixie" selected>debian-13-trixie</option>
+              <option value="debian-12-bookworm">debian-12-bookworm</option>
+              <option value="ubuntu-20-04-focal">ubuntu-20-04-focal</option>
+              <option value="ubuntu-22-04-jammy">ubuntu-22-04-jammy</option>
+              <option value="ubuntu-24-04-noble">ubuntu-24-04-noble</option>
+              <option value="ubuntu-26-04-resolute-raccoon">ubuntu-26-04-resolute-raccoon</option>
+              <option value="fedora-43">fedora-43</option>
+              <option value="fedora-44">fedora-44</option>
+              <option value="rocky-9">rocky-9</option>
+              <option value="almalinux-9">almalinux-9</option>
+              <option value="almalinux-10">almalinux-10</option>
+            </select>
+          </div>
+
+          <!-- 3. Backups -->
+          <div>
+            <div class="step-heading"><span class="step-number">3</span><span class="step-title">Backups</span></div>
+            <div>
+              <input class="ac-range" type="range" id="backups-range" min="2" max="20" step="2" value="2" oninput="updateBackups(this.value)">
+              <div style="display:flex; justify-content:space-between; font:var(--text-caption); color:var(--text-on-light-muted); margin-top:6px;">
+                <span>2</span>
+                <span id="backups-value" style="font:var(--text-ui-label); color:var(--text-on-light);">2 копії</span>
+                <span>20</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Обмеження пропускної здатності -->
+          <div>
+            <div class="step-heading"><span class="step-number">4</span><span class="step-title">Обмеження пропускної здатності</span></div>
+            <div>
+              <input class="ac-range" type="range" id="bandwidth-range" min="1" max="200" step="20" value="1" oninput="updateBandwidth(this.value)">
+              <div style="display:flex; justify-content:space-between; font:var(--text-caption); color:var(--text-on-light-muted); margin-top:6px;">
+                <span>1 MBit/s</span>
+                <span id="bandwidth-value" style="font:var(--text-ui-label); color:var(--text-on-light);">1 MBit/s</span>
+                <span>1 TB (unlimited)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Ім'я хоста -->
+          <div>
+            <div class="step-heading"><span class="step-number">5</span><span class="step-title">Ім'я хоста</span></div>
+            <input class="ac-input" type="text" id="hostname-input" placeholder="vps1.astra.cloud" style="max-width:340px;">
+          </div>
+
+          <!-- 6. Промокод -->
+          <div>
+            <div class="step-heading"><span class="step-number">6</span><span class="step-title">Промокод</span></div>
+            <div style="display:flex; gap:10px; max-width:420px; flex-wrap:wrap;">
+              <input class="ac-input" type="text" id="promo-input" placeholder="Введіть промокод" style="flex:1; min-width:200px;">
+              <button class="btn btn-secondary btn-md" onclick="applyPromo()">Відправити</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right: order summary -->
+        <div class="checkout-summary" style="position:sticky; top:100px;">
+          <div style="border-radius:var(--radius-lg); box-shadow:var(--shadow-card); background:var(--surface-card); border:1px solid var(--border-on-light); padding:28px;">
+            <h3 style="font:var(--text-display-sm); color:var(--text-on-light); margin:0 0 18px;">Всього</h3>
+
+            <div style="display:flex; flex-direction:column; gap:9px;">
+              <div class="summary-line"><span id="summary-plan-label">VDS Micro</span><span id="summary-plan-price">375.00 UAH</span></div>
+              <div class="summary-line"><span id="summary-os-label">debian-13-trixie</span><span>0.00 UAH</span></div>
+              <div class="summary-line"><span id="summary-backups-label">Backups: 2 копії</span><span>включено</span></div>
+              <div class="summary-line"><span id="summary-bandwidth-label">Обмеження: 1 MBit/s</span><span>включено</span></div>
+            </div>
+
+            <div style="height:1px; background:var(--border-on-light); margin:20px 0;"></div>
+
+            <div style="text-align:right; margin-bottom:22px;">
+              <div style="font:var(--text-caption); color:var(--text-on-light-muted); margin-bottom:4px;">Всього</div>
+              <div id="summary-total" style="font:800 2rem/1 var(--font-display); color:var(--text-on-light);">375.00</div>
+              <div id="summary-total-unit" style="font:var(--text-caption); color:var(--text-on-light-muted); margin-top:4px;">UAH / місяць</div>
+            </div>
+
+            <button class="btn btn-primary btn-lg" onclick="placeOrder()">Замовити</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Footer (з маркетингового сайту) ================= -->
+  <footer style="background:var(--navy-950); padding:var(--space-16) 0 var(--space-10);">
+    <div class="ac-container">
+      <div class="footer-grid" style="display:grid; grid-template-columns:1.3fr 1fr 1fr 1fr; gap:var(--space-10); padding-bottom:var(--space-10); border-bottom:1px solid var(--border-on-dark);">
+        <div>
+          <img src="../project/assets/logo/astra-cloud-logo.png" alt="Astra Cloud" style="height:28px; margin-bottom:14px;">
+          <p style="font:var(--text-body-sm); color:var(--text-on-dark-muted);">Україна, м. Львів.</p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; font:var(--text-body-sm); color:var(--text-on-dark-muted);">
+          <span style="color:var(--text-on-dark); font:var(--text-ui-label); margin-bottom:4px;">Клієнтам</span>
+          <a href="#" style="color:inherit; text-decoration:none;">Про нас</a>
+          <a href="#" style="color:inherit; text-decoration:none;">Умови користування</a>
+          <a href="#" style="color:inherit; text-decoration:none;">Політика конфіденційності</a>
+          <a href="#" style="color:inherit; text-decoration:none;">Політика повернення коштів</a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; font:var(--text-body-sm); color:var(--text-on-dark-muted);">
+          <span style="color:var(--text-on-dark); font:var(--text-ui-label); margin-bottom:4px;">Legal</span>
+          <a href="#" style="color:inherit; text-decoration:none;">SLA</a>
+          <a href="#" style="color:inherit; text-decoration:none;">Legal Section</a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; font:var(--text-body-sm); color:var(--text-on-dark-muted);">
+          <span style="color:var(--text-on-dark); font:var(--text-ui-label); margin-bottom:4px;">Контакти</span>
+          <span>063 636 3448</span>
+          <span>cloud@astra.in.ua</span>
+          <span>abuse@astra.in.ua</span>
+        </div>
+      </div>
+      <p style="font:var(--text-caption); color:var(--gray-500); text-align:center; padding-top:var(--space-6);">© 2026 Astra Cloud. Всі права захищені.</p>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  const PLANS = {
+    nano:     { label: "VPS Nano",     price: 150 },
+    micro:    { label: "VDS Micro",    price: 375 },
+    standart: { label: "VPS Standart", price: 750 },
+    premium:  { label: "VPS Premium",  price: 940 },
+  };
+  let currentPlan = "micro";
+
+  function fmt(n) { return n.toFixed(2) + " UAH"; }
+
+  function selectPlan(key) {
+    currentPlan = key;
+    document.querySelectorAll(".plan-card").forEach((el) => {
+      el.classList.toggle("is-selected", el.dataset.plan === key);
+    });
+    updateSummary();
+  }
+
+  function updateBackups(value) {
+    document.getElementById("backups-value").textContent = value + " копії";
+    updateSummary();
+  }
+
+  function updateBandwidth(value) {
+    const label = Number(value) >= 200 ? "1 TB (unlimited)" : value + " MBit/s";
+    document.getElementById("bandwidth-value").textContent = label;
+    updateSummary();
+  }
+
+  function updateSummary() {
+    const plan = PLANS[currentPlan];
+    const os = document.getElementById("os-select").value;
+    const backups = document.getElementById("backups-value").textContent;
+    const bandwidth = document.getElementById("bandwidth-value").textContent;
+
+    document.getElementById("summary-plan-label").textContent = plan.label;
+    document.getElementById("summary-plan-price").textContent = fmt(plan.price);
+    document.getElementById("summary-os-label").textContent = os;
+    document.getElementById("summary-backups-label").textContent = "Backups: " + backups;
+    document.getElementById("summary-bandwidth-label").textContent = "Обмеження: " + bandwidth;
+    document.getElementById("summary-total").textContent = plan.price.toFixed(2);
+  }
+
+  function applyPromo() {
+    const code = document.getElementById("promo-input").value.trim();
+    alert(code ? ("Промокод «" + code + "» перевіряється... (макет)") : "Введіть промокод");
+  }
+
+  function placeOrder() {
+    alert("Макет: тут буде відправка замовлення в HostBill API (createOrderDraft → addOrderDraftItem → convertOrderDraft).");
+  }
+
+  document.getElementById("os-select").addEventListener("change", updateSummary);
+  updateSummary();
+</script>
+
+</body>
+</html>

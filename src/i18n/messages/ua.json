@@ -1,7 +1,6 @@
 {
   "chrome": {
-    "languageLabel": "Мова",
-    "currencyLabel": "Валюта"
+    "languageLabel": "Мова"
   },
   "vpsPricingCards": {
     "specLabels": {
@@ -12,6 +11,32 @@
       "Traffic": "Трафік",
       "Backup": "Резервні копії"
     },
-    "recommendedBadge": "Рекомендовано"
+    "recommendedBadge": "Рекомендовано",
+    "orderCta": "Замовити",
+    "selectCta": "Обрати",
+    "currencies": {
+      "UAH": "грн"
+    },
+    "pricePeriod": "{currency} / міс",
+    "columns": {
+      "plan": "Тариф",
+      "disk": "Диск",
+      "price": "Ціна"
+    }
+  },
+  "consultationModal": {
+    "nameLabel": "Ім'я",
+    "phoneLabel": "Телефон",
+    "emailLabel": "Email",
+    "messageLabel": "Повідомлення",
+    "namePlaceholder": "Ваше ім'я",
+    "phonePlaceholder": "+380 XX XXX XX XX",
+    "emailPlaceholder": "you@example.com",
+    "messagePlaceholder": "Розкажіть, що вам потрібно",
+    "submitLabel": "Надіслати",
+    "submittingLabel": "Надсилаємо...",
+    "successMessage": "Дякуємо! Ми зв'яжемося з вами найближчим часом.",
+    "errorMessage": "Не вдалося надіслати заявку. Спробуйте ще раз.",
+    "closeLabel": "Закрити"
   }
 }

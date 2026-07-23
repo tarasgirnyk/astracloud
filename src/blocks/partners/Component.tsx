@@ -6,6 +6,10 @@ export interface PartnersBlockProps {
   partners?: { name: string; href?: string | null }[] | null
 }
 
+// href is intentionally unused for rendering — logos are decorative only
+// (no outbound links), per conversation decision. Field stays in the CMS
+// schema in case links come back later.
+
 const PARTNER_LOGOS: Record<string, { src: string; width: number; height: number }> = {
   GigaTrans: { src: '/images/partners/gigatrans.svg', width: 133, height: 61 },
   IX: { src: '/images/partners/ix-partner.svg', width: 59, height: 39 },
@@ -19,11 +23,16 @@ export function Partners({ title, partners }: PartnersBlockProps) {
   return (
     <section
       style={{
+        background: 'var(--gray-100)',
         padding: 'var(--space-8) 0',
         borderTop: '1px solid var(--border-on-light)',
         borderBottom: '1px solid var(--border-on-light)',
       }}
     >
+      <style>{`
+        .partner-logo { filter: grayscale(1) opacity(0.5); transition: filter 0.2s ease; }
+        .partner-logo:hover { filter: grayscale(0) opacity(1); }
+      `}</style>
       <div className="ac-container">
         {title ? (
           <p
@@ -51,30 +60,23 @@ export function Partners({ title, partners }: PartnersBlockProps) {
         >
           {partners.map((partner) => {
             const logo = PARTNER_LOGOS[partner.name]
-            const content = logo ? (
-              <Image
-                src={logo.src}
-                alt={partner.name}
-                width={logo.width}
-                height={logo.height}
-                style={{
-                  maxWidth: '100%',
-                  height: 'auto',
-                  filter: 'grayscale(1) opacity(0.5)',
-                  transition: 'filter 0.2s ease',
-                }}
-              />
-            ) : (
-              <span style={{ font: 'var(--text-ui-label)', color: 'var(--text-on-light-muted)' }}>
-                {partner.name}
+            return (
+              <span key={partner.name}>
+                {logo ? (
+                  <Image
+                    src={logo.src}
+                    alt={partner.name}
+                    width={logo.width}
+                    height={logo.height}
+                    className="partner-logo"
+                    style={{ maxWidth: '100%', height: 'auto' }}
+                  />
+                ) : (
+                  <span style={{ font: 'var(--text-ui-label)', color: 'var(--text-on-light-muted)' }}>
+                    {partner.name}
+                  </span>
+                )}
               </span>
-            )
-            return partner.href ? (
-              <a key={partner.name} href={partner.href} target="_blank" rel="noopener noreferrer">
-                {content}
-              </a>
-            ) : (
-              <span key={partner.name}>{content}</span>
             )
           })}
         </div>

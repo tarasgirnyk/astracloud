@@ -23,6 +23,7 @@ export function PricingTable({ columns, rows }: PricingTableProps) {
     <div
       style={{
         overflowX: 'auto',
+        minWidth: 0,
         borderRadius: 'var(--radius-lg)',
         border: '1px solid var(--border-on-light)',
         background: 'var(--white)',
@@ -55,19 +56,57 @@ export function PricingTable({ columns, rows }: PricingTableProps) {
                 background: row.highlighted ? 'rgba(255,112,22,0.06)' : 'transparent',
               }}
             >
-              {columns.map((column, i) => (
-                <td
-                  key={column.key}
-                  style={{
-                    padding: '16px 20px',
-                    borderBottom: '1px solid var(--border-on-light)',
-                    font: i === 0 ? 'var(--text-ui-label)' : 'var(--text-body-sm)',
-                    color: row.highlighted && i === 0 ? 'var(--brand-primary)' : 'var(--text-on-light)',
-                  }}
-                >
-                  {row[column.key]}
-                </td>
-              ))}
+              {columns.map((column, i) => {
+                const href = row[`${column.key}Href`]
+                return (
+                  <td
+                    key={column.key}
+                    style={{
+                      padding: '16px 20px',
+                      borderBottom: '1px solid var(--border-on-light)',
+                      font: i === 0 ? 'var(--text-ui-label)' : 'var(--text-body-sm)',
+                      color: row.highlighted && i === 0 ? 'var(--brand-primary)' : 'var(--text-on-light)',
+                    }}
+                  >
+                    {typeof href === 'string' && href ? (
+                      column.key === 'order' ? (
+                        <a
+                          href={href}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            height: 36,
+                            padding: '0 20px',
+                            borderRadius: 'var(--radius-pill)',
+                            font: 'var(--text-button)',
+                            fontSize: 14,
+                            backgroundImage: 'var(--gradient-orange)',
+                            color: 'var(--brand-primary-text)',
+                            textDecoration: 'none',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {row[column.key]}
+                        </a>
+                      ) : (
+                        <a
+                          href={href}
+                          style={{
+                            color: 'var(--brand-primary)',
+                            textDecoration: 'underline',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {row[column.key]}
+                        </a>
+                      )
+                    ) : (
+                      row[column.key]
+                    )}
+                  </td>
+                )
+              })}
             </tr>
           ))}
         </tbody>

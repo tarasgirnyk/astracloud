@@ -19,9 +19,28 @@ type Locale = 'ua' | 'en' | 'pl'
 
 const SLUG = 'vps'
 
-function vpsPricingCardsBlock() {
+const vpsPricingCardsCopy: Record<Locale, { eyebrow: string; heading: string; subheading: string }> = {
+  ua: {
+    eyebrow: 'VPS-сервери',
+    heading: 'Оберіть свою орбіту',
+    subheading: 'NVMe-диски, миттєве розгортання та цілодобовий моніторинг у кожному тарифі.',
+  },
+  en: {
+    eyebrow: 'VPS Servers',
+    heading: 'Choose your orbit',
+    subheading: 'NVMe drives, instant deployment, and round-the-clock monitoring in every plan.',
+  },
+  pl: {
+    eyebrow: 'Serwery VPS',
+    heading: 'Wybierz swoją orbitę',
+    subheading: 'Dyski NVMe, błyskawiczne wdrożenie i całodobowy monitoring w każdej taryfie.',
+  },
+}
+
+function vpsPricingCardsBlock(locale: Locale) {
   return {
     blockType: 'vps-pricing-cards',
+    ...vpsPricingCardsCopy[locale],
     hostbillCategoryId: '1',
   }
 }
@@ -41,18 +60,22 @@ const pagesByLocale: Record<Locale, Record<string, unknown>[]> = {
       subheading:
         'Запускайте сайти, CRM, додатки та бізнес-рішення на потужній інфраструктурі з гнучким масштабуванням ресурсів.',
       tagline: 'Повний контроль, швидкий старт і стабільна робота 24/7',
-      imageSrc: '/images/img-vps.png',
+      imageSrc: '/images/vps_page.png',
       imageFit: 'contain',
     },
     { blockType: 'partners', title: 'Нам довіряють', partners },
-    vpsPricingCardsBlock(),
+    vpsPricingCardsBlock('ua'),
     {
       blockType: 'consultation',
       tone: 'light',
+      splitCard: true,
+      badgeLabel: '⚙️ Індивідуальний підхід',
       heading: 'Не знаєте, що обрати?',
       subheading: 'Ми швидко підкажемо оптимальний тариф під ваш проєкт і бюджет.',
       ctaLabel: 'Отримати консультацію',
       ctaHref: '#contact',
+      microcopy: "Безкоштовно · без зобов'язань",
+      illustrationSrc: '/images/mascot-contact-us.png',
     },
     {
       blockType: 'architecture',
@@ -179,18 +202,22 @@ const pagesByLocale: Record<Locale, Record<string, unknown>[]> = {
       subheading:
         'Run websites, CRMs, apps, and business solutions on powerful infrastructure with flexible resource scaling.',
       tagline: 'Full control, a fast start, and stable operation 24/7',
-      imageSrc: '/images/img-vps.png',
+      imageSrc: '/images/vps_page.png',
       imageFit: 'contain',
     },
     { blockType: 'partners', title: 'Trusted by', partners },
-    vpsPricingCardsBlock(),
+    vpsPricingCardsBlock('en'),
     {
       blockType: 'consultation',
       tone: 'light',
+      splitCard: true,
+      badgeLabel: '⚙️ Custom approach',
       heading: "Not sure what to choose?",
       subheading: "We'll quickly suggest the right plan for your project and budget.",
       ctaLabel: 'Get a consultation',
       ctaHref: '#contact',
+      microcopy: 'Free · no obligations',
+      illustrationSrc: '/images/mascot-contact-us.png',
     },
     {
       blockType: 'architecture',
@@ -317,18 +344,22 @@ const pagesByLocale: Record<Locale, Record<string, unknown>[]> = {
       subheading:
         'Uruchamiaj strony, CRM-y, aplikacje i rozwiązania biznesowe na wydajnej infrastrukturze z elastycznym skalowaniem zasobów.',
       tagline: 'Pełna kontrola, szybki start i stabilna praca 24/7',
-      imageSrc: '/images/img-vps.png',
+      imageSrc: '/images/vps_page.png',
       imageFit: 'contain',
     },
     { blockType: 'partners', title: 'Zaufali nam', partners },
-    vpsPricingCardsBlock(),
+    vpsPricingCardsBlock('pl'),
     {
       blockType: 'consultation',
       tone: 'light',
+      splitCard: true,
+      badgeLabel: '⚙️ Indywidualne podejście',
       heading: 'Nie wiesz, co wybrać?',
       subheading: 'Szybko podpowiemy optymalną taryfę dla Twojego projektu i budżetu.',
       ctaLabel: 'Umów konsultację',
       ctaHref: '#contact',
+      microcopy: 'Bezpłatnie · bez zobowiązań',
+      illustrationSrc: '/images/mascot-contact-us.png',
     },
     {
       blockType: 'architecture',

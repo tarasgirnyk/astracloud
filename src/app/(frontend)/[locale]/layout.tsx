@@ -8,9 +8,9 @@ import config from '@payload-config'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
-import { SUPPORTED_CURRENCIES, SUPPORTED_LOCALES } from '@/globals/SiteChrome'
+import { SUPPORTED_LOCALES } from '@/globals/SiteChrome'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
-import { CurrencySwitcher } from '@/components/CurrencySwitcher'
+import { NavLink } from '@/components/NavLink'
 import '@/components/tokens.css'
 
 export const metadata: Metadata = {
@@ -65,6 +65,7 @@ export default async function LocaleLayout({
                 color: var(--text-on-light); text-decoration: none; font: var(--text-ui-label);
                 padding: 12px 4px; border-bottom: 1px solid var(--border-on-light);
               }
+              .footer-grid { grid-template-columns: 1fr !important; }
             }
           `}</style>
 
@@ -99,7 +100,7 @@ export default async function LocaleLayout({
                   width={150}
                   height={50}
                   style={{
-                    height: 40,
+                    height: 50,
                     width: 'auto',
                     filter: 'invert(1) brightness(0.3) sepia(1) hue-rotate(190deg) saturate(0)',
                   }}
@@ -146,7 +147,7 @@ export default async function LocaleLayout({
                           }}
                         >
                           {link.children.map((child, childIndex) => (
-                            <a
+                            <NavLink
                               key={`nav-${navIndex}-child-${childIndex}`}
                               href={child.href}
                               style={{
@@ -158,19 +159,19 @@ export default async function LocaleLayout({
                               }}
                             >
                               {child.label}
-                            </a>
+                            </NavLink>
                           ))}
                         </div>
                       </div>
                     </div>
                   ) : (
-                    <a
+                    <NavLink
                       key={`nav-${navIndex}`}
                       href={link.href}
                       style={{ color: 'inherit', textDecoration: 'none' }}
                     >
                       {link.label}
-                    </a>
+                    </NavLink>
                   ),
                 )}
               </nav>
@@ -187,7 +188,6 @@ export default async function LocaleLayout({
                 <div style={{ color: 'var(--text-on-light)' }}>
                   <LanguageSwitcher locales={SUPPORTED_LOCALES} />
                 </div>
-                <CurrencySwitcher currencies={SUPPORTED_CURRENCIES} />
                 {siteChrome.cabinetLabel && siteChrome.cabinetHref ? (
                   <a
                     href={siteChrome.cabinetHref}
@@ -215,13 +215,13 @@ export default async function LocaleLayout({
             </div>
             <div className="mobile-nav-panel">
               {navLinks.flatMap((link, navIndex) => [
-                <a key={`mobile-nav-${navIndex}`} href={link.href}>
+                <NavLink key={`mobile-nav-${navIndex}`} href={link.href}>
                   {link.label}
-                </a>,
+                </NavLink>,
                 ...(link.children ?? []).map((child, childIndex) => (
-                  <a key={`mobile-nav-${navIndex}-child-${childIndex}`} href={child.href}>
+                  <NavLink key={`mobile-nav-${navIndex}-child-${childIndex}`} href={child.href}>
                     {child.label}
-                  </a>
+                  </NavLink>
                 )),
               ])}
             </div>
@@ -232,6 +232,7 @@ export default async function LocaleLayout({
           <footer style={{ background: 'var(--navy-950)', padding: 'var(--space-16) 0 var(--space-10)' }}>
             <div className="ac-container">
               <div
+                className="footer-grid"
                 style={{
                   display: 'grid',
                   gridTemplateColumns: `1.3fr repeat(${Math.max(footerColumns.length, 1)}, 1fr)`,
@@ -297,6 +298,19 @@ export default async function LocaleLayout({
             </div>
           </footer>
         </NextIntlClientProvider>
+        <script>{`
+          document.addEventListener('click', function (e) {
+            const anchor = e.target.closest('a[href^="#"]')
+            if (!anchor) return
+            const id = anchor.getAttribute('href').slice(1)
+            if (!id) return
+            const target = document.getElementById(id)
+            if (!target) return
+            e.preventDefault()
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            history.pushState(null, '', '#' + id)
+          })
+        `}</script>
       </body>
     </html>
   )

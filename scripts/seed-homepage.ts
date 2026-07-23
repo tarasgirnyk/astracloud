@@ -18,7 +18,7 @@ const siteChromeByLocale: Record<Locale, Record<string, unknown>> = {
   ua: {
     navLinks: [
       { label: 'VPS сервери', href: '/vps' },
-      { label: 'Виділений сервер', href: '#dedicated' },
+      { label: 'Виділений сервер', href: '/dedicated' },
       { label: 'Колокація', href: '/colocation' },
       {
         label: 'Компанія',
@@ -31,7 +31,6 @@ const siteChromeByLocale: Record<Locale, Record<string, unknown>> = {
           { label: 'Політика повернення коштів', href: '/refund-policy' },
         ],
       },
-      { label: 'Блог', href: '#' },
     ],
     cabinetLabel: 'Кабінет',
     footerColumns: [
@@ -66,7 +65,7 @@ const siteChromeByLocale: Record<Locale, Record<string, unknown>> = {
   en: {
     navLinks: [
       { label: 'VPS Servers', href: '/en/vps' },
-      { label: 'Dedicated Server', href: '#dedicated' },
+      { label: 'Dedicated Server', href: '/en/dedicated' },
       { label: 'Colocation', href: '/en/colocation' },
       {
         label: 'Company',
@@ -79,7 +78,6 @@ const siteChromeByLocale: Record<Locale, Record<string, unknown>> = {
           { label: 'Refund Policy', href: '/en/refund-policy' },
         ],
       },
-      { label: 'Blog', href: '#' },
     ],
     cabinetLabel: 'Client Area',
     footerColumns: [
@@ -114,7 +112,7 @@ const siteChromeByLocale: Record<Locale, Record<string, unknown>> = {
   pl: {
     navLinks: [
       { label: 'Serwery VPS', href: '/pl/vps' },
-      { label: 'Serwer dedykowany', href: '#dedicated' },
+      { label: 'Serwer dedykowany', href: '/pl/dedicated' },
       { label: 'Kolokacja', href: '/pl/colocation' },
       {
         label: 'Firma',
@@ -127,7 +125,6 @@ const siteChromeByLocale: Record<Locale, Record<string, unknown>> = {
           { label: 'Polityka zwrotów', href: '/pl/refund-policy' },
         ],
       },
-      { label: 'Blog', href: '#' },
     ],
     cabinetLabel: 'Panel klienta',
     footerColumns: [
@@ -161,9 +158,9 @@ const siteChromeByLocale: Record<Locale, Record<string, unknown>> = {
   },
 }
 
-// cabinetHref is display-only for now (no client portal exists yet) and is
-// not locale-specific — see conversation decision.
-const cabinetHref = '#'
+// HostBill client area — same URL for every locale (HostBill itself isn't
+// localized per-path here).
+const cabinetHref = 'https://cp.astra.in.ua/clientarea/'
 
 function servicesUa() {
   return {
@@ -183,7 +180,7 @@ function servicesUa() {
           { text: 'Оптимальне співвідношення ціни та продуктивності' },
         ],
         ctaLabel: 'Дізнатися більше',
-        ctaHref: '#pricing',
+        ctaHref: '/vps',
         checklist: [
           { text: '30-денна гарантія повернення грошей' },
           { text: 'Компетентна техпідтримка' },
@@ -192,23 +189,7 @@ function servicesUa() {
           { text: 'Швидка активація VPS' },
           { text: 'Автоматичне резервне копіювання' },
         ],
-      },
-      {
-        anchorId: 'colocation',
-        eyebrow: 'Розміщуйте обладнання в нас',
-        title: 'Колокація',
-        description:
-          "Розмістіть власне серверне обладнання в професійному дата-центрі та забудьте про ризики, пов'язані з перебоями електроживлення, нестабільним інтернетом чи перегрівом обладнання.",
-        ctaLabel: 'Дізнатися більше',
-        ctaHref: '#pricing',
-        checklist: [
-          { text: 'Резервоване електроживлення з ДБЖ та генераторами' },
-          { text: 'Підтримання оптимальної температури та вологості' },
-          { text: 'Високошвидкісний доступ до мережі Інтернет' },
-          { text: 'Фізична безпека та контроль доступу' },
-          { text: 'Цілодобовий моніторинг інфраструктури' },
-          { text: 'Технічна підтримка 24/7' },
-        ],
+        pricingTableHostbillCategoryId: '1',
       },
       {
         anchorId: 'dedicated',
@@ -217,7 +198,7 @@ function servicesUa() {
         description:
           'Отримайте продуктивний фізичний сервер без витрат на купівлю та обслуговування обладнання. Ми забезпечуємо інфраструктуру, моніторинг і підтримку, а ви зосереджуєтесь на розвитку свого бізнесу.',
         ctaLabel: 'Дізнатися більше',
-        ctaHref: '#pricing',
+        ctaHref: '/dedicated',
         checklist: [
           { text: 'Виділена продуктивність' },
           { text: 'Повний контроль' },
@@ -226,8 +207,35 @@ function servicesUa() {
           { text: 'Професійна підтримка' },
           { text: 'Надійна інфраструктура' },
         ],
+        pricingTableHostbillCategoryId: '3',
+      },
+      {
+        anchorId: 'colocation',
+        eyebrow: 'Розміщуйте обладнання в нас',
+        title: 'Колокація',
+        description:
+          "Розмістіть власне серверне обладнання в професійному дата-центрі та забудьте про ризики, пов'язані з перебоями електроживлення, нестабільним інтернетом чи перегрівом обладнання.",
+        ctaLabel: 'Дізнатися більше',
+        ctaHref: '/colocation',
+        checklist: [
+          { text: 'Резервоване електроживлення з ДБЖ та генераторами' },
+          { text: 'Підтримання оптимальної температури та вологості' },
+          { text: 'Високошвидкісний доступ до мережі Інтернет' },
+          { text: 'Фізична безпека та контроль доступу' },
+          { text: 'Цілодобовий моніторинг інфраструктури' },
+          { text: 'Технічна підтримка 24/7' },
+        ],
+        // Explicit null: this array item's row id gets reused (by position,
+        // see preserveIds in seed-locale-helpers.ts) from whatever service
+        // used to sit at this index — after reordering dedicated before
+        // colocation, that stale row still carried dedicated's category id,
+        // rendering its pricing table twice. Omitting the field leaves the
+        // stale value in place; it must be nulled explicitly.
+        pricingTableHostbillCategoryId: null,
       },
     ],
+    paymentMethodsLabel: 'Методи оплати',
+    paymentMethods: [{ name: 'Mastercard' }, { name: 'VISA' }, { name: 'Bitcoin' }, { name: 'PayPal' }],
   }
 }
 
@@ -249,7 +257,7 @@ function servicesEn() {
           { text: 'Best price-to-performance ratio' },
         ],
         ctaLabel: 'Learn more',
-        ctaHref: '#pricing',
+        ctaHref: '/en/vps',
         checklist: [
           { text: '30-day money-back guarantee' },
           { text: 'Competent technical support' },
@@ -258,23 +266,7 @@ function servicesEn() {
           { text: 'Fast VPS activation' },
           { text: 'Automatic backups' },
         ],
-      },
-      {
-        anchorId: 'colocation',
-        eyebrow: 'Host your equipment with us',
-        title: 'Colocation',
-        description:
-          'Place your own server hardware in a professional data center and forget about power outages, unstable internet, or equipment overheating.',
-        ctaLabel: 'Learn more',
-        ctaHref: '#pricing',
-        checklist: [
-          { text: 'Redundant power with UPS and generators' },
-          { text: 'Optimal temperature and humidity control' },
-          { text: 'High-speed internet access' },
-          { text: 'Physical security and access control' },
-          { text: '24/7 infrastructure monitoring' },
-          { text: '24/7 technical support' },
-        ],
+        pricingTableHostbillCategoryId: '1',
       },
       {
         anchorId: 'dedicated',
@@ -283,7 +275,7 @@ function servicesEn() {
         description:
           'Get a powerful physical server without the cost of purchasing and maintaining hardware. We provide the infrastructure, monitoring, and support, so you can focus on growing your business.',
         ctaLabel: 'Learn more',
-        ctaHref: '#pricing',
+        ctaHref: '/en/dedicated',
         checklist: [
           { text: 'Dedicated performance' },
           { text: 'Full control' },
@@ -292,8 +284,29 @@ function servicesEn() {
           { text: 'Professional support' },
           { text: 'Reliable infrastructure' },
         ],
+        pricingTableHostbillCategoryId: '3',
+      },
+      {
+        anchorId: 'colocation',
+        eyebrow: 'Host your equipment with us',
+        title: 'Colocation',
+        description:
+          'Place your own server hardware in a professional data center and forget about power outages, unstable internet, or equipment overheating.',
+        ctaLabel: 'Learn more',
+        ctaHref: '/en/colocation',
+        checklist: [
+          { text: 'Redundant power with UPS and generators' },
+          { text: 'Optimal temperature and humidity control' },
+          { text: 'High-speed internet access' },
+          { text: 'Physical security and access control' },
+          { text: '24/7 infrastructure monitoring' },
+          { text: '24/7 technical support' },
+        ],
+        pricingTableHostbillCategoryId: null,
       },
     ],
+    paymentMethodsLabel: 'Payment Methods',
+    paymentMethods: [{ name: 'Mastercard' }, { name: 'VISA' }, { name: 'Bitcoin' }, { name: 'PayPal' }],
   }
 }
 
@@ -315,7 +328,7 @@ function servicesPl() {
           { text: 'Optymalny stosunek ceny do wydajności' },
         ],
         ctaLabel: 'Dowiedz się więcej',
-        ctaHref: '#pricing',
+        ctaHref: '/pl/vps',
         checklist: [
           { text: '30-dniowa gwarancja zwrotu pieniędzy' },
           { text: 'Kompetentne wsparcie techniczne' },
@@ -324,23 +337,7 @@ function servicesPl() {
           { text: 'Szybka aktywacja VPS' },
           { text: 'Automatyczne kopie zapasowe' },
         ],
-      },
-      {
-        anchorId: 'colocation',
-        eyebrow: 'Umieść u nas swój sprzęt',
-        title: 'Kolokacja',
-        description:
-          'Umieść własny sprzęt serwerowy w profesjonalnym centrum danych i zapomnij o ryzyku związanym z przerwami w zasilaniu, niestabilnym internetem czy przegrzewaniem sprzętu.',
-        ctaLabel: 'Dowiedz się więcej',
-        ctaHref: '#pricing',
-        checklist: [
-          { text: 'Redundantne zasilanie z UPS i generatorami' },
-          { text: 'Utrzymanie optymalnej temperatury i wilgotności' },
-          { text: 'Szybki dostęp do internetu' },
-          { text: 'Bezpieczeństwo fizyczne i kontrola dostępu' },
-          { text: 'Całodobowy monitoring infrastruktury' },
-          { text: 'Wsparcie techniczne 24/7' },
-        ],
+        pricingTableHostbillCategoryId: '1',
       },
       {
         anchorId: 'dedicated',
@@ -349,7 +346,7 @@ function servicesPl() {
         description:
           'Otrzymaj wydajny serwer fizyczny bez kosztów zakupu i utrzymania sprzętu. Zapewniamy infrastrukturę, monitoring i wsparcie, a Ty skupiasz się na rozwoju swojego biznesu.',
         ctaLabel: 'Dowiedz się więcej',
-        ctaHref: '#pricing',
+        ctaHref: '/pl/dedicated',
         checklist: [
           { text: 'Dedykowana wydajność' },
           { text: 'Pełna kontrola' },
@@ -358,14 +355,36 @@ function servicesPl() {
           { text: 'Profesjonalne wsparcie' },
           { text: 'Niezawodna infrastruktura' },
         ],
+        pricingTableHostbillCategoryId: '3',
+      },
+      {
+        anchorId: 'colocation',
+        eyebrow: 'Umieść u nas swój sprzęt',
+        title: 'Kolokacja',
+        description:
+          'Umieść własny sprzęt serwerowy w profesjonalnym centrum danych i zapomnij o ryzyku związanym z przerwami w zasilaniu, niestabilnym internetem czy przegrzewaniem sprzętu.',
+        ctaLabel: 'Dowiedz się więcej',
+        ctaHref: '/pl/colocation',
+        checklist: [
+          { text: 'Redundantne zasilanie z UPS i generatorami' },
+          { text: 'Utrzymanie optymalnej temperatury i wilgotności' },
+          { text: 'Szybki dostęp do internetu' },
+          { text: 'Bezpieczeństwo fizyczne i kontrola dostępu' },
+          { text: 'Całodobowy monitoring infrastruktury' },
+          { text: 'Wsparcie techniczne 24/7' },
+        ],
+        pricingTableHostbillCategoryId: null,
       },
     ],
+    paymentMethodsLabel: 'Metody płatności',
+    paymentMethods: [{ name: 'Mastercard' }, { name: 'VISA' }, { name: 'Bitcoin' }, { name: 'PayPal' }],
   }
 }
 
 function advantagesUa() {
   return {
     blockType: 'advantages',
+    splitLayout: true,
     eyebrow: 'Чому обирають Astra Cloud',
     heading: 'Надійна інфраструктура для вашого бізнесу 24/7',
     description:
@@ -379,32 +398,32 @@ function advantagesUa() {
     tagline: 'Ваші сервіси працюють — ми гарантуємо їхню стабільність.',
     grid: [
       {
-        icon: '💸',
+        icon: 'refund',
         title: '30-денна гарантія повернення грошей',
         text: 'Якщо щось не сподобається — повернемо гроші протягом перших 30 днів.',
       },
       {
-        icon: '🛠️',
+        icon: 'support',
         title: 'Компетентна техпідтримка',
         text: 'Кваліфіковані спеціалісти цілодобово контролюють роботу інфраструктури.',
       },
       {
-        icon: '⚡',
+        icon: 'speed',
         title: 'NVMe-диски для максимальної швидкості',
         text: 'Миттєвий доступ до даних і висока продуктивність навіть під навантаженням.',
       },
       {
-        icon: '📊',
+        icon: 'monitor',
         title: 'Контроль серверів у реальному часі',
         text: 'Продуктивність, ресурси та доступність — прямо в особистому кабінеті.',
       },
       {
-        icon: '🚀',
+        icon: 'launch',
         title: 'Швидка активація VPS',
         text: 'Сервер готовий до роботи вже через кілька хвилин після оплати.',
       },
       {
-        icon: '🗄️',
+        icon: 'backup',
         title: 'Автоматичне резервне копіювання',
         text: 'Регулярні резервні копії дозволяють швидко відновити систему.',
       },
@@ -415,6 +434,7 @@ function advantagesUa() {
 function advantagesEn() {
   return {
     blockType: 'advantages',
+    splitLayout: true,
     eyebrow: 'Why choose Astra Cloud',
     heading: 'Reliable infrastructure for your business, 24/7',
     description:
@@ -428,32 +448,32 @@ function advantagesEn() {
     tagline: "Your services keep running — we guarantee their stability.",
     grid: [
       {
-        icon: '💸',
+        icon: 'refund',
         title: '30-day money-back guarantee',
         text: "If something doesn't work out, we'll refund you within the first 30 days.",
       },
       {
-        icon: '🛠️',
+        icon: 'support',
         title: 'Competent technical support',
         text: 'Qualified specialists monitor the infrastructure around the clock.',
       },
       {
-        icon: '⚡',
+        icon: 'speed',
         title: 'NVMe drives for maximum speed',
         text: 'Instant data access and high performance even under load.',
       },
       {
-        icon: '📊',
+        icon: 'monitor',
         title: 'Real-time server monitoring',
         text: 'Performance, resources, and availability — right in your account.',
       },
       {
-        icon: '🚀',
+        icon: 'launch',
         title: 'Fast VPS activation',
         text: 'Your server is ready to work within minutes of payment.',
       },
       {
-        icon: '🗄️',
+        icon: 'backup',
         title: 'Automatic backups',
         text: 'Regular backups let you restore your system quickly.',
       },
@@ -464,6 +484,7 @@ function advantagesEn() {
 function advantagesPl() {
   return {
     blockType: 'advantages',
+    splitLayout: true,
     eyebrow: 'Dlaczego Astra Cloud',
     heading: 'Niezawodna infrastruktura dla Twojego biznesu 24/7',
     description:
@@ -477,160 +498,36 @@ function advantagesPl() {
     tagline: 'Twoje usługi działają — gwarantujemy ich stabilność.',
     grid: [
       {
-        icon: '💸',
+        icon: 'refund',
         title: '30-dniowa gwarancja zwrotu pieniędzy',
         text: 'Jeśli coś Ci się nie spodoba, zwrócimy pieniądze w ciągu pierwszych 30 dni.',
       },
       {
-        icon: '🛠️',
+        icon: 'support',
         title: 'Kompetentne wsparcie techniczne',
         text: 'Wykwalifikowani specjaliści całodobowo nadzorują infrastrukturę.',
       },
       {
-        icon: '⚡',
+        icon: 'speed',
         title: 'Dyski NVMe dla maksymalnej szybkości',
         text: 'Błyskawiczny dostęp do danych i wysoka wydajność nawet pod obciążeniem.',
       },
       {
-        icon: '📊',
+        icon: 'monitor',
         title: 'Monitorowanie serwerów w czasie rzeczywistym',
         text: 'Wydajność, zasoby i dostępność — bezpośrednio w panelu klienta.',
       },
       {
-        icon: '🚀',
+        icon: 'launch',
         title: 'Szybka aktywacja VPS',
         text: 'Twój serwer jest gotowy do pracy już kilka minut po płatności.',
       },
       {
-        icon: '🗄️',
+        icon: 'backup',
         title: 'Automatyczne kopie zapasowe',
         text: 'Regularne kopie zapasowe pozwalają szybko przywrócić system.',
       },
     ],
-  }
-}
-
-const vpsRowsUa = [
-  { plan: 'N-START', cpu: '1 vCPU', ram: '1 GB', disk: '20 GB NVMe', price: '99₴/міс' },
-  { plan: 'N-BASIC', cpu: '2 vCPU', ram: '2 GB', disk: '40 GB NVMe', price: '189₴/міс', highlighted: true },
-  { plan: 'N-LIGHT', cpu: '2 vCPU', ram: '4 GB', disk: '60 GB NVMe', price: '289₴/міс' },
-  { plan: 'N-SMART', cpu: '4 vCPU', ram: '8 GB', disk: '100 GB NVMe', price: '489₴/міс' },
-]
-const vpsRowsEn = [
-  { plan: 'N-START', cpu: '1 vCPU', ram: '1 GB', disk: '20 GB NVMe', price: '99₴/mo' },
-  { plan: 'N-BASIC', cpu: '2 vCPU', ram: '2 GB', disk: '40 GB NVMe', price: '189₴/mo', highlighted: true },
-  { plan: 'N-LIGHT', cpu: '2 vCPU', ram: '4 GB', disk: '60 GB NVMe', price: '289₴/mo' },
-  { plan: 'N-SMART', cpu: '4 vCPU', ram: '8 GB', disk: '100 GB NVMe', price: '489₴/mo' },
-]
-const vpsRowsPl = [
-  { plan: 'N-START', cpu: '1 vCPU', ram: '1 GB', disk: '20 GB NVMe', price: '99₴/mies.' },
-  { plan: 'N-BASIC', cpu: '2 vCPU', ram: '2 GB', disk: '40 GB NVMe', price: '189₴/mies.', highlighted: true },
-  { plan: 'N-LIGHT', cpu: '2 vCPU', ram: '4 GB', disk: '60 GB NVMe', price: '289₴/mies.' },
-  { plan: 'N-SMART', cpu: '4 vCPU', ram: '8 GB', disk: '100 GB NVMe', price: '489₴/mies.' },
-]
-
-function pricingUa() {
-  return {
-    blockType: 'pricing',
-    heading: 'Ціни нижчі, профіт вище',
-    subheading: 'Прозорі тарифи без прихованих платежів — оберіть конфігурацію під ваш проєкт.',
-    tabs: [
-      { value: 'vps', label: 'VPS' },
-      { value: 'dedicated', label: 'Виділений сервер' },
-      { value: 'colo', label: 'Колокація' },
-    ],
-    filterTags: [
-      { label: 'Львів', selected: true },
-      { label: 'Варшава', selected: false },
-      { label: 'IPv4', selected: false },
-      { label: 'IPv6', selected: true },
-      { label: 'Щорічна оплата', selected: false },
-    ],
-    columns: [
-      { key: 'plan', label: 'Тариф' },
-      { key: 'cpu', label: 'CPU' },
-      { key: 'ram', label: 'RAM' },
-      { key: 'disk', label: 'Диск' },
-      { key: 'price', label: 'Ціна' },
-    ],
-    rowsByTab: [
-      { tabValue: 'vps', rows: vpsRowsUa },
-      { tabValue: 'dedicated', rows: [] },
-      { tabValue: 'colo', rows: [] },
-    ],
-    noDataMessage: 'Тарифи для цієї послуги уточнюйте в особистому кабінеті.',
-    paymentMethodsLabel: 'Способи оплати',
-    paymentMethods: [{ name: 'Mastercard' }, { name: 'VISA' }, { name: 'Bitcoin' }, { name: 'PayPal' }],
-  }
-}
-
-function pricingEn() {
-  return {
-    blockType: 'pricing',
-    heading: 'Lower prices, higher profit',
-    subheading: 'Transparent pricing with no hidden fees — pick the configuration that fits your project.',
-    tabs: [
-      { value: 'vps', label: 'VPS' },
-      { value: 'dedicated', label: 'Dedicated Server' },
-      { value: 'colo', label: 'Colocation' },
-    ],
-    filterTags: [
-      { label: 'Lviv', selected: true },
-      { label: 'Warsaw', selected: false },
-      { label: 'IPv4', selected: false },
-      { label: 'IPv6', selected: true },
-      { label: 'Annual billing', selected: false },
-    ],
-    columns: [
-      { key: 'plan', label: 'Plan' },
-      { key: 'cpu', label: 'CPU' },
-      { key: 'ram', label: 'RAM' },
-      { key: 'disk', label: 'Disk' },
-      { key: 'price', label: 'Price' },
-    ],
-    rowsByTab: [
-      { tabValue: 'vps', rows: vpsRowsEn },
-      { tabValue: 'dedicated', rows: [] },
-      { tabValue: 'colo', rows: [] },
-    ],
-    noDataMessage: 'Pricing for this service is available on request in your account.',
-    paymentMethodsLabel: 'Payment methods',
-    paymentMethods: [{ name: 'Mastercard' }, { name: 'VISA' }, { name: 'Bitcoin' }, { name: 'PayPal' }],
-  }
-}
-
-function pricingPl() {
-  return {
-    blockType: 'pricing',
-    heading: 'Niższe ceny, wyższy zysk',
-    subheading: 'Przejrzyste taryfy bez ukrytych opłat — wybierz konfigurację dla swojego projektu.',
-    tabs: [
-      { value: 'vps', label: 'VPS' },
-      { value: 'dedicated', label: 'Serwer dedykowany' },
-      { value: 'colo', label: 'Kolokacja' },
-    ],
-    filterTags: [
-      { label: 'Lwów', selected: true },
-      { label: 'Warszawa', selected: false },
-      { label: 'IPv4', selected: false },
-      { label: 'IPv6', selected: true },
-      { label: 'Płatność roczna', selected: false },
-    ],
-    columns: [
-      { key: 'plan', label: 'Taryfa' },
-      { key: 'cpu', label: 'CPU' },
-      { key: 'ram', label: 'RAM' },
-      { key: 'disk', label: 'Dysk' },
-      { key: 'price', label: 'Cena' },
-    ],
-    rowsByTab: [
-      { tabValue: 'vps', rows: vpsRowsPl },
-      { tabValue: 'dedicated', rows: [] },
-      { tabValue: 'colo', rows: [] },
-    ],
-    noDataMessage: 'Ceny dla tej usługi dostępne na życzenie w panelu klienta.',
-    paymentMethodsLabel: 'Metody płatności',
-    paymentMethods: [{ name: 'Mastercard' }, { name: 'VISA' }, { name: 'Bitcoin' }, { name: 'PayPal' }],
   }
 }
 
@@ -772,16 +669,20 @@ const pagesByLocale: Record<Locale, Record<string, unknown>[]> = {
     },
     { blockType: 'partners', title: 'Нам довіряють', partners },
     servicesUa(),
-    advantagesUa(),
-    pricingUa(),
-    faqUa(),
     {
       blockType: 'consultation',
+      tone: 'light',
+      splitCard: true,
+      badgeLabel: '⚙️ Індивідуальний підхід',
       heading: 'Потрібна допомога з вибором?',
       subheading: 'Наші менеджери допоможуть підібрати оптимальне рішення для вашого проєкту.',
       ctaLabel: 'Отримати консультацію',
       ctaHref: '#contact',
+      microcopy: "Безкоштовно · без зобов'язань",
+      illustrationSrc: '/images/mascot-contact-us.png',
     },
+    advantagesUa(),
+    faqUa(),
   ],
   en: [
     {
@@ -794,16 +695,20 @@ const pagesByLocale: Record<Locale, Record<string, unknown>[]> = {
     },
     { blockType: 'partners', title: 'Trusted by', partners },
     servicesEn(),
-    advantagesEn(),
-    pricingEn(),
-    faqEn(),
     {
       blockType: 'consultation',
+      tone: 'light',
+      splitCard: true,
+      badgeLabel: '⚙️ Custom approach',
       heading: 'Need help choosing?',
       subheading: 'Our managers will help you find the optimal solution for your project.',
       ctaLabel: 'Get a consultation',
       ctaHref: '#contact',
+      microcopy: 'Free · no obligations',
+      illustrationSrc: '/images/mascot-contact-us.png',
     },
+    advantagesEn(),
+    faqEn(),
   ],
   pl: [
     {
@@ -816,16 +721,20 @@ const pagesByLocale: Record<Locale, Record<string, unknown>[]> = {
     },
     { blockType: 'partners', title: 'Zaufali nam', partners },
     servicesPl(),
-    advantagesPl(),
-    pricingPl(),
-    faqPl(),
     {
       blockType: 'consultation',
+      tone: 'light',
+      splitCard: true,
+      badgeLabel: '⚙️ Indywidualne podejście',
       heading: 'Potrzebujesz pomocy w wyborze?',
       subheading: 'Nasi menedżerowie pomogą dobrać optymalne rozwiązanie dla Twojego projektu.',
       ctaLabel: 'Umów konsultację',
       ctaHref: '#contact',
+      microcopy: 'Bezpłatnie · bez zobowiązań',
+      illustrationSrc: '/images/mascot-contact-us.png',
     },
+    advantagesPl(),
+    faqPl(),
   ],
 }
 

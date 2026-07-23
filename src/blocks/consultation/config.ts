@@ -32,5 +32,40 @@ export const ConsultationBlock: Block = {
         { siblingData }: { siblingData: { ctaLabel?: string | null } },
       ) => validateCtaHref(value, siblingData),
     },
+    {
+      name: 'splitCard',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description:
+          'Split-card variant: a dark gradient card floating on the section background, with a badge, larger heading, a CTA + microcopy row, and an optional illustration slot. Independent of "tone" so it can\'t change other instances of this block.',
+      },
+    },
+    {
+      name: 'badgeLabel',
+      type: 'text',
+      localized: true,
+      admin: { description: 'Small badge above the heading, e.g. "⚙️ Індивідуальний підхід". Split-card variant only.' },
+    },
+    {
+      name: 'microcopy',
+      type: 'text',
+      localized: true,
+      admin: { description: 'Short note next to the CTA button, e.g. "Безкоштовно · без зобов\'язань". Split-card variant only.' },
+    },
+    {
+      name: 'illustrationSrc',
+      type: 'text',
+      admin: {
+        description:
+          'Path under /images/ for the split-card variant\'s right-column illustration. Leave empty to show illustrationPlaceholder instead, or leave both empty to collapse to a single column.',
+      },
+    },
+    {
+      name: 'illustrationPlaceholder',
+      type: 'textarea',
+      localized: true,
+      admin: { description: 'Shown in the illustration slot until illustrationSrc is set.' },
+    },
   ],
 }

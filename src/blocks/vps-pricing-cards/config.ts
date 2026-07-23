@@ -15,6 +15,9 @@ export const VpsPricingCardsBlock: Block = {
     plural: 'VPS pricing cards',
   },
   fields: [
+    { name: 'eyebrow', type: 'text', localized: true, admin: { description: 'Small label above the heading (e.g. "VPS-сервери").' } },
+    { name: 'heading', type: 'text', required: true, localized: true },
+    { name: 'subheading', type: 'text', localized: true },
     {
       name: 'hostbillCategoryId',
       type: 'text',

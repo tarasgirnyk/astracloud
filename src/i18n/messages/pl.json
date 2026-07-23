@@ -8,6 +8,32 @@
       "Traffic": "Traffic",
       "Backup": "Kopie zapasowe"
     },
-    "recommendedBadge": "Zalecany"
+    "recommendedBadge": "Zalecany",
+    "orderCta": "Zamów",
+    "selectCta": "Wybierz",
+    "currencies": {
+      "UAH": "UAH"
+    },
+    "pricePeriod": "{currency} / mies.",
+    "columns": {
+      "plan": "Taryfa",
+      "disk": "Dysk",
+      "price": "Cena"
+    }
+  },
+  "consultationModal": {
+    "nameLabel": "Imię",
+    "phoneLabel": "Telefon",
+    "emailLabel": "Email",
+    "messageLabel": "Wiadomość",
+    "namePlaceholder": "Twoje imię",
+    "phonePlaceholder": "+48 XXX XXX XXX",
+    "emailPlaceholder": "you@example.com",
+    "messagePlaceholder": "Napisz, czego potrzebujesz",
+    "submitLabel": "Wyślij",
+    "submittingLabel": "Wysyłanie...",
+    "successMessage": "Dziękujemy! Skontaktujemy się wkrótce.",
+    "errorMessage": "Nie udało się wysłać zgłoszenia. Spróbuj ponownie.",
+    "closeLabel": "Zamknij"
   }
 }

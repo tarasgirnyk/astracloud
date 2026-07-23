@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Чому обирають Astra Cloud — Advantages component (Homepage)</title>
+<!--
+  Standalone export of ONE content block for restyling.
+
+  Source component: src/blocks/advantages/Component.tsx (default/non-centered
+                     variant — tone defaults to "dark", centered is unset)
+  Source content:    scripts/seed-homepage.ts — advantagesUa() — the
+                     "advantages" block on the homepage ("Чому обирають Astra Cloud")
+  Live route:        / (ua)
+
+  Note: this is the ORIGINAL, not-yet-redesigned variant of the Advantages
+  block — different from the "centered" variant already redesigned for
+  /dedicated (dark card, badge pill, numbered SVG-icon cards, stats bar).
+  If this homepage instance should get that same centered treatment instead
+  of a fresh look, say so — it's a one-line content change (add
+  `centered: true`), no new component code needed.
+
+  This file is self-contained (fonts + tokens inlined) so it can be opened
+  and restyled on its own. Once a new look is settled, port the styles back
+  into src/blocks/advantages/Component.tsx (the non-centered branch).
+-->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root {
+    /* Neutrals / navy used by this block */
+    --navy-800: #10162e;
+    --navy-950: #05070f;
+    --white: #ffffff;
+    --gray-200: #e3e2dc;
+    --text-on-dark: var(--white);
+    --text-on-dark-muted: #aeb3c8;
+    --text-on-light: #17181c;
+    --text-on-light-muted: #6c6e78;
+    --border-on-light: var(--gray-200);
+    --gradient-navy: linear-gradient(180deg, var(--navy-800) 0%, var(--navy-950) 100%);
+
+    /* Accent (eyebrow + icon tint) */
+    --cyan-400: #3ee6d8;
+    --accent-cyan: var(--cyan-400);
+
+    /* Typography */
+    --font-display: "Unbounded", "Manrope", sans-serif;
+    --font-body: "Inter", "Golos Text", sans-serif;
+    --size-display-lg: clamp(2.25rem, 1.8rem + 1.8vw, 3.375rem);
+    --text-display-lg: 700 var(--size-display-lg)/1.08 var(--font-display);
+    --text-body-md: 400 1.0625rem/1.6 var(--font-body);
+    --text-ui-label: 600 0.9375rem/1.3 var(--font-body);
+    --text-body-sm: 400 0.9375rem/1.5 var(--font-body);
+    --text-eyebrow: 700 0.8125rem/1.2 var(--font-body);
+    --tracking-eyebrow: 0.08em;
+    --tracking-display: -0.01em;
+
+    /* Spacing / layout */
+    --container-max: 1200px;
+    --container-padding: 20px;
+    --section-padding-y: clamp(64px, 9vw, 128px);
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-12: 48px;
+    --radius-lg: 16px;
+    --radius-md: 10px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    font: var(--text-body-md);
+    color: var(--text-on-light);
+    background: var(--white);
+    -webkit-font-smoothing: antialiased;
+  }
+  h2, h4 { margin: 0; font-family: var(--font-display); letter-spacing: var(--tracking-display); color: inherit; }
+  p { margin: 0; }
+
+  .ac-container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
+  }
+
+  .advantages-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-8);
+    margin-top: var(--space-12);
+  }
+  @media (max-width: 768px) {
+    .advantages-grid { grid-template-columns: 1fr; }
+  }
+
+  .advantages-card {
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--white);
+    border: 1px solid var(--border-on-light);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .advantages-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: rgba(255, 112, 22, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .advantages-card-title { font: var(--text-ui-label); color: var(--text-on-light); font-size: 17px; }
+  .advantages-card-text { font: var(--text-body-sm); color: var(--text-on-light-muted); }
+
+  .advantages-bullets {
+    margin: 0 0 20px;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font: var(--text-body-md);
+    color: var(--text-on-dark);
+  }
+</style>
+</head>
+<body>
+
+<section style="background: var(--gradient-navy); padding: var(--section-padding-y) 0;">
+  <div class="ac-container">
+    <div>
+      <span style="font: var(--text-eyebrow); letter-spacing: var(--tracking-eyebrow); color: var(--accent-cyan); text-transform: uppercase;">
+        Чому обирають Astra Cloud
+      </span>
+
+      <h2 style="font: var(--text-display-lg); color: var(--text-on-dark); margin: 14px 0 20px;">
+        Надійна інфраструктура для вашого бізнесу 24/7
+      </h2>
+
+      <p style="font: var(--text-body-md); color: var(--text-on-dark-muted); margin: 0 0 20px;">
+        Ми забезпечуємо стабільну роботу серверного обладнання власного сучасного дата-центру, що гарантує
+        високу відмовостійкість і безперервну доступність сервісів.
+      </p>
+
+      <ul class="advantages-bullets">
+        <li>Резервне електроживлення та автономні системи живлення</li>
+        <li>Ефективне охолодження серверної зали та точний клімат-контроль</li>
+        <li>Дубльовані канали зв'язку з високою пропускною здатністю</li>
+        <li>Постійний моніторинг інфраструктури 24/7</li>
+      </ul>
+
+      <p style="font: 600 1.0625rem/1.5 var(--font-display); color: var(--text-on-dark);">
+        Ваші сервіси працюють — ми гарантуємо їхню стабільність.
+      </p>
+    </div>
+
+    <div class="advantages-grid">
+      <div class="advantages-card">
+        <div class="advantages-card-icon">💸</div>
+        <h4 class="advantages-card-title">30-денна гарантія повернення грошей</h4>
+        <p class="advantages-card-text">Якщо щось не сподобається — повернемо гроші протягом перших 30 днів.</p>
+      </div>
+      <div class="advantages-card">
+        <div class="advantages-card-icon">🛠️</div>
+        <h4 class="advantages-card-title">Компетентна техпідтримка</h4>
+        <p class="advantages-card-text">Кваліфіковані спеціалісти цілодобово контролюють роботу інфраструктури.</p>
+      </div>
+      <div class="advantages-card">
+        <div class="advantages-card-icon">⚡</div>
+        <h4 class="advantages-card-title">NVMe-диски для максимальної швидкості</h4>
+        <p class="advantages-card-text">Миттєвий доступ до даних і висока продуктивність навіть під навантаженням.</p>
+      </div>
+      <div class="advantages-card">
+        <div class="advantages-card-icon">📊</div>
+        <h4 class="advantages-card-title">Контроль серверів у реальному часі</h4>
+        <p class="advantages-card-text">Продуктивність, ресурси та доступність — прямо в особистому кабінеті.</p>
+      </div>
+      <div class="advantages-card">
+        <div class="advantages-card-icon">🚀</div>
+        <h4 class="advantages-card-title">Швидка активація VPS</h4>
+        <p class="advantages-card-text">Сервер готовий до роботи вже через кілька хвилин після оплати.</p>
+      </div>
+      <div class="advantages-card">
+        <div class="advantages-card-icon">🗄️</div>
+        <h4 class="advantages-card-title">Автоматичне резервне копіювання</h4>
+        <p class="advantages-card-text">Регулярні резервні копії дозволяють швидко відновити систему.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
