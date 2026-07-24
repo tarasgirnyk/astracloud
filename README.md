@@ -105,17 +105,31 @@ pnpm payload run scripts/<file>.ts
 (Not `node scripts/...` — `payload run` is what resolves the `@/` path
 aliases and loads `.env`; a plain `node` invocation will fail on both.)
 
-Recommended order on a fresh database (content pages first, so the
-homepage's nav/footer links resolve to real pages — though nothing will
-actually break if you run them in a different order, since links are plain
-`href` strings, not enforced relations):
+Recommended order on a fresh database (content/service pages first, so the
+homepage's nav/footer links resolve to real pages, and so `seed-faq-items.ts`
+can find the pages it tags — it looks each one up by slug and throws if the
+page doesn't exist yet):
 
 1. `seed-about.ts` — "Про нас" (`/about`) — `pages` collection
 2. `seed-legal-pages.ts` — Terms, Privacy, Refund Policy, SLA, Legal Section (`/terms`, `/privacy`, `/refund-policy`, `/sla`, `/legal`) — `pages` collection
 3. `seed-documents.ts` — "Документи" (`/documents`) — `pages` collection
 4. `seed-vps.ts` — VPS product page (`/vps`) — `service-pages` collection
-5. `seed-colocation.ts` — Colocation product page (`/colocation`) — `service-pages` collection
-6. `seed-homepage.ts` — home page + `site-chrome` global (nav/footer/logo links to all of the above) — `pages` collection
+5. `seed-dedicated.ts` — Dedicated Server product page (`/dedicated`) — `service-pages` collection
+6. `seed-colocation.ts` — Colocation product page (`/colocation`) — `service-pages` collection
+7. `seed-partnerka.ts` — Партнерка/affiliate program page (`/partnerka`) + its "Партнерка" nav link — `pages` collection
+8. `seed-homepage.ts` — home page + `site-chrome` global (nav/footer/logo links to all of the above) — `pages` collection
+9. `seed-faq-page.ts` — general FAQ page (`/faq`) with a single `faq-index` block that lists every published FAQ item at render time — `pages` collection
+10. `seed-faq-nav.ts` — adds the "FAQ" link to the `site-chrome` nav dropdown and footer column (run after `seed-faq-page.ts`, whose page it links to)
+11. `seed-faq-items.ts` — the actual FAQ question/answer content (~270 items from real support tickets), each tagged with the page(s) it should render on; run **last**, since it looks up `home`/`vps`/`dedicated`/`partnerka` by slug and fails if any of them aren't seeded yet — items then render automatically via `PageFaq` right before the footer on every page they're tagged with, no block placement needed
+
+`seed-all.ts` runs all 11 scripts above in this exact order, stopping at the
+first failure (each script's exit code is checked before moving on). It only
+spawns child processes — no Payload/`@/` imports of its own — so unlike the
+scripts above, run it with plain `node`, not `payload run`:
+
+```bash
+node --experimental-strip-types scripts/seed-all.ts
+```
 
 `lexical-helpers.ts` is a shared helper (not runnable on its own) used by
 `seed-about.ts`, `seed-legal-pages.ts`, and `seed-colocation.ts` to build
