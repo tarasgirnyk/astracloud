@@ -7,6 +7,7 @@ import { buildConfig } from 'payload'
 import { Users } from '@/collections/Users'
 import { Pages } from '@/collections/Pages'
 import { ServicePages } from '@/collections/ServicePages'
+import { FaqItems } from '@/collections/FaqItems'
 import { SiteChrome } from '@/globals/SiteChrome'
 
 const filename = fileURLToPath(import.meta.url)
@@ -18,7 +19,7 @@ export default buildConfig({
     user: Users.slug,
   },
   editor: lexicalEditor(),
-  collections: [Users, Pages, ServicePages],
+  collections: [Users, Pages, ServicePages, FaqItems],
   globals: [SiteChrome],
   // All content collections (Pages, ServicePages) and SiteChrome use
   // Payload's native field localization (`localized: true` per field) — one

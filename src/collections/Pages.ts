@@ -5,9 +5,11 @@ import { ServicesBlock } from '@/blocks/services/config'
 import { AdvantagesBlock } from '@/blocks/advantages/config'
 import { PricingBlock } from '@/blocks/pricing/config'
 import { FaqBlock } from '@/blocks/faq/config'
+import { FaqIndexBlock } from '@/blocks/faq-index/config'
 import { ConsultationBlock } from '@/blocks/consultation/config'
 import { SimpleContentBlock } from '@/blocks/simple-content/config'
 import { DocumentsBlock } from '@/blocks/documents/config'
+import { StepsBlock } from '@/blocks/steps/config'
 
 /**
  * Generic content pages (homepage, About, legal pages, Documents) — one
@@ -57,9 +59,11 @@ export const Pages: CollectionConfig = {
         AdvantagesBlock,
         PricingBlock,
         FaqBlock,
+        FaqIndexBlock,
         ConsultationBlock,
         SimpleContentBlock,
         DocumentsBlock,
+        StepsBlock,
       ],
     },
     {

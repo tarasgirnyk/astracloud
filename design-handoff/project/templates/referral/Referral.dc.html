@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Astra Cloud — Referral program" description="Referral landing page: hero, step-by-step, FAQ, CTA, footer." -->
+<helmet>
+  <script src="./ds-base.js"></script>
+  <style>
+    /* Hero space background (lighter variant of the homepage hero) */
+    .hero-space-bg { position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; border-radius:inherit; }
+    .hero-nebula { position:absolute; border-radius:50%; filter:blur(70px); animation:hero-nebula-pulse 14s ease-in-out infinite alternate; }
+    .hero-nebula--purple { width:40vw; height:40vw; top:-15%; left:-8%; background:radial-gradient(circle, rgba(139,92,246,0.16) 0%, transparent 70%); animation-duration:14s; }
+    .hero-nebula--blue { width:36vw; height:36vw; top:-5%; right:-10%; background:radial-gradient(circle, rgba(59,130,246,0.14) 0%, transparent 65%); animation-duration:18s; animation-delay:-5s; }
+    .hero-nebula--orange { width:26vw; height:26vw; bottom:-10%; left:38%; background:radial-gradient(circle, rgba(255,112,22,0.12) 0%, transparent 65%); animation-duration:20s; animation-delay:-9s; }
+    @keyframes hero-nebula-pulse { 0% { opacity:0.6; transform:scale(1); } 100% { opacity:1; transform:scale(1.08); } }
+
+    .hero-star { position:absolute; border-radius:50%; background:#fff; animation:hero-twinkle linear infinite; }
+    @keyframes hero-twinkle { 0%, 100% { opacity:0.15; } 50% { opacity:1; } }
+
+    .hero-content { position:relative; z-index:1; }
+
+    .nav-dropdown { position:relative; }
+    .nav-dropdown .nav-dropdown-menu { display:none; }
+    .nav-dropdown:hover .nav-dropdown-menu { display:flex; }
+    .nav-dropdown-menu a:hover { background:var(--surface-light); }
+
+    /* Mobile nav */
+    .nav-burger { display:none; flex-direction:column; justify-content:center; gap:5px; width:26px; height:20px; cursor:pointer; background:none; border:none; padding:0; margin-left:auto; }
+    .nav-burger span { display:block; height:2px; width:100%; background:var(--text-on-light); border-radius:2px; }
+    .mobile-nav-toggle { display:none; }
+    .mobile-nav-panel { display:none; flex-direction:column; padding:8px var(--container-padding) 20px; background:var(--white); border-top:1px solid var(--border-on-light); }
+    .mobile-nav-panel a { color:var(--text-on-light); text-decoration:none; font:var(--text-ui-label); padding:12px 4px; border-bottom:1px solid var(--border-on-light); }
+    #mobile-nav-toggle:checked ~ .mobile-nav-panel { display:flex; }
+
+    /* Step number treatment */
+    .step-number { font:700 3rem/1 var(--font-display); color:rgba(255,112,22,0.4); }
+
+    /* Steps — zigzag rows (text / image, alternating each row) */
+    .step-row { display:grid; grid-template-columns:1fr 1fr; gap:var(--space-12); align-items:center; }
+    .step-row > .step-text { order:1; }
+    .step-row > .step-image { order:2; }
+    .step-row:nth-child(even) > .step-text { order:2; }
+    .step-row:nth-child(even) > .step-image { order:1; }
+
+    .step-image-placeholder { border:1.5px dashed var(--border-on-light); border-radius:var(--radius-lg); background:rgba(11,12,16,0.02); min-height:260px; display:flex; align-items:center; justify-content:center; text-align:center; padding:var(--space-6); color:var(--text-on-light-muted); font:var(--text-body-sm); }
+
+    @media (max-width: 768px) {
+      .main-nav { display:none !important; }
+      .nav-burger { display:flex; }
+
+      .hero-grid { grid-template-columns:1fr !important; }
+      .hero-image { order:-1; max-width:280px; margin:0 auto; }
+      .hero-title { font-size:2.25rem !important; }
+      .hero-section { padding:56px 0 40px !important; }
+
+      .step-row { grid-template-columns:1fr !important; }
+      .step-row > .step-text { order:1 !important; }
+      .step-row > .step-image { order:2 !important; }
+
+      .footer-grid { grid-template-columns:1fr !important; gap:var(--space-8) !important; }
+
+      h1, h2 { font-size:1.75rem !important; }
+    }
+  </style>
+</helmet>
+
+<div style="background:var(--surface-light); overflow-x:hidden;">
+
+  <!-- Header (shared across marketing pages) -->
+  <header style="position:sticky; top:0; z-index:50; background:rgba(250,249,245,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--border-on-light);">
+    <input type="checkbox" id="mobile-nav-toggle" class="mobile-nav-toggle">
+    <div class="ac-container" style="display:flex; align-items:center; justify-content:space-between; min-height:76px; padding-top:14px; padding-bottom:14px; gap:16px 24px; flex-wrap:wrap;">
+      <img src="../../assets/logo/astra-cloud-logo.png" alt="Astra Cloud" style="height:50px; filter:invert(1) brightness(0.3) sepia(1) hue-rotate(190deg) saturate(0);">
+      <nav class="main-nav" style="display:flex; align-items:center; gap:24px; flex-wrap:wrap; font:var(--text-ui-label); color:var(--text-on-light);">
+        <a href="../homepage/Homepage.dc.html#vps" style="color:inherit; text-decoration:none;">VPS сервери</a>
+        <a href="../homepage/Homepage.dc.html#dedicated" style="color:inherit; text-decoration:none;">Виділений сервер</a>
+        <a href="../homepage/Homepage.dc.html#colocation" style="color:inherit; text-decoration:none;">Колокація</a>
+        <div class="nav-dropdown">
+          <span style="display:flex; align-items:center; gap:4px; cursor:pointer;">Компанія <span style="font-size:10px;">▾</span></span>
+          <div class="nav-dropdown-menu" style="flex-direction:column; position:absolute; top:100%; left:0; margin-top:0; padding-top:12px; min-width:240px; z-index:20;">
+            <div style="background:var(--white); border:1px solid var(--border-on-light); border-radius:var(--radius-md); box-shadow:0 8px 24px rgba(0,0,0,0.12); padding:8px; display:flex; flex-direction:column;">
+            <a href="#" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Про нас</a>
+            <a href="#" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap; font-weight:600;">Реферальна програма</a>
+            <a href="#" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Умови користування</a>
+            <a href="#" style="color:var(--text-on-light); text-decoration:none; padding:8px 12px; border-radius:var(--radius-sm); white-space:nowrap;">Політика конфіденційності</a>
+            </div>
+          </div>
+        </div>
+        <a href="#" style="color:inherit; text-decoration:none;">Блог</a>
+      </nav>
+      <div style="display:flex; align-items:center; gap:16px; font:var(--text-caption); color:var(--text-on-light-muted); flex-wrap:wrap;">
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Select" hint-size="90px,44px" options="{{ languageOptions }}" value="{{ activeLanguage }}" on-change="{{ setActiveLanguage }}"></x-import>
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Button" hint-size="140px,40px" variant="primary" size="sm">Кабінет</x-import>
+      </div>
+      <label for="mobile-nav-toggle" class="nav-burger" aria-label="Меню">
+        <span></span><span></span><span></span>
+      </label>
+    </div>
+    <div class="mobile-nav-panel">
+      <a href="../homepage/Homepage.dc.html#vps">VPS сервери</a>
+      <a href="../homepage/Homepage.dc.html#dedicated">Виділений сервер</a>
+      <a href="../homepage/Homepage.dc.html#colocation">Колокація</a>
+      <a href="#">Про нас</a>
+      <a href="#">Реферальна програма</a>
+      <a href="#">Умови користування</a>
+      <a href="#">Блог</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero-section" style="background:var(--gradient-hero); padding:var(--space-32) 0 var(--space-24); position:relative; overflow:hidden;">
+    <div class="hero-space-bg">
+      <div class="hero-nebula hero-nebula--purple"></div>
+      <div class="hero-nebula hero-nebula--blue"></div>
+      <div class="hero-nebula hero-nebula--orange"></div>
+
+      <div class="hero-star" style="top:13%; left:7%; width:1px; height:1px; animation-delay:0.00s; animation-duration:2.00s;"></div>
+      <div class="hero-star" style="top:50%; left:60%; width:2px; height:2px; animation-delay:0.17s; animation-duration:2.13s;"></div>
+      <div class="hero-star" style="top:87%; left:13%; width:1px; height:1px; animation-delay:0.34s; animation-duration:2.26s;"></div>
+      <div class="hero-star" style="top:24%; left:66%; width:2px; height:2px; animation-delay:0.51s; animation-duration:2.39s;"></div>
+      <div class="hero-star" style="top:61%; left:19%; width:1px; height:1px; animation-delay:0.68s; animation-duration:2.52s;"></div>
+      <div class="hero-star" style="top:98%; left:72%; width:2px; height:2px; animation-delay:0.85s; animation-duration:2.65s;"></div>
+      <div class="hero-star" style="top:35%; left:25%; width:1px; height:1px; animation-delay:1.02s; animation-duration:2.78s;"></div>
+      <div class="hero-star" style="top:72%; left:78%; width:2px; height:2px; animation-delay:1.19s; animation-duration:2.91s;"></div>
+      <div class="hero-star" style="top:9%; left:31%; width:1px; height:1px; animation-delay:1.36s; animation-duration:3.04s;"></div>
+      <div class="hero-star" style="top:46%; left:84%; width:2px; height:2px; animation-delay:1.53s; animation-duration:3.17s;"></div>
+      <div class="hero-star" style="top:83%; left:37%; width:1px; height:1px; animation-delay:1.70s; animation-duration:3.30s;"></div>
+      <div class="hero-star" style="top:20%; left:90%; width:2px; height:2px; animation-delay:1.87s; animation-duration:3.43s;"></div>
+      <div class="hero-star" style="top:57%; left:43%; width:1px; height:1px; animation-delay:2.04s; animation-duration:3.56s;"></div>
+      <div class="hero-star" style="top:94%; left:96%; width:2px; height:2px; animation-delay:2.21s; animation-duration:3.69s;"></div>
+      <div class="hero-star" style="top:31%; left:49%; width:1px; height:1px; animation-delay:2.38s; animation-duration:3.82s;"></div>
+      <div class="hero-star" style="top:68%; left:2%; width:2px; height:2px; animation-delay:2.55s; animation-duration:3.95s;"></div>
+      <div class="hero-star" style="top:5%; left:55%; width:1px; height:1px; animation-delay:2.72s; animation-duration:4.08s;"></div>
+      <div class="hero-star" style="top:42%; left:8%; width:2px; height:2px; animation-delay:2.89s; animation-duration:4.21s;"></div>
+    </div>
+
+    <div class="ac-container hero-content hero-grid" style="display:grid; grid-template-columns:1.1fr 0.9fr; gap:var(--space-16); align-items:center;">
+      <div>
+        <span style="font:var(--text-eyebrow); letter-spacing:var(--tracking-eyebrow); color:var(--orange-400); text-transform:uppercase;">Реферальна програма</span>
+        <h1 class="hero-title" style="font:800 3rem/1.1 var(--font-display); letter-spacing:var(--tracking-display); color:var(--text-on-dark); margin:16px 0 0;">Заробляйте з Astra Cloud</h1>
+        <p style="font:var(--text-body-lg); color:var(--text-on-dark-muted); max-width:480px; margin:20px 0 0;">Діліться своїм реферальним посиланням із друзями та підписниками — і отримуйте комісію за кожного нового клієнта.</p>
+        <div style="display:flex; gap:16px; margin-top:36px; flex-wrap:wrap;">
+          <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Button" hint-size="200px,52px" variant="primary" size="lg">Зареєструватися</x-import>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img src="../../../../public/images/pp00.png" alt="Реферальна програма Astra Cloud" style="width:100%; height:auto; display:block;">
+      </div>
+    </div>
+  </section>
+
+  <!-- What you need to do -->
+  <section style="background:var(--paper); padding:var(--section-padding-y) 0;">
+    <div class="ac-container">
+      <div style="text-align:center;">
+        <span style="font:var(--text-eyebrow); letter-spacing:var(--tracking-eyebrow); color:var(--brand-primary); text-transform:uppercase;">Без зайвих кроків</span>
+        <h2 style="font:var(--text-display-lg); color:var(--text-on-light); margin:14px 0 var(--space-12);">Що потрібно зробити?</h2>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:var(--space-16);">
+        <sc-for list="{{ actionSteps }}" as="s" hint-placeholder-count="3">
+          <div class="step-row">
+            <div class="step-text">
+              <span class="step-number">{{ s.number }}</span>
+              <p style="font:var(--text-body-lg); color:var(--text-on-light); margin:12px 0 0;">{{ s.text }}</p>
+            </div>
+            <div class="step-image">
+              <sc-if value="{{ s.img }}">
+                <img src="{{ s.img }}" alt="{{ s.text }}" style="width:100%; height:auto; display:block; border-radius:var(--radius-lg);">
+              </sc-if>
+              <sc-if value="{{ !s.img }}">
+                <div class="step-image-placeholder">{{ s.image }}</div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section style="padding:var(--section-padding-y) 0; background:var(--paper);">
+    <div class="ac-container">
+      <h2 style="font:var(--text-display-lg); color:var(--text-on-light); text-align:center; margin-bottom:var(--space-10);">Часті запитання</h2>
+      <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Accordion" hint-size="100%,400px" items="{{ faqItems }}"></x-import>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section style="background:var(--gray-100); padding:var(--section-padding-y) 0;">
+    <div class="ac-container" style="text-align:center;">
+      <h2 style="font:var(--text-display-lg); color:var(--text-on-light);">Час діяти!</h2>
+      <p style="font:var(--text-body-md); color:var(--text-on-light-muted); margin:16px auto 0; max-width:420px;">Просто діліться посиланням — і починайте заробляти вже сьогодні.</p>
+      <div style="margin-top:30px;">
+        <x-import component-from-global-scope="AstraCloudDesignSystem_7d4ce1.Button" hint-size="220px,52px" variant="primary" size="lg">Зареєструватися</x-import>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background:var(--navy-950); padding:var(--space-16) 0 var(--space-10);">
+    <div class="ac-container">
+      <div class="footer-grid" style="display:grid; grid-template-columns:1.3fr 1fr 1fr 1fr; gap:var(--space-10); padding-bottom:var(--space-10); border-bottom:1px solid var(--border-on-dark);">
+        <div>
+          <img src="../../assets/logo/astra-cloud-logo.png" alt="Astra Cloud" style="height:28px; margin-bottom:14px;">
+          <p style="font:var(--text-body-sm); color:var(--text-on-dark-muted);">Україна, м. Львів.</p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; font:var(--text-body-sm); color:var(--text-on-dark-muted);">
+          <span style="color:var(--text-on-dark); font:var(--text-ui-label); margin-bottom:4px;">Клієнтам</span>
+          <a href="#" style="color:inherit; text-decoration:none;">Про нас</a>
+          <a href="#" style="color:inherit; text-decoration:none; font-weight:600;">Реферальна програма</a>
+          <a href="#" style="color:inherit; text-decoration:none;">Умови користування</a>
+          <a href="#" style="color:inherit; text-decoration:none;">Політика конфіденційності</a>
+          <a href="#" style="color:inherit; text-decoration:none;">Політика повернення коштів</a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; font:var(--text-body-sm); color:var(--text-on-dark-muted);">
+          <span style="color:var(--text-on-dark); font:var(--text-ui-label); margin-bottom:4px;">Legal</span>
+          <a href="#" style="color:inherit; text-decoration:none;">SLA</a>
+          <a href="#" style="color:inherit; text-decoration:none;">Legal Section</a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; font:var(--text-body-sm); color:var(--text-on-dark-muted);">
+          <span style="color:var(--text-on-dark); font:var(--text-ui-label); margin-bottom:4px;">Контакти</span>
+          <span>063 636 3448</span>
+          <span>cloud@astra.in.ua</span>
+          <span>abuse@astra.in.ua</span>
+        </div>
+      </div>
+      <p style="font:var(--text-caption); color:var(--gray-500); text-align:center; padding-top:var(--space-6);">© 2026 Astra Cloud. Всі права захищені.</p>
+    </div>
+  </footer>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { activeLanguage: "ua" };
+
+  renderVals() {
+    return {
+      languageOptions: [
+        { value: "ua", label: "UA", flag: "../../assets/logo/flags/ua.svg" },
+        { value: "en", label: "GB", flag: "../../assets/logo/flags/gb.svg" },
+        { value: "pl", label: "PL", flag: "../../assets/logo/flags/pl.svg" },
+      ],
+      activeLanguage: this.state.activeLanguage,
+      setActiveLanguage: (v) => this.setState({ activeLanguage: v }),
+      actionSteps: [
+        { number: "01", text: "Реєструватися окремо не потрібно — посилання вже є у вашому особистому кабінеті.", image: "Ілюстрація: посилання вже у кабінеті", img: "../../../../public/images/pp1.png" },
+        { number: "02", text: "Копіюйте посилання і діліться ним, де завгодно.", image: "Ілюстрація: копіювати й ділитися", img: "../../../../public/images/pp2.png" },
+        { number: "03", text: "Скористайтеся готовими рекламними банерами з розділу «Реферальна програма» в кабінеті, щоб залучати нових клієнтів було простіше.", image: "Ілюстрація: рекламні банери", img: "../../../../public/images/pp3.png" },
+      ],
+      faqItems: [
+        { question: "Що таке реферальна програма?", answer: "Система, у якій ви, як клієнт Astra Cloud, отримуєте винагороду за залучення нових користувачів, що купують послуги хостингу." },
+        { question: "Як рекламувати своє реферальне посилання?", answer: "Спосіб просування залежить від майданчика: соціальні мережі, месенджери, власний сайт, блог чи відеоканал. Головне — щоб посилання виглядало органічно і було корисним для аудиторії." },
+        { question: "Як вивести партнерську виплату?", answer: "Кошти можна використати для оплати власних послуг або вивести на зовнішню платіжну систему після досягнення мінімальної суми — 1000 грн." },
+        { question: "Яку вигоду отримає реферал?", answer: "Кожен запрошений отримає знижку 15% на будь-яку послугу в перший платіжний цикл (28 днів). Знижка за реферальною програмою не підсумовується зі знижкою за промокодом: якщо промокод дає меншу або таку саму знижку, діє реферальна; якщо більшу — активується лише промокод." },
+      ],
+    };
+  }
+}
+
+</script>
+</body>
+</html>

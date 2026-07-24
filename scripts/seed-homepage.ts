@@ -29,8 +29,10 @@ const siteChromeByLocale: Record<Locale, Record<string, unknown>> = {
           { label: 'Умови користування', href: '/terms' },
           { label: 'Політика конфіденційності', href: '/privacy' },
           { label: 'Політика повернення коштів', href: '/refund-policy' },
+          { label: 'Часті запитання', href: '/faq' },
         ],
       },
+      { label: 'Партнерка', href: '/partnerka' },
     ],
     cabinetLabel: 'Кабінет',
     footerColumns: [
@@ -41,6 +43,7 @@ const siteChromeByLocale: Record<Locale, Record<string, unknown>> = {
           { label: 'Умови користування', href: '/terms' },
           { label: 'Політика конфіденційності', href: '/privacy' },
           { label: 'Політика повернення коштів', href: '/refund-policy' },
+          { label: 'Часті запитання', href: '/faq' },
         ],
       },
       {
@@ -76,8 +79,10 @@ const siteChromeByLocale: Record<Locale, Record<string, unknown>> = {
           { label: 'Terms of Use', href: '/en/terms' },
           { label: 'Privacy Policy', href: '/en/privacy' },
           { label: 'Refund Policy', href: '/en/refund-policy' },
+          { label: 'FAQ', href: '/en/faq' },
         ],
       },
+      { label: 'Affiliate Program', href: '/en/partnerka' },
     ],
     cabinetLabel: 'Client Area',
     footerColumns: [
@@ -88,6 +93,7 @@ const siteChromeByLocale: Record<Locale, Record<string, unknown>> = {
           { label: 'Terms of Use', href: '/en/terms' },
           { label: 'Privacy Policy', href: '/en/privacy' },
           { label: 'Refund Policy', href: '/en/refund-policy' },
+          { label: 'FAQ', href: '/en/faq' },
         ],
       },
       {
@@ -123,8 +129,10 @@ const siteChromeByLocale: Record<Locale, Record<string, unknown>> = {
           { label: 'Regulamin', href: '/pl/terms' },
           { label: 'Polityka prywatności', href: '/pl/privacy' },
           { label: 'Polityka zwrotów', href: '/pl/refund-policy' },
+          { label: 'FAQ', href: '/pl/faq' },
         ],
       },
+      { label: 'Program partnerski', href: '/pl/partnerka' },
     ],
     cabinetLabel: 'Panel klienta',
     footerColumns: [
@@ -135,6 +143,7 @@ const siteChromeByLocale: Record<Locale, Record<string, unknown>> = {
           { label: 'Regulamin', href: '/pl/terms' },
           { label: 'Polityka prywatności', href: '/pl/privacy' },
           { label: 'Polityka zwrotów', href: '/pl/refund-policy' },
+          { label: 'FAQ', href: '/pl/faq' },
         ],
       },
       {
@@ -531,125 +540,6 @@ function advantagesPl() {
   }
 }
 
-function faqUa() {
-  return {
-    blockType: 'faq',
-    heading: 'Питання та відповіді',
-    items: [
-      {
-        question: 'Що таке виділений сервер?',
-        answer: 'Фізичний сервер у повному розпорядженні одного клієнта — без поділу ресурсів з іншими.',
-      },
-      {
-        question: 'Яка різниця між VPS та виділеним сервером?',
-        answer: 'VPS — віртуальний розділ фізичного сервера; виділений сервер — окрема фізична машина цілком.',
-      },
-      {
-        question: 'Чи надаєте ви тестовий період?',
-        answer: 'Так, діє 30-денна гарантія повернення грошей на VDS-сервери.',
-      },
-      {
-        question: 'Як швидко активується сервер після оплати?',
-        answer: 'Сервер готовий до роботи вже через кілька хвилин після оплати.',
-      },
-      {
-        question: 'Яка операційна система доступна для встановлення?',
-        answer: 'Основні дистрибутиви Linux та Windows Server — деталі уточнюйте в кабінеті.',
-      },
-      { question: 'Чи є у вас технічна підтримка?', answer: 'Так, технічна підтримка доступна 24/7.' },
-      {
-        question: 'Що таке колокація (Colocation)?',
-        answer: 'Розміщення власного серверного обладнання клієнта в нашому дата-центрі.',
-      },
-      { question: 'Які способи оплати ви приймаєте?', answer: 'Mastercard, VISA, Bitcoin та PayPal.' },
-      {
-        question: 'Як здійснюється резервне копіювання?',
-        answer: 'Автоматично, за регулярним розкладом, з можливістю швидкого відновлення.',
-      },
-    ],
-  }
-}
-
-function faqEn() {
-  return {
-    blockType: 'faq',
-    heading: 'Frequently Asked Questions',
-    items: [
-      {
-        question: 'What is a dedicated server?',
-        answer: "A physical server entirely at one client's disposal — resources are not shared with anyone else.",
-      },
-      {
-        question: "What's the difference between VPS and a dedicated server?",
-        answer:
-          'A VPS is a virtual partition of a physical server; a dedicated server is an entire separate physical machine.',
-      },
-      {
-        question: 'Do you offer a trial period?',
-        answer: 'Yes, VDS servers come with a 30-day money-back guarantee.',
-      },
-      {
-        question: 'How quickly is a server activated after payment?',
-        answer: 'The server is ready to use within minutes of payment.',
-      },
-      {
-        question: 'Which operating systems are available?',
-        answer: 'The major Linux distributions and Windows Server — check your account for details.',
-      },
-      { question: 'Do you offer technical support?', answer: 'Yes, technical support is available 24/7.' },
-      {
-        question: 'What is colocation?',
-        answer: "Hosting a client's own server hardware in our data center.",
-      },
-      { question: 'What payment methods do you accept?', answer: 'Mastercard, VISA, Bitcoin, and PayPal.' },
-      {
-        question: 'How are backups handled?',
-        answer: 'Automatically, on a regular schedule, with fast recovery available.',
-      },
-    ],
-  }
-}
-
-function faqPl() {
-  return {
-    blockType: 'faq',
-    heading: 'Pytania i odpowiedzi',
-    items: [
-      {
-        question: 'Czym jest serwer dedykowany?',
-        answer:
-          'Fizyczny serwer pozostający w pełnej dyspozycji jednego klienta — bez współdzielenia zasobów z innymi.',
-      },
-      {
-        question: 'Jaka jest różnica między VPS a serwerem dedykowanym?',
-        answer: 'VPS to wirtualna część fizycznego serwera; serwer dedykowany to cała odrębna maszyna fizyczna.',
-      },
-      {
-        question: 'Czy oferujecie okres próbny?',
-        answer: 'Tak, na serwery VDS obowiązuje 30-dniowa gwarancja zwrotu pieniędzy.',
-      },
-      {
-        question: 'Jak szybko aktywowany jest serwer po opłaceniu?',
-        answer: 'Serwer jest gotowy do pracy już kilka minut po płatności.',
-      },
-      {
-        question: 'Jaki system operacyjny można zainstalować?',
-        answer: 'Główne dystrybucje Linuksa oraz Windows Server — szczegóły w panelu klienta.',
-      },
-      { question: 'Czy oferujecie wsparcie techniczne?', answer: 'Tak, wsparcie techniczne jest dostępne 24/7.' },
-      {
-        question: 'Czym jest kolokacja?',
-        answer: 'Umieszczenie własnego sprzętu serwerowego klienta w naszym centrum danych.',
-      },
-      { question: 'Jakie metody płatności akceptujecie?', answer: 'Mastercard, VISA, Bitcoin oraz PayPal.' },
-      {
-        question: 'Jak wygląda tworzenie kopii zapasowych?',
-        answer: 'Automatycznie, według regularnego harmonogramu, z możliwością szybkiego przywrócenia.',
-      },
-    ],
-  }
-}
-
 const partners = [
   { name: 'GigaTrans', href: 'https://gigatrans.ua' },
   { name: 'IX' },
@@ -682,7 +572,6 @@ const pagesByLocale: Record<Locale, Record<string, unknown>[]> = {
       illustrationSrc: '/images/mascot-contact-us.png',
     },
     advantagesUa(),
-    faqUa(),
   ],
   en: [
     {
@@ -708,7 +597,6 @@ const pagesByLocale: Record<Locale, Record<string, unknown>[]> = {
       illustrationSrc: '/images/mascot-contact-us.png',
     },
     advantagesEn(),
-    faqEn(),
   ],
   pl: [
     {
@@ -734,7 +622,6 @@ const pagesByLocale: Record<Locale, Record<string, unknown>[]> = {
       illustrationSrc: '/images/mascot-contact-us.png',
     },
     advantagesPl(),
-    faqPl(),
   ],
 }
 

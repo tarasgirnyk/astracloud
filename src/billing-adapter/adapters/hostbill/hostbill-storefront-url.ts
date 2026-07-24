@@ -19,3 +19,23 @@ export function getHostbillOrderUrl(categorySlug: string, productId: string): st
   const base = storefrontUrl.endsWith('/') ? storefrontUrl : `${storefrontUrl}/`
   return `${base}cart/${encodeURIComponent(categorySlug)}/?id=${encodeURIComponent(productId)}`
 }
+
+/**
+ * Expands the portable `/affiliates/signup` sentinel — the path CMS content
+ * authors write for the "Зареєструватися" CTA on the Партнерка (affiliate
+ * program) page — into an absolute HostBill storefront URL at render time,
+ * reading the same HOSTBILL_STOREFRONT_URL env var as getHostbillOrderUrl
+ * above. Any other href (in-page anchor, relative site path) passes through
+ * unchanged; this only rewrites that one specific sentinel so a plain string
+ * field on the Hero block config doesn't need to hardcode a per-environment
+ * domain (dev VM vs. prod).
+ */
+export function resolveHostbillHref(href: string | null | undefined): string | null | undefined {
+  if (href !== '/affiliates/signup') return href
+
+  const storefrontUrl = process.env.HOSTBILL_STOREFRONT_URL
+  if (!storefrontUrl) return '#'
+
+  const base = storefrontUrl.endsWith('/') ? storefrontUrl : `${storefrontUrl}/`
+  return `${base}affiliates/signup`
+}

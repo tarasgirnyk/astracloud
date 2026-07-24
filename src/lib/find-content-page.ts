@@ -7,6 +7,10 @@ import type { Payload } from 'payload'
  * localization (one document per slug, not one per locale), so `locale` is
  * passed as a top-level option — it selects which locale's values Payload
  * resolves for localized fields, it's not a `where` filter.
+ *
+ * Returns which collection matched alongside the doc — callers need it to
+ * query FaqItems tagged with this exact page (see PageFaq.tsx), since
+ * FaqItems.pages is a polymorphic relationship keyed by collection + id.
  */
 export async function findContentPage(payload: Payload, slug: string, locale: string) {
   const pagesResult = await payload.find({
@@ -18,7 +22,7 @@ export async function findContentPage(payload: Payload, slug: string, locale: st
     limit: 1,
   })
   if (pagesResult.docs[0]) {
-    return pagesResult.docs[0]
+    return { page: pagesResult.docs[0], collection: 'pages' as const }
   }
 
   const servicePagesResult = await payload.find({
@@ -29,5 +33,9 @@ export async function findContentPage(payload: Payload, slug: string, locale: st
     locale: locale as 'ua' | 'en' | 'pl',
     limit: 1,
   })
-  return servicePagesResult.docs[0] ?? null
+  if (servicePagesResult.docs[0]) {
+    return { page: servicePagesResult.docs[0], collection: 'service-pages' as const }
+  }
+
+  return null
 }

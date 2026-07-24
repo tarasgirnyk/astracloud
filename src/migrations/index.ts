@@ -19,6 +19,10 @@ import * as migration_20260722_105055_services_payment_methods from './20260722_
 import * as migration_20260723_100419_advantages_centered_stats_bar from './20260723_100419_advantages_centered_stats_bar';
 import * as migration_20260723_101611_consultation_split_card from './20260723_101611_consultation_split_card';
 import * as migration_20260723_105056_advantages_split_layout from './20260723_105056_advantages_split_layout';
+import * as migration_20260724_115806_faq_items from './20260724_115806_faq_items';
+import * as migration_20260724_115950_pages_faq_index_block from './20260724_115950_pages_faq_index_block';
+import * as migration_20260724_142826_steps_block from './20260724_142826_steps_block';
+import * as migration_20260724_153900_faq_items_pages_relationship from './20260724_153900_faq_items_pages_relationship';
 
 export const migrations = [
   {
@@ -124,6 +128,26 @@ export const migrations = [
   {
     up: migration_20260723_105056_advantages_split_layout.up,
     down: migration_20260723_105056_advantages_split_layout.down,
-    name: '20260723_105056_advantages_split_layout'
+    name: '20260723_105056_advantages_split_layout',
+  },
+  {
+    up: migration_20260724_115806_faq_items.up,
+    down: migration_20260724_115806_faq_items.down,
+    name: '20260724_115806_faq_items',
+  },
+  {
+    up: migration_20260724_115950_pages_faq_index_block.up,
+    down: migration_20260724_115950_pages_faq_index_block.down,
+    name: '20260724_115950_pages_faq_index_block',
+  },
+  {
+    up: migration_20260724_142826_steps_block.up,
+    down: migration_20260724_142826_steps_block.down,
+    name: '20260724_142826_steps_block',
+  },
+  {
+    up: migration_20260724_153900_faq_items_pages_relationship.up,
+    down: migration_20260724_153900_faq_items_pages_relationship.down,
+    name: '20260724_153900_faq_items_pages_relationship'
   },
 ];

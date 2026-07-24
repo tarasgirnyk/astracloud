@@ -1,9 +1,9 @@
-import { Accordion } from '@/components/Accordion'
+import { Accordion, type AccordionItem } from '@/components/Accordion'
 
 export interface FaqBlockProps {
   blockType: 'faq'
   heading: string
-  items?: { question: string; answer: string }[] | null
+  items?: AccordionItem[] | null
 }
 
 export function Faq({ heading, items }: FaqBlockProps) {
