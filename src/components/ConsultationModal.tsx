@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, type CSSProperties, type FormEvent } from 'react'
+import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
 
 export interface ConsultationModalProps {
@@ -103,159 +104,180 @@ export function ConsultationModal({ triggerLabel }: ConsultationModalProps) {
         {triggerLabel}
       </button>
 
-      {isOpen ? (
-        <div
-          role="presentation"
-          onClick={close}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(10, 14, 26, 0.6)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 20,
-            zIndex: 1000,
-          }}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label={triggerLabel}
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              background: 'var(--white)',
-              borderRadius: 'var(--radius-lg)',
-              padding: 32,
-              width: '100%',
-              maxWidth: 440,
-              maxHeight: '90vh',
-              overflowY: 'auto',
-              position: 'relative',
-              textAlign: 'left',
-            }}
-          >
-            <button
-              type="button"
+      {isOpen
+        ? createPortal(
+            <div
+              role="presentation"
               onClick={close}
-              aria-label={t('closeLabel')}
               style={{
-                position: 'absolute',
-                top: 16,
-                right: 16,
-                width: 32,
-                height: 32,
-                borderRadius: '50%',
-                border: 'none',
-                background: 'var(--gray-100)',
-                color: 'var(--text-on-light)',
-                cursor: 'pointer',
-                fontSize: 18,
-                lineHeight: 1,
+                position: 'fixed',
+                inset: 0,
+                background: 'rgba(10, 14, 26, 0.6)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 20,
+                zIndex: 1000,
               }}
             >
-              ×
-            </button>
-
-            <h3 style={{ font: 'var(--text-display-sm)', color: 'var(--text-on-light)', margin: '0 0 24px', paddingRight: 32 }}>
-              {triggerLabel}
-            </h3>
-
-            {status === 'success' ? (
-              <p style={{ font: 'var(--text-body-md)', color: 'var(--text-on-light)' }}>{t('successMessage')}</p>
-            ) : (
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <div>
-                  <label style={labelStyle} htmlFor="consultation-name">
-                    {t('nameLabel')}
-                  </label>
-                  <input
-                    id="consultation-name"
-                    type="text"
-                    required
-                    maxLength={200}
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder={t('namePlaceholder')}
-                    style={inputStyle}
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle} htmlFor="consultation-phone">
-                    {t('phoneLabel')}
-                  </label>
-                  <input
-                    id="consultation-phone"
-                    type="tel"
-                    required
-                    maxLength={200}
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder={t('phonePlaceholder')}
-                    style={inputStyle}
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle} htmlFor="consultation-email">
-                    {t('emailLabel')}
-                  </label>
-                  <input
-                    id="consultation-email"
-                    type="email"
-                    required
-                    maxLength={200}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder={t('emailPlaceholder')}
-                    style={inputStyle}
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle} htmlFor="consultation-message">
-                    {t('messageLabel')}
-                  </label>
-                  <textarea
-                    id="consultation-message"
-                    required
-                    maxLength={5000}
-                    rows={4}
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder={t('messagePlaceholder')}
-                    style={{ ...inputStyle, resize: 'vertical' }}
-                  />
-                </div>
-
-                {status === 'error' ? (
-                  <p style={{ font: 'var(--text-body-sm)', color: 'var(--red-600, #dc2626)', margin: 0 }}>
-                    {t('errorMessage')}
-                  </p>
-                ) : null}
-
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-label={triggerLabel}
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  background: 'var(--white)',
+                  borderRadius: 'var(--radius-lg)',
+                  padding: 32,
+                  width: '100%',
+                  maxWidth: 440,
+                  maxHeight: '90vh',
+                  overflowY: 'auto',
+                  position: 'relative',
+                  textAlign: 'left',
+                }}
+              >
                 <button
-                  type="submit"
-                  disabled={status === 'submitting'}
+                  type="button"
+                  onClick={close}
+                  aria-label={t('closeLabel')}
                   style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '14px 32px',
-                    borderRadius: 'var(--radius-pill)',
-                    font: '600 16px/1 var(--font-body)',
-                    backgroundImage: 'var(--gradient-orange)',
-                    color: 'var(--brand-primary-text)',
+                    position: 'absolute',
+                    top: 16,
+                    right: 16,
+                    width: 32,
+                    height: 32,
+                    borderRadius: '50%',
                     border: 'none',
-                    cursor: status === 'submitting' ? 'default' : 'pointer',
-                    opacity: status === 'submitting' ? 0.7 : 1,
+                    background: 'var(--gray-100)',
+                    color: 'var(--text-on-light)',
+                    cursor: 'pointer',
+                    fontSize: 18,
+                    lineHeight: 1,
                   }}
                 >
-                  {status === 'submitting' ? t('submittingLabel') : t('submitLabel')}
+                  ×
                 </button>
-              </form>
-            )}
-          </div>
-        </div>
-      ) : null}
+
+                <h3
+                  style={{
+                    font: 'var(--text-display-sm)',
+                    color: 'var(--text-on-light)',
+                    margin: '0 0 24px',
+                    paddingRight: 32,
+                  }}
+                >
+                  {triggerLabel}
+                </h3>
+
+                {status === 'success' ? (
+                  <p style={{ font: 'var(--text-body-md)', color: 'var(--text-on-light)' }}>
+                    {t('successMessage')}
+                  </p>
+                ) : (
+                  <form
+                    onSubmit={handleSubmit}
+                    style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
+                  >
+                    <div>
+                      <label style={labelStyle} htmlFor="consultation-name">
+                        {t('nameLabel')}
+                      </label>
+                      <input
+                        id="consultation-name"
+                        type="text"
+                        required
+                        maxLength={200}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder={t('namePlaceholder')}
+                        style={inputStyle}
+                      />
+                    </div>
+                    <div>
+                      <label style={labelStyle} htmlFor="consultation-phone">
+                        {t('phoneLabel')}
+                      </label>
+                      <input
+                        id="consultation-phone"
+                        type="tel"
+                        required
+                        maxLength={200}
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder={t('phonePlaceholder')}
+                        style={inputStyle}
+                      />
+                    </div>
+                    <div>
+                      <label style={labelStyle} htmlFor="consultation-email">
+                        {t('emailLabel')}
+                      </label>
+                      <input
+                        id="consultation-email"
+                        type="email"
+                        required
+                        maxLength={200}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder={t('emailPlaceholder')}
+                        style={inputStyle}
+                      />
+                    </div>
+                    <div>
+                      <label style={labelStyle} htmlFor="consultation-message">
+                        {t('messageLabel')}
+                      </label>
+                      <textarea
+                        id="consultation-message"
+                        required
+                        maxLength={5000}
+                        rows={4}
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        placeholder={t('messagePlaceholder')}
+                        style={{ ...inputStyle, resize: 'vertical' }}
+                      />
+                    </div>
+
+                    {status === 'error' ? (
+                      <p
+                        style={{
+                          font: 'var(--text-body-sm)',
+                          color: 'var(--red-600, #dc2626)',
+                          margin: 0,
+                        }}
+                      >
+                        {t('errorMessage')}
+                      </p>
+                    ) : null}
+
+                    <button
+                      type="submit"
+                      disabled={status === 'submitting'}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '14px 32px',
+                        borderRadius: 'var(--radius-pill)',
+                        font: '600 16px/1 var(--font-body)',
+                        backgroundImage: 'var(--gradient-orange)',
+                        color: 'var(--brand-primary-text)',
+                        border: 'none',
+                        cursor: status === 'submitting' ? 'default' : 'pointer',
+                        opacity: status === 'submitting' ? 0.7 : 1,
+                      }}
+                    >
+                      {status === 'submitting' ? t('submittingLabel') : t('submitLabel')}
+                    </button>
+                  </form>
+                )}
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
     </>
   )
 }

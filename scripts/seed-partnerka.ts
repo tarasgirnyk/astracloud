@@ -83,7 +83,7 @@ const stepItems: Record<Locale, { text: string; imageSrc: string }[]> = {
     { text: 'Копіюйте посилання і діліться ним, де завгодно.', imageSrc: '/images/pp2.png' },
     {
       text: 'Скористайтеся готовими рекламними банерами з розділу «Реферальна програма» в кабінеті, щоб залучати нових клієнтів було простіше.',
-      imageSrc: '/images/pp3.png',
+      imageSrc: '/images/banners/astra-cloud-banner-cards-mockup.png',
     },
   ],
   en: [
@@ -94,7 +94,7 @@ const stepItems: Record<Locale, { text: string; imageSrc: string }[]> = {
     { text: 'Copy the link and share it anywhere.', imageSrc: '/images/pp2.png' },
     {
       text: 'Use the ready-made promotional banners from the "Affiliate Program" section in your client area to make attracting new clients easier.',
-      imageSrc: '/images/pp3.png',
+      imageSrc: '/images/banners/astra-cloud-banner-cards-mockup.png',
     },
   ],
   pl: [
@@ -105,7 +105,7 @@ const stepItems: Record<Locale, { text: string; imageSrc: string }[]> = {
     { text: 'Skopiujcie link i dzielcie się nim gdziekolwiek.', imageSrc: '/images/pp2.png' },
     {
       text: 'Skorzystajcie z gotowych banerów reklamowych z sekcji „Program partnerski” w panelu klienta, aby łatwiej przyciągać nowych klientów.',
-      imageSrc: '/images/pp3.png',
+      imageSrc: '/images/banners/astra-cloud-banner-cards-mockup.png',
     },
   ],
 }
