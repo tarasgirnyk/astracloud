@@ -3,10 +3,12 @@
    Body/UI: Inter (paragraphs, nav, pricing tables, forms — compact and highly legible at small sizes).
    Fallback: Golos Text / Manrope if Inter is ever too "software-y" for a given surface.
 
-   No local font binaries were supplied — loaded from Google Fonts CDN below.
-   Swap for self-hosted @font-face rules here if the brand licenses static files later. */
-
-@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Golos+Text:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
+   Previously loaded via a render-blocking Google Fonts CDN @import here;
+   now self-hosted and preloaded via next/font/google in the app
+   (src/app/(frontend)/[locale]/layout.tsx) instead — see
+   specs/002-seo-foundations/research.md §7. Font-family names below are
+   unchanged, since next/font registers @font-face rules under the same
+   family names. */
 
 :root {
   --font-display: "Unbounded", "Manrope", sans-serif;

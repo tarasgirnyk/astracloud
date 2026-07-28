@@ -93,4 +93,15 @@ export default tseslint.config(
       'boundaries/dependencies': 'off',
     },
   },
+  {
+    // Payload's migrate:create dictates the `up`/`down` signature
+    // (`{ db, payload, req }`) for every migration file; most migrations
+    // only use `db`, leaving `payload`/`req` unused by design, not by
+    // oversight — pre-existing across every migration in this directory,
+    // not specific to any one feature.
+    files: ['src/migrations/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['error', { args: 'none' }],
+    },
+  },
 )

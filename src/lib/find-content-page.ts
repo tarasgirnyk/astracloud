@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import type { Payload } from 'payload'
 
 /**
@@ -11,8 +12,14 @@ import type { Payload } from 'payload'
  * Returns which collection matched alongside the doc — callers need it to
  * query FaqItems tagged with this exact page (see PageFaq.tsx), since
  * FaqItems.pages is a polymorphic relationship keyed by collection + id.
+ *
+ * Wrapped in React's `cache()` so `generateMetadata` and the page component
+ * — both of which need this same document per request — share one lookup
+ * instead of querying Payload twice; unlike `fetch()`, direct Payload calls
+ * aren't deduped by Next.js automatically (see Next.js docs on sharing data
+ * between generateMetadata and the page).
  */
-export async function findContentPage(payload: Payload, slug: string, locale: string) {
+export const findContentPage = cache(async function findContentPage(payload: Payload, slug: string, locale: string) {
   const pagesResult = await payload.find({
     collection: 'pages',
     where: {
@@ -38,4 +45,4 @@ export async function findContentPage(payload: Payload, slug: string, locale: st
   }
 
   return null
-}
+})

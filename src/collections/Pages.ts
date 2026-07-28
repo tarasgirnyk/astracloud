@@ -50,6 +50,36 @@ export const Pages: CollectionConfig = {
       },
     },
     {
+      name: 'meta',
+      type: 'group',
+      admin: {
+        description:
+          'Search-engine title/description for this page. Leave blank to use an auto-generated fallback (page heading + site name) — see src/lib/seo/fallback.ts.',
+      },
+      fields: [
+        {
+          name: 'title',
+          type: 'text',
+          localized: true,
+          admin: { description: 'Search-result title. Falls back to an auto-generated value when blank.' },
+        },
+        {
+          name: 'description',
+          type: 'textarea',
+          localized: true,
+          admin: { description: 'Search-result description. Falls back to an auto-generated value when blank.' },
+        },
+        {
+          name: 'ogImage',
+          type: 'text',
+          admin: {
+            description:
+              'Path under /images/ used for social share previews (Open Graph/Twitter). Falls back to the sitewide default image when blank.',
+          },
+        },
+      ],
+    },
+    {
       name: 'blocks',
       type: 'blocks',
       blocks: [

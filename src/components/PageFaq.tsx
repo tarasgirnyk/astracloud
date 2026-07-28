@@ -2,6 +2,7 @@ import { getLocale } from 'next-intl/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { Accordion, type AccordionItem } from '@/components/Accordion'
+import { faqPageJsonLd } from '@/lib/seo/json-ld'
 
 const HEADING: Record<'ua' | 'en' | 'pl', string> = {
   ua: 'Питання та відповіді',
@@ -37,9 +38,16 @@ export async function PageFaq({ collection, id }: { collection: 'pages' | 'servi
   if (!result.docs.length) return null
 
   const items: AccordionItem[] = result.docs.map((doc) => ({ question: doc.question, answer: doc.answer }))
+  const faqJsonLd = faqPageJsonLd(items)
 
   return (
     <section style={{ padding: 'var(--section-padding-y) 0', background: 'var(--paper)' }}>
+      {faqJsonLd ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      ) : null}
       <div className="ac-container">
         <h2
           style={{

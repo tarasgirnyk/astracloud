@@ -178,7 +178,7 @@ export function Hero({
               pre-sized box */}
           <img
             src={imageSrc ?? '/images/hero3.png'}
-            alt=""
+            alt={heading}
             style={{ display: 'block', width: '100%', height: 'auto' }}
             fetchPriority="high"
             loading="eager"

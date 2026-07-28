@@ -3,9 +3,11 @@
    Do not hand-edit values here without updating the source design-handoff files —
    see docs/GRILL_NOTES.md decision 11 / constitution Principle VIII. */
 
-/* @import must precede all other rules (CSS spec) — moved up from the
-   typography section below. */
-@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Golos+Text:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
+/* Fonts (Unbounded, Inter, Golos Text, Manrope) are no longer loaded via a
+   render-blocking @import here — next/font/google self-hosts and preloads
+   them instead (see src/app/(frontend)/[locale]/layout.tsx,
+   specs/002-seo-foundations). The font-family names below are unchanged,
+   since next/font registers @font-face rules under the same family names. */
 
 /* ---- Colors ---- */
 :root {

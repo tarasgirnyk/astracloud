@@ -112,7 +112,7 @@ export function Consultation({
                 // eslint-disable-next-line @next/next/no-img-element -- stretches to the card's own height, not worth next/image config here
                 <img
                   src={illustrationSrc}
-                  alt=""
+                  alt={heading}
                   style={{
                     position: 'relative',
                     zIndex: 1,

@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
+import { Unbounded, Inter, Golos_Text, Manrope } from 'next/font/google'
+import Script from 'next/script'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
@@ -11,11 +13,43 @@ import { routing } from '@/i18n/routing'
 import { SUPPORTED_LOCALES } from '@/globals/SiteChrome'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { NavLink } from '@/components/NavLink'
+import { organizationJsonLd, websiteJsonLd } from '@/lib/seo/json-ld'
 import '@/components/tokens.css'
 
+/**
+ * Last-resort fallback only — every real page under this layout defines its
+ * own `generateMetadata` (see page.tsx / [slug]/page.tsx and
+ * src/lib/seo/build-metadata.ts), which fully overrides this. This value is
+ * only ever seen on a route with no page-level metadata (e.g. the 404 page
+ * for an unmatched slug) — it must never again be the title search engines
+ * see on a real, published page (specs/002-seo-foundations).
+ */
 export const metadata: Metadata = {
   title: 'Astra Cloud',
+  // Sitewide (not page-specific), so it belongs on the layout, not
+  // build-metadata.ts — Next.js merges parent-layout metadata fields a
+  // page's own generateMetadata doesn't set, so this still applies on every
+  // page despite each one overriding title/description. Omitted entirely
+  // (not an empty string) when unset, so local/dev/CI builds never ship a
+  // production verification token — research.md §9.
+  ...(process.env.GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
+    : {}),
 }
+
+/**
+ * Self-hosted, preloaded replacements for the render-blocking Google Fonts
+ * `@import` previously in tokens.css (research.md §7) — `subsets` include
+ * `cyrillic` (Ukrainian, most of this site's content) and `latin-ext`
+ * (Polish diacritics), not just `latin`. No `variable` option: next/font
+ * registers each font's `@font-face` under its real family name (e.g.
+ * "Unbounded"), so tokens.css's existing `--font-display`/`--font-body`
+ * values keep working completely unchanged.
+ */
+const unbounded = Unbounded({ weight: ['500', '600', '700', '800'], subsets: ['latin', 'latin-ext', 'cyrillic'] })
+const inter = Inter({ weight: ['400', '500', '600', '700', '800'], subsets: ['latin', 'latin-ext', 'cyrillic'] })
+const golosText = Golos_Text({ weight: ['400', '500', '600', '700'], subsets: ['cyrillic'] })
+const manrope = Manrope({ weight: ['400', '500', '600', '700'], subsets: ['latin', 'latin-ext'] })
 
 export default async function LocaleLayout({
   children,
@@ -38,7 +72,34 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale}>
-      <body style={{ margin: 0 }}>
+      <body
+        className={`${unbounded.className} ${inter.className} ${golosText.className} ${manrope.className}`}
+        style={{ margin: 0 }}
+      >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
+        />
+        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ? (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}');
+              `}
+            </Script>
+          </>
+        ) : null}
         <NextIntlClientProvider locale={locale} messages={messages}>
           <style>{`
             .nav-dropdown { position: relative; }
