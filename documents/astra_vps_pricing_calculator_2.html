@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Astra Cloud — калькулятор економіки VPS-кластера</title>
+<style>
+  :root{
+    --primary:#1E4FD8;
+    --primary-50:#EEF3FE;
+    --primary-100:#D9E4FC;
+    --primary-700:#1840AE;
+    --ink:#0B0E14;
+    --body:#545B6B;
+    --muted:#7A8194;
+    --canvas:#FFFFFF;
+    --surface-soft:#F6F8FB;
+    --surface-strong:#EBEFF5;
+    --hairline:#DEE2EA;
+    --hairline-soft:#EBEFF5;
+    --success:#0E9F6E;
+    --success-bg:#E6F7F0;
+    --success-text:#067A57;
+    --danger:#DC2626;
+    --danger-bg:#FDEBEB;
+    --danger-text:#B91C1C;
+    --warning:#D97706;
+    --warning-bg:#FDF3E3;
+    --warning-text:#92500A;
+    --radius-md:10px;
+    --radius-lg:14px;
+    --radius-pill:100px;
+    --shadow:0 4px 16px rgba(11,14,26,0.06);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,system-ui,'Segoe UI',Roboto,Arial,sans-serif;
+    color:var(--ink);
+    background:var(--canvas);
+    padding:24px;
+    line-height:1.5;
+  }
+  .mono{ font-family:'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace; font-variant-numeric:tabular-nums; }
+  h1{ font-size:26px; font-weight:600; letter-spacing:-0.3px; margin:0 0 4px; }
+  .subtitle{ color:var(--body); font-size:14px; margin:0 0 8px; max-width:900px; }
+  .assumptions{
+    background:var(--warning-bg); border:1px solid var(--warning); border-radius:var(--radius-lg);
+    padding:14px 18px; font-size:13px; color:var(--warning-text); max-width:900px; margin-bottom:24px;
+  }
+  .assumptions b{ display:block; margin-bottom:4px; }
+  .assumptions ul{ margin:6px 0 0; padding-left:18px; }
+  .controls{
+    display:flex; flex-wrap:wrap; gap:16px; background:var(--surface-soft);
+    border:1px solid var(--hairline); border-radius:var(--radius-lg); padding:20px 24px; margin-bottom:28px;
+  }
+  .control{ display:flex; flex-direction:column; gap:4px; min-width:150px; }
+  .control label{ font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.3px; }
+  .control input{
+    font-family:'JetBrains Mono',ui-monospace,monospace; font-size:15px; font-weight:500;
+    padding:8px 10px; border:1px solid var(--hairline); border-radius:var(--radius-md); background:var(--canvas); width:120px;
+  }
+  .control input:focus{ outline:none; border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-100); }
+  .control .hint{ font-size:11px; color:var(--muted); }
+  section{ margin-bottom:36px; }
+  h2{ font-size:18px; font-weight:600; margin:0 0 4px; }
+  h3{ font-size:14px; font-weight:600; margin:18px 0 6px; }
+  .section-hint{ font-size:13px; color:var(--muted); margin:0 0 14px; max-width:900px; }
+  .amort-badge{
+    display:inline-block; font-size:11px; font-weight:600; padding:2px 8px; border-radius:var(--radius-pill);
+    background:var(--primary-50); color:var(--primary-700); margin-left:8px;
+  }
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  thead th{
+    text-align:left; font-size:11px; font-weight:600; color:var(--muted); text-transform:uppercase;
+    letter-spacing:0.3px; padding:8px 10px; border-bottom:1px solid var(--hairline); white-space:nowrap;
+  }
+  tbody td{ padding:8px 10px; border-bottom:1px solid var(--hairline-soft); vertical-align:middle; }
+  tbody tr.missing-data{ background:var(--warning-bg); }
+  tbody tr.highlight{ background:var(--primary-50); }
+  .name-cell{ font-weight:600; min-width:190px; }
+  .tag{
+    display:inline-block; font-size:10px; font-weight:600; padding:1px 6px; border-radius:var(--radius-pill);
+    margin-left:6px; vertical-align:middle;
+  }
+  .tag.invoice{ background:var(--success-bg); color:var(--success-text); }
+  .tag.estimate{ background:var(--surface-strong); color:var(--body); }
+  .tag.missing{ background:var(--warning-bg); color:var(--warning-text); border:1px solid var(--warning); }
+  .tag.new{ background:var(--primary-100); color:var(--primary-700); }
+  input.num{
+    font-family:'JetBrains Mono',ui-monospace,monospace; font-size:13px; font-weight:500; width:80px;
+    padding:6px 8px; border:1px solid var(--hairline); border-radius:var(--radius-md); background:var(--canvas); text-align:right;
+  }
+  input.num:focus{ outline:none; border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-100); }
+  td.computed{ font-family:'JetBrains Mono',ui-monospace,monospace; font-weight:600; text-align:right; white-space:nowrap; }
+  td.computed.floor{ color:var(--ink); }
+  td.computed.price{ color:var(--primary-700); }
+  td.computed.delta.up{ color:var(--danger-text); }
+  td.computed.delta.down{ color:var(--success-text); }
+  td.computed.margin.low{ color:var(--danger-text); }
+  td.computed.margin.ok{ color:var(--success-text); }
+  .stat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-top:10px; }
+  .stat-card{ border:1px solid var(--hairline); border-radius:var(--radius-lg); padding:16px 18px; background:var(--surface-soft); }
+  .stat-card .label{ font-size:11px; text-transform:uppercase; letter-spacing:0.3px; color:var(--muted); font-weight:600; }
+  .stat-card .value{ font-family:'JetBrains Mono',ui-monospace,monospace; font-size:22px; font-weight:600; color:var(--primary-700); margin-top:4px; }
+  .stat-card .sub{ font-size:12px; color:var(--body); margin-top:2px; }
+  .legend{ font-size:12px; color:var(--muted); margin-top:8px; display:flex; gap:16px; flex-wrap:wrap; }
+  .legend span{ display:flex; align-items:center; gap:6px; }
+  .notes{ font-size:13px; color:var(--body); background:var(--surface-soft); border:1px solid var(--hairline); border-radius:var(--radius-lg); padding:18px 22px; max-width:900px; }
+  .notes h3{ margin-top:0; }
+  .notes ol,.notes ul{ padding-left:20px; margin:6px 0; }
+  .notes li{ margin-bottom:8px; }
+</style>
+</head>
+<body>
+
+<h1>Економіка VPS-кластера (Astra Cloud)</h1>
+<p class="subtitle">Всі поля з рамкою редаговані. Зміна будь-якого числа перераховує вартість вузлів, питому собівартість ресурсу (vCPU / RAM / диск), собівартість поточних тарифів і GPU-тарифу одразу.</p>
+
+<div class="assumptions">
+  <b>⚠ Уточнено: compute і ceph — на одному залізі (4 вузли)</b>
+  Кластер — 4 конвергентних вузли HP ProLiant DL360 Gen8: на кожному одночасно і Proxmox (VPS), і Ceph OSD. Вартість шасі й «базового» споживання ділю порівну між CPU-роллю (продаж vCPU) і SSD-роллю (продаж диска), бо це одна фізична коробка. RAM віднесена повністю на CPU-роль, бо продається клієнтам з VPS.
+  <ul>
+    <li><b>Overcommit по vCPU поставив на рекомендоване значення — 2.5.</b> Red Hat KVM guidance для навантажень &lt;100% допускає до ~5 vCPU на 1 фізичне ядро; оскільки модель рахує від потоків (вже ×2 від HT), еквівалент — 2.5× від потоків. Це стартова консервативна цифра, підлягає коригуванню під реальний CPU Ready/Steal Time.</li>
+  </ul>
+</div>
+
+<div class="controls">
+  <div class="control">
+    <label for="rate">Тариф е/е, грн/кВт·год</label>
+    <input type="number" id="rate" class="num" value="11" step="0.1">
+  </div>
+  <div class="control">
+    <label for="hours">Годин/місяць</label>
+    <input type="number" id="hours" class="num" value="730" step="1">
+  </div>
+  <div class="control">
+    <label for="pue">Коефіцієнт ЦОД (PUE)</label>
+    <input type="number" id="pue" class="num" value="1.0" step="0.05">
+  </div>
+  <div class="control">
+    <label for="margin">Цільова маржа, %</label>
+    <input type="number" id="margin" class="num" value="45" step="1">
+  </div>
+  <div class="control">
+    <label for="overcommit">Overcommit vCPU/потік</label>
+    <input type="number" id="overcommit" class="num" value="2.5" step="0.5">
+    <span class="hint">рекомендовано: до 5 vCPU/фіз.ядро (Red Hat KVM), тут — від потоків</span>
+  </div>
+  <div class="control">
+    <label for="usableStorage">Usable storage (факт), ГБ</label>
+    <input type="number" id="usableStorage" class="num" value="2800" step="50">
+    <span class="hint">реальна цифра з Ceph, не з теоретичної формули</span>
+  </div>
+  <div class="control">
+    <label for="gpusplit">Поділ GPU (N часток)</label>
+    <input type="number" id="gpusplit" class="num" value="4" step="1">
+    <span class="hint">24 ГБ Tesla P40 ÷ N</span>
+  </div>
+</div>
+
+<section>
+  <h2>Комплектуючі кластера</h2>
+  <p class="section-hint">Базові ціни/амортизація/споживання по одиниці комплектуючого. Використовуються нижче для розрахунку вартості вузлів.</p>
+  <table>
+    <thead>
+      <tr><th>Компонент</th><th>Собівартість, грн/шт</th><th>Амортизація, міс</th><th>Потужність, Вт</th><th>Потоків (vCPU max)</th></tr>
+    </thead>
+    <tbody id="tbl-parts"></tbody>
+  </table>
+  <div class="legend">
+    <span><span class="tag invoice">рахунок</span> реальна цифра, яку ти дав</span>
+    <span><span class="tag estimate">оцінка</span> орієнтовне значення, підлягає перевірці</span>
+    <span><span class="tag missing">потрібні дані</span> собівартість невідома, стоїть 0</span>
+  </div>
+</section>
+
+<section>
+  <h2>Параметри вузлів</h2>
+  <p class="section-hint">Скільки комплектуючих на вузол і скільки вузлів у кластері (усі 4 сервери однакові — і CPU, і SSD, і RAM разом).</p>
+  <div class="controls" style="margin-bottom:0;">
+    <div class="control"><label for="clusterNodes">Вузлів у кластері</label><input type="number" id="clusterNodes" class="num" value="4" step="1"></div>
+    <div class="control"><label for="cpuPerNode">CPU на вузол</label><input type="number" id="cpuPerNode" class="num" value="2" step="1"></div>
+    <div class="control"><label for="ssdPerNode">SSD на вузол</label><input type="number" id="ssdPerNode" class="num" value="4" step="1"></div>
+    <div class="control"><label for="ssdSizeGb">Розмір SSD, ГБ</label><input type="number" id="ssdSizeGb" class="num" value="800" step="10"></div>
+    <div class="control"><label for="ramPerNode">RAM/вузол, ГБ</label><input type="number" id="ramPerNode" class="num" value="192" step="16"></div>
+    <div class="control"><label for="ramCostPerNode">Вартість RAM/вузол, грн</label><input type="number" id="ramCostPerNode" class="num" value="15000" step="500"></div>
+    <span class="hint" style="align-self:center;max-width:170px;">6×32ГБ DDR3 ×2500грн = 15000грн</span>
+    <div class="control"><label for="ramAmort">Амортизація RAM, міс</label><input type="number" id="ramAmort" class="num" value="24" step="1"></div>
+    <div class="control"><label for="baseWatts">База шасі, Вт (idle)</label><input type="number" id="baseWatts" class="num" value="60" step="5"></div>
+  </div>
+</section>
+
+<section>
+  <h2>Собівартість вузлів і питомого ресурсу</h2>
+  <p class="section-hint">Рахується наживо з розділів вище.</p>
+  <div class="stat-grid" id="node-stats"></div>
+  <div class="stat-grid" id="unit-stats" style="margin-top:14px;"></div>
+</section>
+
+<section>
+  <h2>Поточні тарифи Astra Cloud <span class="amort-badge">cloud.astra.in.ua/vps</span></h2>
+  <p class="section-hint">Специфікації — з сайту. Floor і маржа рахуються з питомої собівартості вище.</p>
+  <table>
+    <thead>
+      <tr><th>Тариф</th><th>vCPU</th><th>RAM, ГБ</th><th>Диск, ГБ</th><th>Floor, грн/міс</th><th>Рекомендована ціна</th><th>Поточна ціна, грн</th><th>Маржа, %</th><th>Δ до цільової маржі</th></tr>
+    </thead>
+    <tbody id="tbl-tariffs"></tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Пропоновані нові тарифи</h2>
+  <p class="section-hint">Заповнюють розриви в лінійці — між Standart і Premium, і зверху над Premium. Ціна — floor + цільова маржа.</p>
+  <table>
+    <thead>
+      <tr><th>Тариф</th><th>vCPU</th><th>RAM, ГБ</th><th>Диск, ГБ</th><th>Floor, грн/міс</th><th>Пропонована ціна</th></tr>
+    </thead>
+    <tbody id="tbl-new-tariffs"></tbody>
+  </table>
+</section>
+
+<section>
+  <h2>GPU-тариф — Tesla P40 24 ГБ, поділ на N часток</h2>
+  <p class="section-hint">N керується контролом «Поділ GPU» вгорі. Кожна частка = 24/N ГБ VRAM + пакет vCPU/RAM/диск.</p>
+  <div class="controls" style="margin-bottom:14px;">
+    <div class="control"><label for="gpuVcpu">vCPU в пакеті</label><input type="number" id="gpuVcpu" class="num" value="4" step="1"></div>
+    <div class="control"><label for="gpuRam">RAM в пакеті, ГБ</label><input type="number" id="gpuRam" class="num" value="16" step="1"></div>
+    <div class="control"><label for="gpuDisk">Диск в пакеті, ГБ</label><input type="number" id="gpuDisk" class="num" value="100" step="10"></div>
+  </div>
+  <table>
+    <thead>
+      <tr><th>Частка GPU</th><th>VRAM, ГБ</th><th>vCPU</th><th>RAM, ГБ</th><th>Диск, ГБ</th><th>Floor, грн/міс</th><th>Пропонована ціна</th></tr>
+    </thead>
+    <tbody id="tbl-gpu"></tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Конкуренти — довідково (не редагується)</h2>
+  <p class="section-hint">Витягнуто з публічних тарифів, для орієнтиру. Ціни — станом на липень 2026.</p>
+  <table>
+    <thead><tr><th>Провайдер</th><th>Тариф</th><th>vCPU</th><th>RAM, ГБ</th><th>Диск, ГБ</th><th>Ціна, грн/міс</th></tr></thead>
+    <tbody>
+      <tr><td class="name-cell">Astra Cloud</td><td>Micro</td><td>2</td><td>4</td><td>64</td><td class="computed mono">375</td></tr>
+      <tr><td class="name-cell">UAhosting</td><td>UAX-1</td><td>2</td><td>4</td><td>64 SSD</td><td class="computed mono">550</td></tr>
+      <tr><td class="name-cell">UAhosting</td><td>CX-23</td><td>2</td><td>4</td><td>40 SSD</td><td class="computed mono">480</td></tr>
+      <tr><td class="name-cell">Astra Cloud</td><td>Standart</td><td>4</td><td>8</td><td>128</td><td class="computed mono">750</td></tr>
+      <tr><td class="name-cell">UAhosting</td><td>UAX-2</td><td>4</td><td>8</td><td>128 SSD</td><td class="computed mono">970</td></tr>
+      <tr><td class="name-cell">Astra Cloud</td><td>Premium</td><td>8</td><td>16</td><td>256</td><td class="computed mono">940</td></tr>
+      <tr><td class="name-cell">UAhosting</td><td>UAX-3</td><td>8</td><td>16</td><td>256 SSD</td><td class="computed mono">1180</td></tr>
+      <tr><td class="name-cell">Adamant.ua</td><td>—</td><td>3</td><td>4</td><td>64 SSD</td><td class="computed mono">1005</td></tr>
+      <tr><td class="name-cell">ho.ua</td><td>economy</td><td>1</td><td>2</td><td>25 SSD</td><td class="computed mono">190</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <div class="notes">
+    <h3>Висновки і що можна розширити</h3>
+    <ol>
+      <li><b>Ціни зараз конкурентні або нижчі, ніж в UAhosting</b> на однакових специфікаціях (Micro/Standart/Premium дешевші за UAX-1/2/3). Це підтверджує висновок з попереднього аудиту Dedicated — по цінам ми не програємо, розрив в довірі й маркетингу.</li>
+      <li><b>Storage — вузьке місце по собівартості.</b> Всього 4 вузли × 4 SSD × 800ГБ = 12.8ТБ raw, а реальний usable — 2.8ТБ (overhead ×4.6 — типово для Ceph: replica + near-full margin + bluestore metadata). При такій щільності диск може «з'їдати» суттєву частину floor-ціни молодших тарифів (Micro/Standart) — дивись собівартість вище. Якщо floor виявляється близьким до поточної ціни або вище — це сигнал додати вузлів/дисків, перш ніж масштабувати продажі.</li>
+      <li><b>Розрив між Standart (4c/8GB) і Premium (8c/16GB)</b> — раптовий стрибок і по ресурсах, і по ціні. Проміжний тариф «VPS Business» (нижче) закриває цю прогалину.</li>
+      <li><b>Топова лінійка відсутня.</b> У конкурентів (UAhosting, uahosting VDS) є тарифи від 16 vCPU/32ГБ. «VPS Mega» нижче — орієнтир для клієнтів, що виростають з Premium і зараз йдуть до конкурентів або одразу на Dedicated.</li>
+      <li><b>GPU-тариф на Tesla P40 — унікальна пропозиція для укр. ринку</b> в цьому ціновому сегменті: жоден із перевірених конкурентів не пропонує GPU VPS. Поділ картки на N часток (зараз N=4 → 6ГБ VRAM/частка) дає нішевий продукт для inference/ML-задач без інвестицій в окрему картку на клієнта.</li>
+    </ol>
+  </div>
+</section>
+
+<script>
+function partRow(tbody,id,name,tag,cost,months,watts,threads){
+  const tr=document.createElement('tr');
+  tr.id=id;
+  if(tag==='missing') tr.className='missing-data';
+  tr.innerHTML=`
+    <td class="name-cell">${name}<span class="tag ${tag}">${tag==='invoice'?'рахунок':tag==='estimate'?'оцінка':'потрібні дані'}</span></td>
+    <td><input type="number" class="num p-cost" value="${cost}" step="10"></td>
+    <td><input type="number" class="num p-months" value="${months}" step="1"></td>
+    <td><input type="number" class="num p-watts" value="${watts}" step="1"></td>
+    <td>${threads!==null?`<input type="number" class="num p-threads" value="${threads}" step="1">`:'<span class="mono">—</span>'}</td>
+  `;
+  tbody.appendChild(tr);
+  return tr;
+}
+const tblParts=document.getElementById('tbl-parts');
+partRow(tblParts,'part-cpu','Intel Xeon E5-2470 v2<br><span style="font-weight:400;color:var(--muted);font-size:12px">10c/20t, 2.4GHz</span>','invoice',6000,18,95,20);
+partRow(tblParts,'part-chassis','HP ProLiant DL360 Gen8<br><span style="font-weight:400;color:var(--muted);font-size:12px">8-bay, спільне шасі compute/ceph</span>','invoice',16000,18,0,null);
+partRow(tblParts,'part-ssd','Intel DC S3500 SATA SSD<br><span style="font-weight:400;color:var(--muted);font-size:12px">800ГБ, для ceph OSD</span>','invoice',9700,24,4,null);
+partRow(tblParts,'part-gpu','Nvidia Tesla P40<br><span style="font-weight:400;color:var(--muted);font-size:12px">24ГБ VRAM, PCIe</span>','invoice',19900,15,250,null);
+
+function fmt(n){ return Math.round(n).toLocaleString('uk-UA'); }
+function fmt2(n){ return (Math.round(n*100)/100).toLocaleString('uk-UA'); }
+function num(id){ return parseFloat(document.getElementById(id).value)||0; }
+function part(id,cls){ return parseFloat(document.querySelector('#'+id+' .'+cls).value)||0; }
+
+let costPerVcpu=0, costPerRamGb=0, costPerStorageGb=0;
+
+function recalcAll(){
+  const rate=num('rate'), hours=num('hours'), pue=num('pue')||1, margin=num('margin');
+  const overcommit=num('overcommit')||1, usableStorageOverride=num('usableStorage'), gpuSplit=Math.max(1,num('gpusplit'));
+
+  const cpuCost=part('part-cpu','p-cost'), cpuAmort=part('part-cpu','p-months')||1, cpuWatts=part('part-cpu','p-watts'), cpuThreads=part('part-cpu','p-threads')||1;
+  const chassisCost=part('part-chassis','p-cost'), chassisAmort=part('part-chassis','p-months')||1;
+  const ssdCost=part('part-ssd','p-cost'), ssdAmort=part('part-ssd','p-months')||1, ssdWatts=part('part-ssd','p-watts');
+  const gpuCost=part('part-gpu','p-cost'), gpuAmort=part('part-gpu','p-months')||1, gpuWatts=part('part-gpu','p-watts');
+
+  const clusterNodes=num('clusterNodes')||1, cpuPerNode=num('cpuPerNode')||1;
+  const ssdPerNode=num('ssdPerNode');
+  const ssdSizeGb=num('ssdSizeGb'), ramPerNode=num('ramPerNode'), ramCostPerNode=num('ramCostPerNode'), ramAmort=num('ramAmort')||1;
+  const baseWatts=num('baseWatts');
+
+  function elecCost(watts){ return (watts/1000)*hours*pue*rate; }
+
+  // Converged node: same physical box sells both vCPU and storage GB.
+  // Chassis capex/watts split 50/50 between the CPU-role and SSD-role. RAM stays fully on the CPU-role (sold with VPS).
+  const computeShare = cpuCost*cpuPerNode/cpuAmort + chassisCost*0.5/chassisAmort;
+  const computeWatts = cpuWatts*cpuPerNode + baseWatts*0.5;
+  const computeElec = elecCost(computeWatts);
+  const computeFloorPerNode = computeShare + computeElec;
+
+  const ramShare = ramCostPerNode/ramAmort;
+
+  const threadsPerNode = cpuThreads*cpuPerNode;
+  const sellableVcpuPerNode = threadsPerNode*overcommit;
+  costPerVcpu = computeFloorPerNode/sellableVcpuPerNode;
+  costPerRamGb = ramPerNode>0 ? ramShare/ramPerNode : 0;
+
+  const storageShare = ssdCost*ssdPerNode/ssdAmort + chassisCost*0.5/chassisAmort;
+  const storageWatts = ssdWatts*ssdPerNode + baseWatts*0.5;
+  const storageElec = elecCost(storageWatts);
+  const storageFloorPerNode = storageShare + storageElec;
+
+  const totalStorageFloor = storageFloorPerNode*clusterNodes;
+  const rawStorageGb = ssdSizeGb*ssdPerNode*clusterNodes;
+  const usableStorageGb = usableStorageOverride>0 ? usableStorageOverride : rawStorageGb;
+  costPerStorageGb = usableStorageGb>0 ? totalStorageFloor/usableStorageGb : 0;
+  const impliedOverhead = usableStorageGb>0 ? rawStorageGb/usableStorageGb : 0;
+
+  const nodeFloor = computeFloorPerNode + ramShare + storageFloorPerNode;
+
+  // Node stat cards
+  const nodeStats=document.getElementById('node-stats');
+  nodeStats.innerHTML=`
+    <div class="stat-card"><div class="label">Вузлів у кластері</div><div class="value">${fmt(clusterNodes)}</div><div class="sub">по ${fmt(cpuPerNode)} CPU + ${fmt(ssdPerNode)} SSD кожен (converged)</div></div>
+    <div class="stat-card"><div class="label">Вузол, floor (CPU-роль)</div><div class="value">${fmt(computeFloorPerNode)} грн/міс</div><div class="sub">капекс ${fmt(computeShare)} + е/е ${fmt(computeElec)}</div></div>
+    <div class="stat-card"><div class="label">Вузол, floor (SSD-роль)</div><div class="value">${fmt(storageFloorPerNode)} грн/міс</div><div class="sub">капекс ${fmt(storageShare)} + е/е ${fmt(storageElec)}</div></div>
+    <div class="stat-card"><div class="label">Разом floor кластера</div><div class="value">${fmt(nodeFloor*clusterNodes)} грн/міс</div><div class="sub">${fmt(clusterNodes)} вузли × ${fmt(nodeFloor)} грн (з RAM)</div></div>
+  `;
+  const unitStats=document.getElementById('unit-stats');
+  unitStats.innerHTML=`
+    <div class="stat-card"><div class="label">Собівартість vCPU</div><div class="value">${fmt2(costPerVcpu)} грн/міс</div><div class="sub">${fmt(sellableVcpuPerNode)} vCPU продаваних на вузол (overcommit ×${overcommit})</div></div>
+    <div class="stat-card"><div class="label">Собівартість 1ГБ RAM</div><div class="value">${fmt2(costPerRamGb)} грн/міс</div><div class="sub">${ramCostPerNode===0?'⚠ вартість RAM не задана':fmt(ramPerNode)+' ГБ/вузол'}</div></div>
+    <div class="stat-card"><div class="label">Собівартість 1ГБ storage</div><div class="value">${fmt2(costPerStorageGb)} грн/міс</div><div class="sub">${fmt(usableStorageGb)} ГБ usable (факт) з ${fmt(rawStorageGb)} ГБ raw — overhead ×${fmt2(impliedOverhead)}</div></div>
+  `;
+
+  renderTariffs();
+  renderNewTariffs();
+  renderGpu(gpuSplit);
+}
+
+function floorFor(vcpu,ram,disk){
+  return vcpu*costPerVcpu + ram*costPerRamGb + disk*costPerStorageGb;
+}
+
+function tariffRow(vcpu,ram,disk){
+  const floor=floorFor(vcpu,ram,disk);
+  const price=floor/(1-num('margin')/100);
+  return {floor,price};
+}
+
+const currentTariffs=[
+  {name:'VPS Nano',vcpu:1,ram:1,disk:8,price:150},
+  {name:'VPS Micro',vcpu:2,ram:4,disk:64,price:375},
+  {name:'VPS Standart',vcpu:4,ram:8,disk:128,price:750},
+  {name:'VPS Premium',vcpu:8,ram:16,disk:256,price:940},
+];
+
+function renderTariffs(){
+  const tbody=document.getElementById('tbl-tariffs');
+  tbody.innerHTML='';
+  const targetMarginPct=num('margin');
+  currentTariffs.forEach(t=>{
+    const floor=floorFor(t.vcpu,t.ram,t.disk);
+    const recPrice=floor/(1-targetMarginPct/100);
+    const margin=t.price>0 ? (1-floor/t.price)*100 : 0;
+    const tr=document.createElement('tr');
+    if(margin<targetMarginPct) tr.className='missing-data';
+    tr.innerHTML=`
+      <td class="name-cell">${t.name}</td>
+      <td class="mono">${t.vcpu}</td>
+      <td class="mono">${t.ram}</td>
+      <td class="mono">${t.disk}</td>
+      <td class="computed floor mono">${fmt(floor)}</td>
+      <td class="computed price mono">${fmt(recPrice)}</td>
+      <td class="mono">${fmt(t.price)}</td>
+      <td class="computed margin ${margin<targetMarginPct?'low':'ok'} mono">${fmt2(margin)}%</td>
+      <td class="computed delta ${margin<targetMarginPct?'up':'down'} mono">${margin<targetMarginPct?'потрібно підняти ціну':'запас маржі є'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+const newTariffs=[
+  {name:'VPS Business',vcpu:6,ram:12,disk:192},
+  {name:'VPS Mega',vcpu:16,ram:32,disk:512},
+];
+
+function renderNewTariffs(){
+  const tbody=document.getElementById('tbl-new-tariffs');
+  tbody.innerHTML='';
+  newTariffs.forEach(t=>{
+    const {floor,price}=tariffRow(t.vcpu,t.ram,t.disk);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td class="name-cell">${t.name}<span class="tag new">новий</span></td>
+      <td class="mono">${t.vcpu}</td>
+      <td class="mono">${t.ram}</td>
+      <td class="mono">${t.disk}</td>
+      <td class="computed floor mono">${fmt(floor)}</td>
+      <td class="computed price mono">${fmt(price)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderGpu(N){
+  const gpuCost=part('part-gpu','p-cost'), gpuAmort=part('part-gpu','p-months')||1, gpuWatts=part('part-gpu','p-watts');
+  const rate=num('rate'), hours=num('hours'), pue=num('pue')||1;
+  const gpuElecTotal=(gpuWatts/1000)*hours*pue*rate;
+  const gpuAmortMonthly=gpuCost/gpuAmort;
+  const vram=24/N;
+  const bundleVcpu=num('gpuVcpu'), bundleRam=num('gpuRam'), bundleDisk=num('gpuDisk');
+  const gpuFloorSlice=(gpuAmortMonthly+gpuElecTotal)/N + floorFor(bundleVcpu,bundleRam,bundleDisk);
+  const gpuPriceSlice=gpuFloorSlice/(1-num('margin')/100);
+
+  const tbody=document.getElementById('tbl-gpu');
+  tbody.innerHTML='';
+  for(let i=1;i<=N;i++){
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td class="name-cell">GPU-частка ${i}/${N}</td>
+      <td class="mono">${fmt2(vram)}</td>
+      <td class="mono">${bundleVcpu}</td>
+      <td class="mono">${bundleRam}</td>
+      <td class="mono">${bundleDisk}</td>
+      <td class="computed floor mono">${fmt(gpuFloorSlice)}</td>
+      <td class="computed price mono">${fmt(gpuPriceSlice)}</td>
+    `;
+    tbody.appendChild(tr);
+  }
+}
+
+document.addEventListener('input',(e)=>{
+  if(e.target.matches('input')) recalcAll();
+});
+document.addEventListener('change',(e)=>{
+  if(e.target.matches('input')) recalcAll();
+});
+
+recalcAll();
+</script>
+</body>
+</html>

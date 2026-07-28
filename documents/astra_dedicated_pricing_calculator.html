@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Astra Cloud — калькулятор собівартості Dedicated</title>
+<style>
+  :root{
+    --primary:#1E4FD8;
+    --primary-50:#EEF3FE;
+    --primary-100:#D9E4FC;
+    --primary-700:#1840AE;
+    --ink:#0B0E14;
+    --body:#545B6B;
+    --muted:#7A8194;
+    --canvas:#FFFFFF;
+    --surface-soft:#F6F8FB;
+    --surface-strong:#EBEFF5;
+    --hairline:#DEE2EA;
+    --hairline-soft:#EBEFF5;
+    --success:#0E9F6E;
+    --success-bg:#E6F7F0;
+    --success-text:#067A57;
+    --danger:#DC2626;
+    --danger-bg:#FDEBEB;
+    --danger-text:#B91C1C;
+    --warning:#D97706;
+    --warning-bg:#FDF3E3;
+    --warning-text:#92500A;
+    --radius-md:10px;
+    --radius-lg:14px;
+    --radius-pill:100px;
+    --shadow:0 4px 16px rgba(11,14,26,0.06);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,system-ui,'Segoe UI',Roboto,Arial,sans-serif;
+    color:var(--ink);
+    background:var(--canvas);
+    padding:24px;
+    line-height:1.5;
+  }
+  .mono{
+    font-family:'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace;
+    font-variant-numeric:tabular-nums;
+  }
+  h1{
+    font-size:28px;
+    font-weight:600;
+    letter-spacing:-0.3px;
+    margin:0 0 4px;
+  }
+  .subtitle{
+    color:var(--body);
+    font-size:14px;
+    margin:0 0 24px;
+    max-width:760px;
+  }
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:16px;
+    background:var(--surface-soft);
+    border:1px solid var(--hairline);
+    border-radius:var(--radius-lg);
+    padding:20px 24px;
+    margin-bottom:28px;
+  }
+  .control{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    min-width:150px;
+  }
+  .control label{
+    font-size:12px;
+    font-weight:600;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.3px;
+  }
+  .control input{
+    font-family:'JetBrains Mono',ui-monospace,monospace;
+    font-size:15px;
+    font-weight:500;
+    padding:8px 10px;
+    border:1px solid var(--hairline);
+    border-radius:var(--radius-md);
+    background:var(--canvas);
+    width:120px;
+  }
+  .control input:focus{
+    outline:none;
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px var(--primary-100);
+  }
+  .control .hint{
+    font-size:11px;
+    color:var(--muted);
+  }
+  section{ margin-bottom:36px; }
+  h2{
+    font-size:18px;
+    font-weight:600;
+    margin:0 0 4px;
+  }
+  .section-hint{
+    font-size:13px;
+    color:var(--muted);
+    margin:0 0 14px;
+  }
+  .amort-badge{
+    display:inline-block;
+    font-size:11px;
+    font-weight:600;
+    padding:2px 8px;
+    border-radius:var(--radius-pill);
+    background:var(--primary-50);
+    color:var(--primary-700);
+    margin-left:8px;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+  thead th{
+    text-align:left;
+    font-size:11px;
+    font-weight:600;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.3px;
+    padding:8px 10px;
+    border-bottom:1px solid var(--hairline);
+    white-space:nowrap;
+  }
+  tbody td{
+    padding:8px 10px;
+    border-bottom:1px solid var(--hairline-soft);
+    vertical-align:middle;
+  }
+  tbody tr.missing-data{ background:var(--warning-bg); }
+  .name-cell{
+    font-weight:600;
+    min-width:190px;
+  }
+  .tag{
+    display:inline-block;
+    font-size:10px;
+    font-weight:600;
+    padding:1px 6px;
+    border-radius:var(--radius-pill);
+    margin-left:6px;
+    vertical-align:middle;
+  }
+  .tag.invoice{ background:var(--success-bg); color:var(--success-text); }
+  .tag.estimate{ background:var(--surface-strong); color:var(--body); }
+  .tag.missing{ background:var(--warning-bg); color:var(--warning-text); border:1px solid var(--warning); }
+  input.num{
+    font-family:'JetBrains Mono',ui-monospace,monospace;
+    font-size:13px;
+    font-weight:500;
+    width:88px;
+    padding:6px 8px;
+    border:1px solid var(--hairline);
+    border-radius:var(--radius-md);
+    background:var(--canvas);
+    text-align:right;
+  }
+  input.num:focus{
+    outline:none;
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px var(--primary-100);
+  }
+  td.computed{
+    font-family:'JetBrains Mono',ui-monospace,monospace;
+    font-weight:600;
+    text-align:right;
+    white-space:nowrap;
+  }
+  td.computed.floor{ color:var(--ink); }
+  td.computed.price{ color:var(--primary-700); }
+  td.computed.delta.up{ color:var(--danger-text); }
+  td.computed.delta.down{ color:var(--success-text); }
+  .examples{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:16px;
+  }
+  .example-card{
+    border:1px solid var(--hairline);
+    border-radius:var(--radius-lg);
+    padding:20px;
+    background:var(--canvas);
+  }
+  .example-card h3{
+    font-size:15px;
+    font-weight:600;
+    margin:0 0 12px;
+  }
+  .example-row{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    padding:4px 0;
+    color:var(--body);
+  }
+  .example-row.total{
+    border-top:1px solid var(--hairline);
+    margin-top:8px;
+    padding-top:10px;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .example-row .val{ font-family:'JetBrains Mono',ui-monospace,monospace; }
+  .example-price{
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px solid var(--hairline);
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+  .example-price .label{ font-size:13px; color:var(--body); }
+  .example-price .value{
+    font-family:'JetBrains Mono',ui-monospace,monospace;
+    font-size:22px;
+    font-weight:600;
+    color:var(--primary-700);
+  }
+  .legend{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:8px;
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .legend span{ display:flex; align-items:center; gap:6px; }
+</style>
+</head>
+<body>
+
+<h1>Калькулятор собівартості — Dedicated (Astra Cloud)</h1>
+<p class="subtitle">Всі поля з рамкою редаговані. Зміна будь-якого числа перераховує електроенергію, амортизацію, собівартість і пропоновану ціну одразу для всіх рядків.</p>
+
+<div class="controls">
+  <div class="control">
+    <label for="rate">Тариф е/е, грн/кВт·год</label>
+    <input type="number" id="rate" class="num" value="11" step="0.1">
+  </div>
+  <div class="control">
+    <label for="hours">Годин/місяць</label>
+    <input type="number" id="hours" class="num" value="730" step="1">
+    <span class="hint">365×24/12, сервер працює 24/7</span>
+  </div>
+  <div class="control">
+    <label for="pue">Коефіцієнт ЦОД (PUE)</label>
+    <input type="number" id="pue" class="num" value="1.0" step="0.05">
+    <span class="hint">1.0 = без надбавки на охолодження</span>
+  </div>
+  <div class="control">
+    <label for="margin">Цільова маржа, %</label>
+    <input type="number" id="margin" class="num" value="45" step="1">
+    <span class="hint">поверх floor-собівартості</span>
+  </div>
+</div>
+
+<section>
+  <h2>Базові платформи (шасі + плата + CPU)<span class="amort-badge">амортизація 24–30 міс</span></h2>
+  <p class="section-hint">Собівартість Silver/Gold — реальні цифри (шасі R640 за поточною ринковою ціною закупівлі + вартість CPU). Pentium/Platinum/i9/R740 — дані відсутні, поставлено 0, позначено жовтим.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Платформа</th>
+        <th>Собівартість, грн</th>
+        <th>Амортизація, міс</th>
+        <th>Потужність, Вт</th>
+        <th>Е/е, грн/міс</th>
+        <th>Floor, грн/міс</th>
+        <th>Пропонована ціна</th>
+        <th>Поточна ціна, грн</th>
+        <th>Δ до поточної</th>
+      </tr>
+    </thead>
+    <tbody id="tbl-platforms"></tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Комплектуючі</h2>
+  <p class="section-hint">Групи мають різні дефолтні терміни амортизації — редагуються незалежно по кожному рядку.</p>
+
+  <h3 style="font-size:14px;margin:18px 0 6px;">RAM DDR4 <span class="amort-badge">18–24 міс</span></h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Компонент</th><th>Собівартість, грн</th><th>Амортизація, міс</th><th>Потужність, Вт</th>
+        <th>Е/е, грн/міс</th><th>Floor, грн/міс</th><th>Пропонована ціна</th><th>Поточна ціна, грн</th><th>Δ до поточної</th>
+      </tr>
+    </thead>
+    <tbody id="tbl-ram"></tbody>
+  </table>
+
+  <h3 style="font-size:14px;margin:18px 0 6px;">Enterprise SSD <span class="amort-badge">20–24 міс</span></h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Компонент</th><th>Собівартість, грн</th><th>Амортизація, міс</th><th>Потужність, Вт</th>
+        <th>Е/е, грн/міс</th><th>Floor, грн/міс</th><th>Пропонована ціна</th><th>Поточна ціна, грн</th><th>Δ до поточної</th>
+      </tr>
+    </thead>
+    <tbody id="tbl-ssd"></tbody>
+  </table>
+
+  <h3 style="font-size:14px;margin:18px 0 6px;">HDD <span class="amort-badge">18–24 міс</span></h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Компонент</th><th>Собівартість, грн</th><th>Амортизація, міс</th><th>Потужність, Вт</th>
+        <th>Е/е, грн/міс</th><th>Floor, грн/міс</th><th>Пропонована ціна</th><th>Поточна ціна, грн</th><th>Δ до поточної</th>
+      </tr>
+    </thead>
+    <tbody id="tbl-hdd"></tbody>
+  </table>
+
+  <h3 style="font-size:14px;margin:18px 0 6px;">GPU <span class="amort-badge">12–18 міс</span></h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Компонент</th><th>Собівартість, грн</th><th>Амортизація, міс</th><th>Потужність, Вт</th>
+        <th>Е/е, грн/міс</th><th>Floor, грн/міс</th><th>Пропонована ціна</th><th>Поточна ціна, грн</th><th>Δ до поточної</th>
+      </tr>
+    </thead>
+    <tbody id="tbl-gpu"></tbody>
+  </table>
+
+  <h3 style="font-size:14px;margin:18px 0 6px;">Мережеві карти / RAID-контролери <span class="amort-badge">24 міс</span></h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Компонент</th><th>Собівартість, грн</th><th>Амортизація, міс</th><th>Потужність, Вт</th>
+        <th>Е/е, грн/міс</th><th>Floor, грн/міс</th><th>Пропонована ціна</th><th>Поточна ціна, грн</th><th>Δ до поточної</th>
+      </tr>
+    </thead>
+    <tbody id="tbl-net"></tbody>
+  </table>
+
+  <div class="legend">
+    <span><span class="tag invoice">рахунок</span> реальна цифра з закупівлі</span>
+    <span><span class="tag estimate">оцінка</span> орієнтовне значення, підлягає перевірці</span>
+    <span><span class="tag missing">потрібні дані</span> собівартість невідома, стоїть 0</span>
+  </div>
+</section>
+
+<section>
+  <h2>Приклади повних конфігурацій</h2>
+  <p class="section-hint">Рахується наживо з рядків вище (Gold Server + RAM + SSD, GPU-сервер тощо).</p>
+  <div class="examples" id="examples"></div>
+</section>
+
+<script>
+function row(tbody, id, name, tag, cost, months, watts, currentPrice, missing){
+  const tr = document.createElement('tr');
+  tr.id = id;
+  if(missing) tr.className = 'missing-data';
+  tr.innerHTML = `
+    <td class="name-cell">${name}<span class="tag ${tag}">${tag==='invoice'?'рахунок':tag==='estimate'?'оцінка':'потрібні дані'}</span></td>
+    <td><input type="number" class="num cost" value="${cost}" step="10"></td>
+    <td><input type="number" class="num months" value="${months}" step="1"></td>
+    <td><input type="number" class="num watts" value="${watts}" step="1"></td>
+    <td class="computed elec mono">—</td>
+    <td class="computed floor mono">—</td>
+    <td class="computed price mono">—</td>
+    <td><input type="number" class="num current" value="${currentPrice}" step="1"></td>
+    <td class="computed delta mono">—</td>
+  `;
+  tbody.appendChild(tr);
+  return tr;
+}
+
+// ---- Платформи ----
+const tblPlatforms = document.getElementById('tbl-platforms');
+row(tblPlatforms,'row-pentium','Pentium Server<br><span style="font-weight:400;color:var(--muted);font-size:12px">G6405, 2c/2t</span>','missing',0,27,100,2679,true);
+row(tblPlatforms,'row-silver','Silver Server<br><span style="font-weight:400;color:var(--muted);font-size:12px">R640 + 2×Xeon Silver 4110</span>','invoice',36550,27,190,4500,false);
+row(tblPlatforms,'row-gold','Gold Server<br><span style="font-weight:400;color:var(--muted);font-size:12px">R640 + 2×Xeon Gold 6126</span>','invoice',40750,27,270,5500,false);
+row(tblPlatforms,'row-platinum','Platinum Server<br><span style="font-weight:400;color:var(--muted);font-size:12px">2×Xeon Platinum 8173M</span>','missing',0,27,380,7000,true);
+row(tblPlatforms,'row-i9','i9 Server<br><span style="font-weight:400;color:var(--muted);font-size:12px">i9-13900K</span>','missing',0,27,220,6699,true);
+row(tblPlatforms,'row-r740-8','R740 8-bay <em style="font-style:normal;color:var(--muted);font-size:11px">(новий тариф)</em>','estimate',45150,27,280,0,false);
+row(tblPlatforms,'row-r740-16','R740 16-bay <em style="font-style:normal;color:var(--muted);font-size:11px">(новий тариф)</em>','estimate',49150,27,300,0,false);
+
+// ---- RAM ----
+const tblRam = document.getElementById('tbl-ram');
+row(tblRam,'row-ram2133','RAM 32GB DDR4-2133','invoice',6800,21,5,194,false);
+row(tblRam,'row-ram2666','RAM 32GB DDR4-2666','invoice',8500,21,5,194,false);
+
+// ---- SSD ----
+const tblSsd = document.getElementById('tbl-ssd');
+row(tblSsd,'row-ssd400','SAS SSD 400GB (Toshiba)','invoice',4500,22,7,69,false);
+row(tblSsd,'row-ssd192','SAS SSD 1.92TB (Samsung)','invoice',25621,22,8,330,false);
+
+// ---- HDD ----
+const tblHdd = document.getElementById('tbl-hdd');
+row(tblHdd,'row-hdd18','SAS HDD 1.8TB','missing',0,21,9,91,true);
+
+// ---- GPU ----
+const tblGpu = document.getElementById('tbl-gpu');
+row(tblGpu,'row-gpu','Nvidia Tesla P40 PCIe','invoice',19900,15,250,0,false);
+
+// ---- Мережа/RAID ----
+const tblNet = document.getElementById('tbl-net');
+row(tblNet,'row-net','Мережева карта / RAID-контролер','missing',0,24,12,0,true);
+
+function recalcAll(){
+  const rate = parseFloat(document.getElementById('rate').value)||0;
+  const hours = parseFloat(document.getElementById('hours').value)||0;
+  const pue = parseFloat(document.getElementById('pue').value)||1;
+  const margin = parseFloat(document.getElementById('margin').value)||0;
+
+  document.querySelectorAll('tbody tr[id^="row-"]').forEach(tr=>{
+    const cost = parseFloat(tr.querySelector('.cost').value)||0;
+    const months = parseFloat(tr.querySelector('.months').value)||0;
+    const watts = parseFloat(tr.querySelector('.watts').value)||0;
+    const current = parseFloat(tr.querySelector('.current').value)||0;
+
+    const kwh = (watts/1000) * hours * pue;
+    const elec = kwh * rate;
+    const amort = months>0 ? cost/months : 0;
+    const floor = amort + elec;
+    const price = margin<100 ? floor/(1-margin/100) : floor;
+    const delta = price - current;
+
+    tr.dataset.floor = floor;
+    tr.dataset.price = price;
+
+    tr.querySelector('.elec').textContent = fmt(elec);
+    tr.querySelector('.floor').textContent = fmt(floor);
+    tr.querySelector('.price').textContent = fmt(price);
+    const deltaCell = tr.querySelector('.delta');
+    deltaCell.textContent = (delta>=0?'+':'') + fmt(delta);
+    deltaCell.classList.remove('up','down');
+    deltaCell.classList.add(delta>=0?'up':'down');
+  });
+
+  updateExamples();
+}
+
+function fmt(n){
+  return Math.round(n).toLocaleString('uk-UA');
+}
+
+function getRow(id){
+  const tr = document.getElementById(id);
+  return { floor: parseFloat(tr.dataset.floor)||0, price: parseFloat(tr.dataset.price)||0 };
+}
+
+function updateExamples(){
+  const gold = getRow('row-gold');
+  const ram32 = getRow('row-ram2133');
+  const ram128 = { floor: ram32.floor*4, price: ram32.price*4 };
+  const ssd400 = getRow('row-ssd400');
+  const ssd192x2 = { floor: getRow('row-ssd192').floor*2, price: getRow('row-ssd192').price*2 };
+  const gpu = getRow('row-gpu');
+  const ram64 = { floor: ram32.floor*2, price: ram32.price*2 };
+
+  const examples = [
+    {
+      title: 'Gold Server + 32GB RAM + 1×400GB SSD',
+      parts: [
+        ['Gold Server (платформа)', gold],
+        ['RAM 32GB DDR4-2133', ram32],
+        ['SSD SAS 400GB ×1', ssd400],
+      ]
+    },
+    {
+      title: 'Gold Server + 128GB RAM + 2×1.92TB SSD',
+      parts: [
+        ['Gold Server (платформа)', gold],
+        ['RAM 128GB (4×32GB)', ram128],
+        ['SSD SAS 1.92TB ×2', ssd192x2],
+      ]
+    },
+    {
+      title: 'GPU Server: Gold + Tesla P40 + 64GB RAM',
+      parts: [
+        ['Gold Server (платформа)', gold],
+        ['Nvidia Tesla P40', gpu],
+        ['RAM 64GB (2×32GB)', ram64],
+      ]
+    }
+  ];
+
+  const container = document.getElementById('examples');
+  container.innerHTML = '';
+  examples.forEach(ex=>{
+    const floorSum = ex.parts.reduce((s,p)=>s+p[1].floor,0);
+    const priceSum = ex.parts.reduce((s,p)=>s+p[1].price,0);
+    const card = document.createElement('div');
+    card.className = 'example-card';
+    let rowsHtml = ex.parts.map(p=>`<div class="example-row"><span>${p[0]}</span><span class="val">${fmt(p[1].floor)} грн</span></div>`).join('');
+    card.innerHTML = `
+      <h3>${ex.title}</h3>
+      ${rowsHtml}
+      <div class="example-row total"><span>Floor-собівартість/міс</span><span class="val">${fmt(floorSum)} грн</span></div>
+      <div class="example-price">
+        <span class="label">Пропонована ціна</span>
+        <span class="value">${fmt(priceSum)} грн</span>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+document.querySelectorAll('input').forEach(inp=>{
+  inp.addEventListener('input', recalcAll);
+});
+
+recalcAll();
+</script>
+</body>
+</html>
