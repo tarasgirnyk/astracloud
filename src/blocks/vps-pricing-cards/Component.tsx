@@ -105,6 +105,9 @@ export async function VpsPricingCards({
             {sortedProducts.map((product) => {
               const isRecommended = Boolean(recommendedProductId) && product.id === recommendedProductId
               const labelColor = isRecommended ? 'var(--orange-600)' : 'var(--text-on-light-muted)'
+              // Mirrors HostBill's own out-of-stock flag — the card stays
+              // visible (price/specs are still useful) but can't be ordered.
+              const outOfStock = !product.inStock
 
               return (
                 <div
@@ -123,6 +126,7 @@ export async function VpsPricingCards({
                     border: isRecommended ? '2px solid var(--orange-600)' : '1px solid var(--border-on-light)',
                     boxShadow: isRecommended ? '0 16px 44px rgba(255,112,22,0.3)' : 'var(--shadow-card)',
                     transform: isRecommended ? 'translateY(-16px)' : undefined,
+                    opacity: outOfStock ? 0.75 : undefined,
                   }}
                 >
                   {isRecommended && (
@@ -158,6 +162,24 @@ export async function VpsPricingCards({
                   >
                     {product.name}
                   </div>
+
+                  {outOfStock && (
+                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: -6, marginBottom: 14 }}>
+                      <span
+                        style={{
+                          font: '600 12px/1 var(--font-body)',
+                          color: 'var(--text-on-light-muted)',
+                          background: 'var(--surface-light)',
+                          border: '1px solid var(--border-on-light)',
+                          borderRadius: 'var(--radius-pill)',
+                          padding: '6px 12px',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {t('outOfStock')}
+                      </span>
+                    </div>
+                  )}
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     <span
@@ -224,23 +246,44 @@ export async function VpsPricingCards({
                   </div>
 
                   <div style={{ marginTop: 'auto', width: '100%', display: 'flex', justifyContent: 'center' }}>
-                    <a
-                      href={categorySlug ? getHostbillOrderUrl(categorySlug, product.id) : '#'}
-                      style={{
-                        minWidth: 180,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        height: 44,
-                        borderRadius: 'var(--radius-pill)',
-                        font: 'var(--text-button)',
-                        backgroundImage: 'var(--gradient-orange)',
-                        color: 'var(--brand-primary-text)',
-                        textDecoration: 'none',
-                      }}
-                    >
-                      Замовити
-                    </a>
+                    {outOfStock ? (
+                      <span
+                        aria-disabled="true"
+                        style={{
+                          minWidth: 180,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          height: 44,
+                          borderRadius: 'var(--radius-pill)',
+                          font: 'var(--text-button)',
+                          background: 'var(--surface-light)',
+                          border: '1px solid var(--border-on-light)',
+                          color: 'var(--text-on-light-muted)',
+                          cursor: 'not-allowed',
+                        }}
+                      >
+                        {t('outOfStock')}
+                      </span>
+                    ) : (
+                      <a
+                        href={categorySlug ? getHostbillOrderUrl(categorySlug, product.id) : '#'}
+                        style={{
+                          minWidth: 180,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          height: 44,
+                          borderRadius: 'var(--radius-pill)',
+                          font: 'var(--text-button)',
+                          backgroundImage: 'var(--gradient-orange)',
+                          color: 'var(--brand-primary-text)',
+                          textDecoration: 'none',
+                        }}
+                      >
+                        Замовити
+                      </a>
+                    )}
                   </div>
                 </div>
               )

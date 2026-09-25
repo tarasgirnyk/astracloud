@@ -129,8 +129,10 @@ async function ServicePricingTable({ hostbillCategoryId }: { hostbillCategoryId:
         disk: disk.value,
         diskHref: disk.href,
         price: `${formatPrice(product.fromPrice.amount)} ${t('pricePeriod', { currency })}`,
-        order: t('orderCta'),
-        orderHref,
+        // Out of stock in HostBill → plain text instead of the order button
+        // (PricingTable renders a cell without an href as text).
+        order: product.inStock ? t('orderCta') : t('outOfStock'),
+        orderHref: product.inStock ? orderHref : undefined,
       }
     })
 

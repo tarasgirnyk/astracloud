@@ -60,7 +60,32 @@ describe('HostBill ProductCatalogProvider adapter', () => {
     const products = await provider.listProducts({ categoryId: '1' })
 
     expect(products).toEqual([
-      { id: '7', name: 'VPS Standart', fromPrice: { amount: 750, currency: 'UAH' }, specs: [] },
+      { id: '7', name: 'VPS Standart', fromPrice: { amount: 750, currency: 'UAH' }, specs: [], inStock: true },
+    ])
+  })
+
+  it('maps HostBill\'s stockStatus:"Out" flag to inStock:false, even when stock/qty are non-zero', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        jsonResponse({
+          success: true,
+          // Shape confirmed against the real instance: the storefront shows
+          // "out of stock" while stock/qty still carry numbers.
+          products: {
+            5: { id: '5', name: 'VPS Nano', m: '150.00', stock: '58', qty: '58', hasStock: true, stockStatus: 'Out' },
+            22: { id: '22', name: 'VPS Custom', m: '0.00', stock: '0', qty: '2', hasStock: false },
+          },
+        }),
+      ),
+    )
+
+    const provider = createHostbillProductCatalogProvider()
+    const products = await provider.listProducts({ categoryId: '1' })
+
+    expect(products.map((p) => [p.id, p.inStock])).toEqual([
+      ['5', false],
+      ['22', true],
     ])
   })
 

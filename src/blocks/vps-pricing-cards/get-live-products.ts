@@ -5,6 +5,10 @@ const REVALIDATE_SECONDS = 600
 // Admin-only convenience (category picker) — categories change far less
 // often than prices, and staleness here has no customer-facing cost.
 const CATEGORIES_REVALIDATE_SECONDS = 1800
+// Bump whenever ProductSummary's shape changes — the data cache survives
+// deploys, and an entry cached under the old shape (e.g. without `inStock`)
+// would otherwise be served until the TTL runs out.
+const PRODUCTS_CACHE_VERSION = 'v2'
 
 /**
  * Cache tag naming is shared with the manual revalidate route
@@ -31,7 +35,7 @@ export function hostbillCategoriesCacheTag(): string {
 export async function getCachedVpsProducts(hostbillCategoryId: string): Promise<ProductSummary[]> {
   const cached = unstable_cache(
     async (categoryId: string) => getProductCatalogProvider().listProducts({ categoryId, visible: true }),
-    ['vps-pricing-cards', hostbillCategoryId],
+    ['vps-pricing-cards', PRODUCTS_CACHE_VERSION, hostbillCategoryId],
     { revalidate: REVALIDATE_SECONDS, tags: [vpsPricingCacheTag(hostbillCategoryId)] },
   )
   return cached(hostbillCategoryId)
@@ -48,7 +52,7 @@ export async function getCachedVpsProducts(hostbillCategoryId: string): Promise<
 export async function getCachedProductsForAdmin(hostbillCategoryId: string): Promise<ProductSummary[]> {
   const cached = unstable_cache(
     async (categoryId: string) => getProductCatalogProvider().listProducts({ categoryId }),
-    ['vps-pricing-cards-admin', hostbillCategoryId],
+    ['vps-pricing-cards-admin', PRODUCTS_CACHE_VERSION, hostbillCategoryId],
     { revalidate: REVALIDATE_SECONDS, tags: [vpsPricingCacheTag(hostbillCategoryId)] },
   )
   return cached(hostbillCategoryId)

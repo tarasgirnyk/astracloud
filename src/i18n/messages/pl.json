@@ -11,6 +11,7 @@
     "recommendedBadge": "Zalecany",
     "orderCta": "Zamów",
     "selectCta": "Wybierz",
+    "outOfStock": "Brak w magazynie",
     "currencies": {
       "UAH": "UAH"
     },

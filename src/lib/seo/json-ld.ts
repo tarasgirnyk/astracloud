@@ -127,6 +127,7 @@ interface ServiceJsonLd {
     '@type': 'Offer'
     price: number
     priceCurrency: string
+    availability?: 'https://schema.org/InStock' | 'https://schema.org/OutOfStock'
   }
 }
 
@@ -148,7 +149,7 @@ export function serviceJsonLd({
   name: string
   description: string
   url: string
-  product?: Pick<ProductSummary, 'fromPrice'>
+  product?: Pick<ProductSummary, 'fromPrice'> & Partial<Pick<ProductSummary, 'inStock'>>
 }): ServiceJsonLd {
   const base: ServiceJsonLd = { '@context': 'https://schema.org', '@type': 'Service', name, description, url }
   if (!product) return base
@@ -158,6 +159,11 @@ export function serviceJsonLd({
       '@type': 'Offer',
       price: product.fromPrice.amount,
       priceCurrency: product.fromPrice.currency,
+      // Same out-of-stock flag the pricing cards show, so search results
+      // don't advertise a plan HostBill won't sell.
+      ...(product.inStock === undefined
+        ? {}
+        : { availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }),
     },
   }
 }

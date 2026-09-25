@@ -76,6 +76,16 @@ describe('serviceJsonLd', () => {
     })
   })
 
+  it('marks the offer OutOfStock when HostBill says the product is out of stock', () => {
+    const service = serviceJsonLd({
+      name: 'VPS',
+      description: 'VPS hosting',
+      url: 'http://localhost:3000/vps',
+      product: { fromPrice: { amount: 150, currency: 'UAH' }, inStock: false },
+    })
+    expect(service.offers?.availability).toBe('https://schema.org/OutOfStock')
+  })
+
   it('never fabricates a price when the product has none', () => {
     const service = serviceJsonLd({
       name: 'Colocation',

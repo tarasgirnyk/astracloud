@@ -18,6 +18,14 @@ interface HostbillProductRaw {
   description?: string
   /** "1" or "0" — whether this product is visible/active in HostBill. */
   visible?: string
+  /**
+   * Present only when stock control is enabled for the product
+   * (`hasStock: true`). Confirmed against the real instance: `"Out"` is set
+   * whenever HostBill's storefront shows the product as out of stock, even
+   * though `stock`/`qty` still hold non-zero numbers — so this flag, not the
+   * quantity, is the source of truth.
+   */
+  stockStatus?: string
 }
 
 interface HostbillGetProductsResponse {
@@ -49,6 +57,7 @@ function toProductSummary(raw: HostbillProductRaw): ProductSummary {
     // renders prices, not this connectivity-proving adapter.
     fromPrice: { amount, currency: 'UAH' },
     specs: parseHostbillDescription(raw.description),
+    inStock: raw.stockStatus !== 'Out',
   }
 }
 

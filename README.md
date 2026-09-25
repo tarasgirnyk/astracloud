@@ -28,7 +28,8 @@ Fill in `.env`:
 - `HOSTBILL_*` — **required** for the VPS page to show real tariffs (name/price/specs are 100% live — see "Live pricing" below) and for the two HostBill dropdowns in the admin (category picker, recommended-product picker); the site still runs without them, but `/vps` shows "Тарифи тимчасово недоступні" and those dropdowns come up empty
 - `REVALIDATE_SECRET` — any random string; only needed if you'll force-refresh the pricing cache from outside the admin (see "Live pricing" below) — the in-admin "Оновити ціни" button doesn't use it
 - `NEXT_PUBLIC_SITE_URL` — public base URL used for canonical/hreflang tags, `sitemap.xml`, and Open Graph `og:url` (see `specs/002-seo-foundations/`); leave as `http://localhost:3000` locally, set to `https://cloud.astra.in.ua` in production
-- `GOOGLE_SITE_VERIFICATION` / `NEXT_PUBLIC_GA_MEASUREMENT_ID` — Google Search Console verification token and GA4 measurement ID for the existing property on `cloud.astra.in.ua`; not secrets, but environment-specific — leave both empty locally, both are omitted from the page entirely when unset
+- `GOOGLE_SITE_VERIFICATION` / `NEXT_PUBLIC_GTM_ID` — Google Search Console verification token and the Google Tag Manager container ID (shared with the HostBill storefront; GA4 is configured inside the container, not loaded directly); not secrets, but environment-specific — leave both empty locally, both are omitted from the page entirely when unset
+- `NEXT_PUBLIC_HELPCRUNCH_ORGANIZATION` / `NEXT_PUBLIC_HELPCRUNCH_APP_ID` — HelpCrunch live-chat widget (same one as on the HostBill storefront); leave empty locally to avoid opening real chats, the widget is omitted when unset
 
 Then:
 
@@ -275,8 +276,12 @@ Fill in `.env` for production:
 - `NEXT_PUBLIC_SITE_URL=https://cloud.astra.in.ua` — required for correct
   canonical/hreflang/sitemap/Open Graph URLs in production (see
   `specs/002-seo-foundations/`)
-- `GOOGLE_SITE_VERIFICATION`, `NEXT_PUBLIC_GA_MEASUREMENT_ID` — the existing
-  Search Console/GA4 values already associated with `cloud.astra.in.ua`
+- `GOOGLE_SITE_VERIFICATION` — the existing Search Console value for
+  `cloud.astra.in.ua`; `NEXT_PUBLIC_GTM_ID=GTM-T2KQ3RR4` — the GTM container
+  shared with HostBill (GA4 `G-5N4NQPFLTY` lives inside it)
+- `NEXT_PUBLIC_HELPCRUNCH_ORGANIZATION=cloudastra`,
+  `NEXT_PUBLIC_HELPCRUNCH_APP_ID=df15a812-6cda-4523-b6a1-74b015a95a54` — HelpCrunch
+  live chat (the same widget is hard-coded in the HostBill theme's `header.shared.tpl`)
 
 ### 4. Install, migrate, build
 

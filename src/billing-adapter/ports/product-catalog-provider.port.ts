@@ -20,6 +20,13 @@ export interface ProductSummary {
   name: string
   fromPrice: { amount: number; currency: string }
   specs: ProductSpec[]
+  /**
+   * False when HostBill itself marks the product out of stock (the storefront
+   * shows "out of stock" and refuses the order) — the site must say the same
+   * rather than send a visitor to an order page that won't take their order.
+   * Products without stock control in HostBill are always in stock.
+   */
+  inStock: boolean
 }
 
 export interface ProductDetails extends ProductSummary {

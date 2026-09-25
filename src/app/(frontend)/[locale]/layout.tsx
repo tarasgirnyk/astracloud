@@ -26,6 +26,23 @@ import '@/components/tokens.css'
  */
 export const metadata: Metadata = {
   title: 'Astra Cloud',
+  // Sitewide, like `verification` below. favicon.ico sits at the public/
+  // root because browsers (and the Payload admin) request /favicon.ico
+  // directly; the PNG sizes live in public/favicons/.
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicons/favicon_16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicons/favicon_32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicons/favicon_96.png', sizes: '96x96', type: 'image/png' },
+      { url: '/favicons/favicon_apple_192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/favicons/favicon_apple_72.png', sizes: '72x72' },
+      { url: '/favicons/favicon_apple_144.png', sizes: '144x144' },
+      { url: '/favicons/favicon_180.png', sizes: '180x180' },
+    ],
+  },
   // Sitewide (not page-specific), so it belongs on the layout, not
   // build-metadata.ts — Next.js merges parent-layout metadata fields a
   // page's own generateMetadata doesn't set, so this still applies on every
@@ -84,21 +101,45 @@ export default async function LocaleLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
         />
-        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ? (
+        {/* Google Tag Manager — one container shared with the HostBill
+            storefront (cp.astra.in.ua), which loads the same GTM ID from its
+            theme's header.shared.tpl. GA4 and every other tag are configured
+            inside the container, never loaded directly here, or pageviews
+            would be counted twice. Omitted entirely when unset. */}
+        {process.env.NEXT_PUBLIC_GTM_ID ? (
           <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}
-              strategy="afterInteractive"
-            />
-            <Script id="ga4-init" strategy="afterInteractive">
+            <noscript>
+              <iframe
+                src={`https://www.googletagmanager.com/ns.html?id=${process.env.NEXT_PUBLIC_GTM_ID}`}
+                height="0"
+                width="0"
+                style={{ display: 'none', visibility: 'hidden' }}
+              />
+            </noscript>
+            <Script id="gtm-init" strategy="afterInteractive">
               {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}');
+                (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                })(window,document,'script','dataLayer','${process.env.NEXT_PUBLIC_GTM_ID}');
               `}
             </Script>
           </>
+        ) : null}
+        {/* HelpCrunch live chat — the same widget as on the HostBill storefront
+            (cp.astra.in.ua), so a visitor keeps one conversation across both
+            sites. Omitted entirely when unset, like GTM above. */}
+        {process.env.NEXT_PUBLIC_HELPCRUNCH_ORGANIZATION && process.env.NEXT_PUBLIC_HELPCRUNCH_APP_ID ? (
+          <Script id="helpcrunch-init" strategy="afterInteractive">
+            {`
+              window.helpcrunchSettings = {
+                organization: '${process.env.NEXT_PUBLIC_HELPCRUNCH_ORGANIZATION}',
+                appId: '${process.env.NEXT_PUBLIC_HELPCRUNCH_APP_ID}',
+              };
+              (function(w,d){var hS=w.helpcrunchSettings;if(!hS||!hS.organization){return;}var widgetSrc='https://embed.helpcrunch.com/sdk.js';w.HelpCrunch=function(){w.HelpCrunch.q.push(arguments)};w.HelpCrunch.q=[];function r(){if (d.querySelector('script[src="' + widgetSrc + '"')) { return; }var s=d.createElement('script');s.async=1;s.type='text/javascript';s.src=widgetSrc;(d.body||d.head).appendChild(s);}if(d.readyState === 'complete'||hS.loadImmediately){r();} else if(w.attachEvent){w.attachEvent('onload',r)}else{w.addEventListener('load',r,false)}})(window, document)
+            `}
+          </Script>
         ) : null}
         <NextIntlClientProvider locale={locale} messages={messages}>
           <style>{`
