@@ -24,6 +24,8 @@ import * as migration_20260724_115950_pages_faq_index_block from './20260724_115
 import * as migration_20260724_153900_faq_items_pages_relationship from './20260724_153900_faq_items_pages_relationship';
 import * as migration_20260724_142826_steps_block from './20260724_142826_steps_block';
 import * as migration_20260728_100850_add_seo_meta_fields from './20260728_100850_add_seo_meta_fields';
+import * as migration_20260929_074800_colocation_calculator from './20260929_074800_colocation_calculator';
+import * as migration_20260929_081409_fixed_colocation_installation_price from './20260929_081409_fixed_colocation_installation_price';
 
 export const migrations = [
   {
@@ -164,5 +166,15 @@ export const migrations = [
     up: migration_20260728_100850_add_seo_meta_fields.up,
     down: migration_20260728_100850_add_seo_meta_fields.down,
     name: '20260728_100850_add_seo_meta_fields',
+  },
+  {
+    up: migration_20260929_074800_colocation_calculator.up,
+    down: migration_20260929_074800_colocation_calculator.down,
+    name: '20260929_074800_colocation_calculator',
+  },
+  {
+    up: migration_20260929_081409_fixed_colocation_installation_price.up,
+    down: migration_20260929_081409_fixed_colocation_installation_price.down,
+    name: '20260929_081409_fixed_colocation_installation_price',
   },
 ];

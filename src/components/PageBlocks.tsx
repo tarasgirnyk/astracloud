@@ -11,6 +11,7 @@ import { Documents, type DocumentsBlockProps } from '@/blocks/documents/Componen
 import { Architecture, type ArchitectureBlockProps } from '@/blocks/architecture/Component'
 import { VpsPricingCards, type VpsPricingCardsBlockProps } from '@/blocks/vps-pricing-cards/Component'
 import { Steps, type StepsBlockProps } from '@/blocks/steps/Component'
+import { ColocationCalculator, type ColocationCalculatorBlockProps } from '@/blocks/colocation-calculator/Component'
 import { resolveHostbillHref } from '@/billing-adapter/adapters/hostbill/hostbill-storefront-url'
 
 export type PageBlock =
@@ -27,6 +28,7 @@ export type PageBlock =
   | ArchitectureBlockProps
   | VpsPricingCardsBlockProps
   | StepsBlockProps
+  | ColocationCalculatorBlockProps
 
 export function PageBlocks({ blocks }: { blocks: PageBlock[] }) {
   return (
@@ -59,6 +61,8 @@ export function PageBlocks({ blocks }: { blocks: PageBlock[] }) {
             return <VpsPricingCards key={index} {...block} />
           case 'steps':
             return <Steps key={index} {...block} />
+          case 'colocation-calculator':
+            return <ColocationCalculator key={index} {...block} />
           default:
             return null
         }

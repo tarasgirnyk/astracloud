@@ -1,0 +1,90 @@
+.section {
+  padding: var(--section-padding-y) 0;
+  background: var(--surface-subtle, #f5f7fb);
+}
+
+.header {
+  max-width: 720px;
+  margin: 0 auto var(--space-10);
+  text-align: center;
+}
+
+.header h2 {
+  margin: 0;
+  font: var(--text-display-lg);
+  color: var(--text-on-light);
+}
+
+.header p {
+  margin: 12px 0 0;
+  font: var(--text-body-md);
+  color: var(--text-on-light-muted);
+}
+
+.calculator {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.9fr);
+  gap: var(--space-8);
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: clamp(22px, 4vw, 40px);
+  background: var(--white);
+  border: 1px solid var(--border-on-light);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 18px 50px rgb(22 31 56 / 8%);
+}
+
+.controls { display: grid; gap: 24px; }
+.field { display: grid; gap: 10px; }
+.field label { font: var(--text-ui-label); color: var(--text-on-light); }
+.fieldHeader { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.fieldHeader output { padding: 6px 12px; border-radius: 999px; background: var(--brand-orange, #ff6b35); color: white; font-weight: 700; }
+.field input[type='range'] { width: 100%; accent-color: var(--brand-orange, #ff6b35); }
+.rangeLimits { display: flex; justify-content: space-between; color: var(--text-on-light-muted); font: var(--text-caption); }
+.field select { width: 100%; min-height: 48px; padding: 0 14px; border: 1px solid var(--border-on-light); border-radius: var(--radius-md); background: var(--white); color: var(--text-on-light); font: var(--text-body-md); }
+
+.summary {
+  min-width: 0;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(22px, 3vw, 34px);
+  border-radius: var(--radius-lg);
+  background: var(--text-on-light, #111936);
+  color: white;
+}
+
+.summary > span { font: var(--text-ui-label); opacity: .72; }
+.summary > strong { margin-top: 10px; }
+.totalPrice {
+  display: block;
+  max-width: 100%;
+  min-width: 0;
+  font-family: var(--font-display, var(--font-body));
+  font-size: clamp(2rem, 2.6vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -.04em;
+  white-space: nowrap;
+}
+.summary > small { margin-top: 3px; opacity: .72; }
+.setup { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 14px; margin-top: 26px; padding-top: 20px; border-top: 1px solid rgb(255 255 255 / 18%); }
+.setup span { opacity: .72; }
+.setup b { white-space: nowrap; }
+.summary p { margin: 20px 0 0; font: var(--text-caption); opacity: .68; }
+.bookingButton { width: 100%; margin-top: 22px; padding: 14px 12px; border: 0; border-radius: var(--radius-pill); background-image: var(--gradient-orange); color: var(--brand-primary-text); font: 600 14px/1 var(--font-body); white-space: nowrap; cursor: pointer; }
+.bookingButton:disabled { cursor: default; opacity: .65; }
+.modalBackdrop { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 20px; background: rgb(10 14 26 / 65%); }
+.modal { position: relative; width: min(100%, 440px); padding: 32px; border-radius: var(--radius-lg); background: var(--white); color: var(--text-on-light); }
+.modal h3 { margin: 0 40px 24px 0; font: var(--text-display-sm); }
+.modal form { display: grid; gap: 10px; }
+.modal label { margin-top: 6px; font: var(--text-ui-label); }
+.modal input { width: 100%; min-height: 48px; padding: 0 14px; border: 1px solid var(--border-on-light); border-radius: var(--radius-md); font: var(--text-body-sm); }
+.modalClose { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--gray-100); color: var(--text-on-light); font-size: 20px; cursor: pointer; }
+.formError { margin: 4px 0 0 !important; color: var(--red-600, #dc2626); opacity: 1 !important; }
+
+@media (max-width: 760px) {
+  .calculator { grid-template-columns: 1fr; }
+  .totalPrice { font-size: clamp(2rem, 12vw, 3rem); }
+}

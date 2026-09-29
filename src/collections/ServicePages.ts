@@ -7,6 +7,7 @@ import { ConsultationBlock } from '@/blocks/consultation/config'
 import { ArchitectureBlock } from '@/blocks/architecture/config'
 import { SimpleContentBlock } from '@/blocks/simple-content/config'
 import { VpsPricingCardsBlock } from '@/blocks/vps-pricing-cards/config'
+import { ColocationCalculatorBlock } from '@/blocks/colocation-calculator/config'
 import {
   getCachedCategories,
   getCachedProductsForAdmin,
@@ -158,6 +159,7 @@ export const ServicePages: CollectionConfig = {
         HeroBlock,
         PartnersBlock,
         VpsPricingCardsBlock,
+        ColocationCalculatorBlock,
         ConsultationBlock,
         ArchitectureBlock,
         AdvantagesBlock,

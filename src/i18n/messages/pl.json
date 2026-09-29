@@ -22,6 +22,17 @@
       "price": "Cena"
     }
   },
+  "colocationBooking": {
+    "button": "Zarezerwuj konfigurację",
+    "title": "Zarezerwuj konfigurację",
+    "email": "Email",
+    "phone": "Telefon",
+    "submit": "Wyślij zgłoszenie",
+    "submitting": "Wysyłanie...",
+    "success": "Dziękujemy! Konfiguracja została wysłana do opiekuna. Wkrótce się skontaktujemy.",
+    "error": "Nie udało się wysłać zgłoszenia. Spróbuj ponownie.",
+    "close": "Zamknij"
+  },
   "consultationModal": {
     "nameLabel": "Imię",
     "phoneLabel": "Telefon",

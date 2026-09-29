@@ -211,6 +211,74 @@ const partners = [
   { name: 'Türk Telekom International', href: 'https://www.turktelekomint.com' },
 ]
 
+const calculatorCopy = {
+  ua: {
+    heading: 'Розрахуйте вартість колокації',
+    subheading: 'Оберіть параметри обладнання — орієнтовна щомісячна вартість оновиться автоматично.',
+    units: 'Кількість юнітів', power: 'Потужність блоків живлення', ip: 'Кількість IP', speed: 'Швидкість інтернету',
+    monthly: 'Щомісячна вартість', setup: 'Одноразова інсталяція', currency: 'грн', suffix: '/ місяць', note: 'Ціни включають ПДВ. Остаточну конфігурацію підтвердить менеджер.',
+  },
+  en: {
+    heading: 'Calculate your colocation cost',
+    subheading: 'Choose your hardware parameters to get an instant estimated monthly price.',
+    units: 'Rack units', power: 'Power supply capacity', ip: 'Number of IPs', speed: 'Internet speed',
+    monthly: 'Monthly total', setup: 'One-time installation', currency: 'UAH', suffix: '/ month', note: 'Prices include VAT. A manager will confirm the final configuration.',
+  },
+  pl: {
+    heading: 'Oblicz koszt kolokacji',
+    subheading: 'Wybierz parametry sprzętu, aby otrzymać szacunkową miesięczną cenę.',
+    units: 'Liczba jednostek U', power: 'Moc zasilaczy', ip: 'Liczba adresów IP', speed: 'Prędkość Internetu',
+    monthly: 'Koszt miesięczny', setup: 'Jednorazowa instalacja', currency: 'UAH', suffix: '/ miesiąc', note: 'Ceny zawierają VAT. Ostateczną konfigurację potwierdzi opiekun.',
+  },
+} satisfies Record<Locale, Record<string, string>>
+
+function calculatorBlock(locale: Locale) {
+  const copy = calculatorCopy[locale]
+  return {
+    blockType: 'colocation-calculator',
+    heading: copy.heading,
+    subheading: copy.subheading,
+    unitSettings: {
+      label: copy.units,
+      minimum: 1,
+      maximum: 42,
+      defaultValue: 1,
+      monthlyPricePerUnit: 500,
+    },
+    installationPrice: 1000,
+    powerOptions: [
+      { label: '100 W', value: 100, monthlyPrice: 1346.4 },
+      { label: '200 W', value: 200, monthlyPrice: 2692.8 },
+      { label: '300 W', value: 300, monthlyPrice: 4039.2 },
+      { label: '400 W', value: 400, monthlyPrice: 5385.6 },
+      { label: '500 W', value: 500, monthlyPrice: 6732 },
+      { label: '600 W', value: 600, monthlyPrice: 8078.4 },
+      { label: '700 W', value: 700, monthlyPrice: 9424.8 },
+      { label: '800 W', value: 800, monthlyPrice: 10771.2 },
+      { label: '900 W', value: 900, monthlyPrice: 12117.6 },
+    ],
+    ipOptions: [
+      { label: '1 IP', value: 1, monthlyPrice: 0 },
+      { label: '/30 · 2 IP', value: 2, monthlyPrice: 150 },
+      { label: '/29 · 6 IP', value: 6, monthlyPrice: 300 },
+      { label: '/28 · 14 IP', value: 14, monthlyPrice: 500 },
+      { label: '/27 · 30 IP', value: 30, monthlyPrice: 950 },
+      { label: '/26 · 62 IP', value: 62, monthlyPrice: 1750 },
+      { label: '/25 · 126 IP', value: 126, monthlyPrice: 3200 },
+    ],
+    speedOptions: [
+      { label: '100 Mbit/s', value: 100, monthlyPrice: 0 },
+      { label: '1000 Mbit/s', value: 1000, monthlyPrice: 500 },
+      { label: '100 Mbit/s · guaranteed', value: 100, monthlyPrice: 500 },
+      { label: '1000 Mbit/s · guaranteed', value: 1000, monthlyPrice: 4000 },
+    ],
+    labels: {
+      power: copy.power, ip: copy.ip, speed: copy.speed, monthlyTotal: copy.monthly,
+      setupTotal: copy.setup, currency: copy.currency, monthlySuffix: copy.suffix, vatNote: copy.note,
+    },
+  }
+}
+
 function heroBlock(heading: string, subheading: string, tagline: string) {
   return {
     blockType: 'hero',
@@ -230,6 +298,7 @@ function colocationUa() {
       'Захист від перебоїв живлення, перегріву та відмов обладнання',
     ),
     { blockType: 'partners', title: 'Нам довіряють', partners },
+    calculatorBlock('ua'),
     {
       blockType: 'simple-content',
       content: richTextDoc([
@@ -276,6 +345,7 @@ function colocationEn() {
       'Protection from power outages, overheating, and equipment failure',
     ),
     { blockType: 'partners', title: 'Trusted by', partners },
+    calculatorBlock('en'),
     {
       blockType: 'simple-content',
       content: richTextDoc([
@@ -322,6 +392,7 @@ function colocationPl() {
       'Ochrona przed przerwami w zasilaniu, przegrzaniem i awariami sprzętu',
     ),
     { blockType: 'partners', title: 'Zaufali nam', partners },
+    calculatorBlock('pl'),
     {
       blockType: 'simple-content',
       content: richTextDoc([

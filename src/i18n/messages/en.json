@@ -25,6 +25,17 @@
       "price": "Price"
     }
   },
+  "colocationBooking": {
+    "button": "Reserve configuration",
+    "title": "Reserve configuration",
+    "email": "Email",
+    "phone": "Phone",
+    "submit": "Send request",
+    "submitting": "Sending...",
+    "success": "Thank you! Your configuration was sent to our manager. We will contact you shortly.",
+    "error": "Could not send your request. Please try again.",
+    "close": "Close"
+  },
   "consultationModal": {
     "nameLabel": "Name",
     "phoneLabel": "Phone",
