@@ -25,6 +25,8 @@ import { InlineToolbarFeatureClient as InlineToolbarFeatureClient_e70f5e05f09f93
 import { HostbillCategorySelect as HostbillCategorySelect_fd8acdbb2ea9c88fa2156c30b7500b57 } from '@/blocks/vps-pricing-cards/HostbillCategorySelect'
 import { RecommendedProductSelect as RecommendedProductSelect_eb3fd6f289e299bf4691aa4ad97dbe57 } from '@/blocks/vps-pricing-cards/RecommendedProductSelect'
 import { RevalidatePricingButton as RevalidatePricingButton_54ed8cd5400578efffffe4747957f3cd } from '@/blocks/vps-pricing-cards/RevalidatePricingButton'
+import { AdminOptionsTable as AdminOptionsTable_137f9c5bd1af43d83961332a6e001b56 } from '@/blocks/colocation-calculator/AdminOptionsTable'
+import { BackupButton as BackupButton_0c765183eff0f6e2dce43d7c88259a10 } from '@/blocks/colocation-calculator/BackupButton'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -56,5 +58,7 @@ export const importMap = {
   "@/blocks/vps-pricing-cards/HostbillCategorySelect#HostbillCategorySelect": HostbillCategorySelect_fd8acdbb2ea9c88fa2156c30b7500b57,
   "@/blocks/vps-pricing-cards/RecommendedProductSelect#RecommendedProductSelect": RecommendedProductSelect_eb3fd6f289e299bf4691aa4ad97dbe57,
   "@/blocks/vps-pricing-cards/RevalidatePricingButton#RevalidatePricingButton": RevalidatePricingButton_54ed8cd5400578efffffe4747957f3cd,
+  "@/blocks/colocation-calculator/AdminOptionsTable#AdminOptionsTable": AdminOptionsTable_137f9c5bd1af43d83961332a6e001b56,
+  "@/blocks/colocation-calculator/BackupButton#BackupButton": BackupButton_0c765183eff0f6e2dce43d7c88259a10,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

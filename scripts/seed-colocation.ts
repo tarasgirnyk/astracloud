@@ -13,6 +13,8 @@
  * Run with: pnpm payload run scripts/seed-colocation.ts
  */
 import { getPayload } from 'payload'
+import { existsSync, readFileSync } from 'node:fs'
+import path from 'node:path'
 import config from '../payload.config.ts'
 import { seedLocalizedDoc } from './seed-locale-helpers.ts'
 import {
@@ -60,7 +62,14 @@ const SECTIONS_UA: PriceSection[] = [
   },
   {
     title: 'Розміщення в стійці',
-    rows: [{ label: 'Розміщення в стійці 1U', lviv2: '500,00', lviv1: '600,00', install: '1 000,00' }],
+    rows: [
+      {
+        label: 'Розміщення в стійці 1U',
+        lviv2: '1 000,00',
+        lviv1: '1 000,00',
+        install: '1 000,00',
+      },
+    ],
   },
   {
     title: 'Гарантоване живлення (до 5 кВт)',
@@ -74,7 +83,9 @@ const SECTIONS_UA: PriceSection[] = [
   },
   {
     title: 'Оренда стійки',
-    rows: [{ label: 'Оренда стійки 42U', lviv2: '6 000,00', lviv1: '6 000,00', install: '3 000,00' }],
+    rows: [
+      { label: 'Оренда стійки 42U', lviv2: '6 000,00', lviv1: '6 000,00', install: '3 000,00' },
+    ],
   },
   {
     title: 'Інтернет послуги',
@@ -99,10 +110,20 @@ const SECTIONS_UA: PriceSection[] = [
   {
     title: 'Додаткові послуги',
     rows: [
-      { label: 'Технічне обслуговування патчкорду', lviv2: '150,00', lviv1: '150,00', install: '1 000,00' },
+      {
+        label: 'Технічне обслуговування патчкорду',
+        lviv2: '150,00',
+        lviv1: '150,00',
+        install: '1 000,00',
+      },
       { label: 'Розміщення патч-панелі', lviv2: '500,00', lviv1: '500,00', install: '1 000,00' },
       { label: 'Виклик спеціаліста (до 2 год)', lviv2: '500,00', lviv1: '500,00', install: '–' },
-      { label: 'Виклик у нічний час (22:00–8:00)', lviv2: '2 000,00', lviv1: '2 000,00', install: '–' },
+      {
+        label: 'Виклик у нічний час (22:00–8:00)',
+        lviv2: '2 000,00',
+        lviv1: '2 000,00',
+        install: '–',
+      },
     ],
   },
 ]
@@ -179,7 +200,11 @@ const ROW_LABELS_PL: Record<string, string> = {
   'Виклик у нічний час (22:00–8:00)': 'Wezwanie nocne (22:00–8:00)',
 }
 
-function translateSections(sections: PriceSection[], titles: Record<string, string>, labels: Record<string, string>): PriceSection[] {
+function translateSections(
+  sections: PriceSection[],
+  titles: Record<string, string>,
+  labels: Record<string, string>,
+): PriceSection[] {
   return sections.map((s) => ({
     title: titles[s.title] ?? s.title,
     rows: s.rows.map((r) => ({ ...r, label: labels[r.label] ?? r.label })),
@@ -198,7 +223,14 @@ function buildPriceTable(sections: PriceSection[], headers: [string, string, str
   for (const section of sections) {
     rows.push(tableRowNode([tableCellNode(section.title, { header: true, colSpan: 4 })]))
     for (const row of section.rows) {
-      rows.push(tableRowNode([tableCellNode(row.label), tableCellNode(row.lviv2), tableCellNode(row.lviv1), tableCellNode(row.install)]))
+      rows.push(
+        tableRowNode([
+          tableCellNode(row.label),
+          tableCellNode(row.lviv2),
+          tableCellNode(row.lviv1),
+          tableCellNode(row.install),
+        ]),
+      )
     }
   }
   return tableNode(rows)
@@ -214,25 +246,60 @@ const partners = [
 const calculatorCopy = {
   ua: {
     heading: 'Розрахуйте вартість колокації',
-    subheading: 'Оберіть параметри обладнання — орієнтовна щомісячна вартість оновиться автоматично.',
-    units: 'Кількість юнітів', power: 'Потужність блоків живлення', ip: 'Кількість IP', speed: 'Швидкість інтернету',
-    monthly: 'Щомісячна вартість', setup: 'Одноразова інсталяція', currency: 'грн', suffix: '/ місяць', note: 'Ціни включають ПДВ. Остаточну конфігурацію підтвердить менеджер.',
+    subheading:
+      'Оберіть параметри обладнання — орієнтовна щомісячна вартість оновиться автоматично.',
+    units: 'Кількість юнітів',
+    power: 'Потужність блоків живлення',
+    ip: 'Кількість IP',
+    speed: 'Швидкість інтернету',
+    monthly: 'Щомісячна вартість',
+    setup: 'Одноразова інсталяція',
+    currency: 'грн',
+    suffix: '/ місяць',
+    note: 'Ціни включають ПДВ. Остаточну конфігурацію підтвердить менеджер.',
+    details: 'Деталі розрахунку',
   },
   en: {
     heading: 'Calculate your colocation cost',
     subheading: 'Choose your hardware parameters to get an instant estimated monthly price.',
-    units: 'Rack units', power: 'Power supply capacity', ip: 'Number of IPs', speed: 'Internet speed',
-    monthly: 'Monthly total', setup: 'One-time installation', currency: 'UAH', suffix: '/ month', note: 'Prices include VAT. A manager will confirm the final configuration.',
+    units: 'Rack units',
+    power: 'Power supply capacity',
+    ip: 'Number of IPs',
+    speed: 'Internet speed',
+    monthly: 'Monthly total',
+    setup: 'One-time installation',
+    currency: 'UAH',
+    suffix: '/ month',
+    note: 'Prices include VAT. A manager will confirm the final configuration.',
+    details: 'Calculation details',
   },
   pl: {
     heading: 'Oblicz koszt kolokacji',
     subheading: 'Wybierz parametry sprzętu, aby otrzymać szacunkową miesięczną cenę.',
-    units: 'Liczba jednostek U', power: 'Moc zasilaczy', ip: 'Liczba adresów IP', speed: 'Prędkość Internetu',
-    monthly: 'Koszt miesięczny', setup: 'Jednorazowa instalacja', currency: 'UAH', suffix: '/ miesiąc', note: 'Ceny zawierają VAT. Ostateczną konfigurację potwierdzi opiekun.',
+    units: 'Liczba jednostek U',
+    power: 'Moc zasilaczy',
+    ip: 'Liczba adresów IP',
+    speed: 'Prędkość Internetu',
+    monthly: 'Koszt miesięczny',
+    setup: 'Jednorazowa instalacja',
+    currency: 'UAH',
+    suffix: '/ miesiąc',
+    note: 'Ceny zawierają VAT. Ostateczną konfigurację potwierdzi opiekun.',
+    details: 'Szczegóły obliczenia',
   },
 } satisfies Record<Locale, Record<string, string>>
 
+const calculatorBackupPath = path.resolve(process.cwd(), 'backups', 'colocation-calculator.json')
+const calculatorBackup = existsSync(calculatorBackupPath)
+  ? (JSON.parse(readFileSync(calculatorBackupPath, 'utf8')) as {
+      calculators?: Partial<Record<Locale, Record<string, unknown>>>
+    })
+  : null
+
 function calculatorBlock(locale: Locale) {
+  const backedUpCalculator = calculatorBackup?.calculators?.[locale]
+  if (backedUpCalculator) return backedUpCalculator
+
   const copy = calculatorCopy[locale]
   return {
     blockType: 'colocation-calculator',
@@ -243,38 +310,51 @@ function calculatorBlock(locale: Locale) {
       minimum: 1,
       maximum: 42,
       defaultValue: 1,
-      monthlyPricePerUnit: 500,
+      monthlyPricePerUnit: 1000,
     },
     installationPrice: 1000,
+    electricitySettings: {
+      pricePerKwh: 18.7,
+      hoursPerDay: 24,
+      daysPerMonth: 30,
+      formula: '(powerW / 2 * 31 * 15 * 1.7 * 24) / 1000',
+    },
     powerOptions: [
-      { label: '100 W', value: 100, monthlyPrice: 1346.4 },
-      { label: '200 W', value: 200, monthlyPrice: 2692.8 },
-      { label: '300 W', value: 300, monthlyPrice: 4039.2 },
-      { label: '400 W', value: 400, monthlyPrice: 5385.6 },
-      { label: '500 W', value: 500, monthlyPrice: 6732 },
-      { label: '600 W', value: 600, monthlyPrice: 8078.4 },
-      { label: '700 W', value: 700, monthlyPrice: 9424.8 },
-      { label: '800 W', value: 800, monthlyPrice: 10771.2 },
-      { label: '900 W', value: 900, monthlyPrice: 12117.6 },
+      { label: '100 W', value: 100 },
+      { label: '200 W', value: 200 },
+      { label: '300 W', value: 300 },
+      { label: '400 W', value: 400 },
+      { label: '500 W', value: 500 },
+      { label: '600 W', value: 600 },
+      { label: '700 W', value: 700 },
+      { label: '800 W', value: 800 },
+      { label: '900 W', value: 900 },
     ],
     ipOptions: [
-      { label: '1 IP', value: 1, monthlyPrice: 0 },
-      { label: '/30 · 2 IP', value: 2, monthlyPrice: 150 },
-      { label: '/29 · 6 IP', value: 6, monthlyPrice: 300 },
-      { label: '/28 · 14 IP', value: 14, monthlyPrice: 500 },
-      { label: '/27 · 30 IP', value: 30, monthlyPrice: 950 },
-      { label: '/26 · 62 IP', value: 62, monthlyPrice: 1750 },
-      { label: '/25 · 126 IP', value: 126, monthlyPrice: 3200 },
+      { label: '/30 · 1 usable IP', value: 1, monthlyPrice: 0 },
+      { label: '/29 · 5 usable IP', value: 5, monthlyPrice: 300 },
+      { label: '/28 · 13 usable IP', value: 13, monthlyPrice: 500 },
+      { label: '/27 · 29 usable IP', value: 29, monthlyPrice: 950 },
+      { label: '/26 · 61 usable IP', value: 61, monthlyPrice: 1750 },
+      { label: '/25 · 125 usable IP', value: 125, monthlyPrice: 3200 },
     ],
     speedOptions: [
       { label: '100 Mbit/s', value: 100, monthlyPrice: 0 },
       { label: '1000 Mbit/s', value: 1000, monthlyPrice: 500 },
       { label: '100 Mbit/s · guaranteed', value: 100, monthlyPrice: 500 },
       { label: '1000 Mbit/s · guaranteed', value: 1000, monthlyPrice: 4000 },
+      { label: '10 Gbit/s · guaranteed', value: 10000, monthlyPrice: 20000 },
     ],
     labels: {
-      power: copy.power, ip: copy.ip, speed: copy.speed, monthlyTotal: copy.monthly,
-      setupTotal: copy.setup, currency: copy.currency, monthlySuffix: copy.suffix, vatNote: copy.note,
+      power: copy.power,
+      ip: copy.ip,
+      speed: copy.speed,
+      monthlyTotal: copy.monthly,
+      setupTotal: copy.setup,
+      currency: copy.currency,
+      monthlySuffix: copy.suffix,
+      vatNote: copy.note,
+      calculationDetails: copy.details,
     },
   }
 }
@@ -294,7 +374,7 @@ function colocationUa() {
   return [
     heroBlock(
       'Колокація',
-      "Розмістіть власне серверне обладнання у надійному дата-центрі — від одного пристрою до цілої стійки.",
+      'Розмістіть власне серверне обладнання у надійному дата-центрі — від одного пристрою до цілої стійки.',
       'Захист від перебоїв живлення, перегріву та відмов обладнання',
     ),
     { blockType: 'partners', title: 'Нам довіряють', partners },
@@ -305,11 +385,13 @@ function colocationUa() {
         paragraphNode(
           'Astra Cloud розміщує обладнання клієнтів у власних дата-центрах у Львові — ДЦ Львів 1 та ДЦ Львів 2. Обладнання захищене від перебоїв живлення, перегріву та інших аварійних ситуацій цілодобовим моніторингом і резервними системами.',
         ),
-        paragraphNode('ДЦ Львів 1 дає змогу розмістити обладнання в приміщенні колишнього бомбосховища.'),
+        paragraphNode(
+          'ДЦ Львів 1 дає змогу розмістити обладнання в приміщенні колишнього бомбосховища.',
+        ),
         headingNode('h3', 'Що входить у послугу'),
         bulletListNode([
           'Розміщення обладнання будь-якого розміру — від 1U до цілих стійок',
-          "Два незалежних джерела живлення з резервуванням (ДБЖ, дизель-генератори)",
+          'Два незалежних джерела живлення з резервуванням (ДБЖ, дизель-генератори)',
           'Цілодобова робота 24/7/365',
           'Система кондиціонування для контролю температури та вологості',
           'Канали Інтернету від 100 Мбіт/с до 10 Гбіт/с',
@@ -399,7 +481,9 @@ function colocationPl() {
         paragraphNode(
           'Astra Cloud umieszcza sprzęt klientów we własnych centrach danych we Lwowie — CD Lwów 1 i CD Lwów 2. Sprzęt jest chroniony przed przerwami w zasilaniu, przegrzaniem i innymi awariami dzięki całodobowemu monitoringowi i systemom redundantnym.',
         ),
-        paragraphNode('CD Lwów 1 pozwala umieścić sprzęt w pomieszczeniu dawnego schronu przeciwbombowego.'),
+        paragraphNode(
+          'CD Lwów 1 pozwala umieścić sprzęt w pomieszczeniu dawnego schronu przeciwbombowego.',
+        ),
         headingNode('h3', 'Co obejmuje usługa'),
         bulletListNode([
           'Umieszczenie sprzętu dowolnego rozmiaru — od 1U po całe szafy',

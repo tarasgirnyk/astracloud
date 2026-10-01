@@ -1,4 +1,6 @@
 import type { CollectionConfig } from 'payload'
+import { mkdir, writeFile } from 'node:fs/promises'
+import path from 'node:path'
 import { HeroBlock } from '@/blocks/hero/config'
 import { PartnersBlock } from '@/blocks/partners/config'
 import { AdvantagesBlock } from '@/blocks/advantages/config'
@@ -32,6 +34,50 @@ export const ServicePages: CollectionConfig = {
   },
   endpoints: [
     {
+      path: '/backup-colocation-calculator',
+      method: 'post',
+      handler: async (req) => {
+        if (!req.user) {
+          return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+        }
+
+        const calculators: Record<string, Record<string, unknown>> = {}
+        for (const locale of ['ua', 'en', 'pl'] as const) {
+          const result = await req.payload.find({
+            collection: 'service-pages',
+            locale,
+            limit: 1,
+            depth: 0,
+            where: { slug: { equals: 'colocation' } },
+          })
+          const calculator = result.docs[0]?.blocks?.find(
+            (block) => block.blockType === 'colocation-calculator',
+          )
+          if (!calculator) {
+            return Response.json(
+              { success: false, error: `Calculator block not found for locale ${locale}` },
+              { status: 404 },
+            )
+          }
+          calculators[locale] = calculator as unknown as Record<string, unknown>
+        }
+
+        const backupDirectory = path.resolve(process.cwd(), 'backups')
+        const backupPath = path.join(backupDirectory, 'colocation-calculator.json')
+        await mkdir(backupDirectory, { recursive: true })
+        await writeFile(
+          backupPath,
+          `${JSON.stringify({ backedUpAt: new Date().toISOString(), calculators }, null, 2)}\n`,
+          'utf8',
+        )
+
+        return Response.json({
+          success: true,
+          path: path.relative(process.cwd(), backupPath).replaceAll('\\', '/'),
+        })
+      },
+    },
+    {
       path: '/revalidate-vps-pricing',
       method: 'post',
       // Backs the "Оновити ціни з HostBill зараз" button on the
@@ -45,7 +91,10 @@ export const ServicePages: CollectionConfig = {
 
         const categoryId = req.searchParams.get('categoryId')
         if (!categoryId) {
-          return Response.json({ success: false, error: 'Missing "categoryId" query param' }, { status: 400 })
+          return Response.json(
+            { success: false, error: 'Missing "categoryId" query param' },
+            { status: 400 },
+          )
         }
 
         revalidateVpsPricingCache(categoryId)
@@ -67,7 +116,10 @@ export const ServicePages: CollectionConfig = {
           return Response.json({ success: true, categories })
         } catch (error) {
           return Response.json(
-            { success: false, error: error instanceof Error ? error.message : 'Failed to list categories' },
+            {
+              success: false,
+              error: error instanceof Error ? error.message : 'Failed to list categories',
+            },
             { status: 502 },
           )
         }
@@ -86,7 +138,10 @@ export const ServicePages: CollectionConfig = {
 
         const categoryId = req.searchParams.get('categoryId')
         if (!categoryId) {
-          return Response.json({ success: false, error: 'Missing "categoryId" query param' }, { status: 400 })
+          return Response.json(
+            { success: false, error: 'Missing "categoryId" query param' },
+            { status: 400 },
+          )
         }
 
         try {
@@ -97,7 +152,10 @@ export const ServicePages: CollectionConfig = {
           })
         } catch (error) {
           return Response.json(
-            { success: false, error: error instanceof Error ? error.message : 'Failed to list products' },
+            {
+              success: false,
+              error: error instanceof Error ? error.message : 'Failed to list products',
+            },
             { status: 502 },
           )
         }
@@ -134,13 +192,18 @@ export const ServicePages: CollectionConfig = {
           name: 'title',
           type: 'text',
           localized: true,
-          admin: { description: 'Search-result title. Falls back to an auto-generated value when blank.' },
+          admin: {
+            description: 'Search-result title. Falls back to an auto-generated value when blank.',
+          },
         },
         {
           name: 'description',
           type: 'textarea',
           localized: true,
-          admin: { description: 'Search-result description. Falls back to an auto-generated value when blank.' },
+          admin: {
+            description:
+              'Search-result description. Falls back to an auto-generated value when blank.',
+          },
         },
         {
           name: 'ogImage',

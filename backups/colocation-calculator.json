@@ -1,0 +1,452 @@
+{
+  "backedUpAt": "2026-09-29T12:54:24.963Z",
+  "calculators": {
+    "ua": {
+      "id": "6a6212234f12a331109f21ac",
+      "installationPrice": 1000,
+      "blockName": null,
+      "powerOptions": [
+        {
+          "id": "6abb6d90f6e06738fc031d87",
+          "value": 100,
+          "label": "100 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d88",
+          "value": 200,
+          "label": "200 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d89",
+          "value": 300,
+          "label": "300 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d8a",
+          "value": 400,
+          "label": "400 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d8b",
+          "value": 500,
+          "label": "500 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d8c",
+          "value": 600,
+          "label": "600 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d8d",
+          "value": 700,
+          "label": "700 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d8e",
+          "value": 800,
+          "label": "800 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d8f",
+          "value": 900,
+          "label": "900 W"
+        }
+      ],
+      "ipOptions": [
+        {
+          "id": "6abb6d90f6e06738fc031d90",
+          "value": 1,
+          "monthlyPrice": 0,
+          "label": "/30 · 1 usable IP"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d92",
+          "value": 5,
+          "monthlyPrice": 300,
+          "label": "/29 · 5 usable IP"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d93",
+          "value": 13,
+          "monthlyPrice": 500,
+          "label": "/28 · 13 usable IP"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d94",
+          "value": 29,
+          "monthlyPrice": 950,
+          "label": "/27 · 29 usable IP"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d95",
+          "value": 61,
+          "monthlyPrice": 1750,
+          "label": "/26 · 61 usable IP"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d96",
+          "value": 125,
+          "monthlyPrice": 3200,
+          "label": "/25 · 125 usable IP"
+        }
+      ],
+      "speedOptions": [
+        {
+          "id": "6abb6d90f6e06738fc031d97",
+          "value": 100,
+          "monthlyPrice": 0,
+          "label": "100 Mbit/s"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d98",
+          "value": 1000,
+          "monthlyPrice": 500,
+          "label": "1000 Mbit/s"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d99",
+          "value": 100,
+          "monthlyPrice": 500,
+          "label": "100 Mbit/s · guaranteed"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d9a",
+          "value": 1000,
+          "monthlyPrice": 4000,
+          "label": "1000 Mbit/s · guaranteed"
+        },
+        {
+          "id": "6abbb445b3e6c02948743aa1",
+          "value": 10000,
+          "monthlyPrice": 20000,
+          "label": "10G"
+        }
+      ],
+      "blockType": "colocation-calculator",
+      "heading": "Розрахуйте вартість колокації",
+      "subheading": "Оберіть параметри обладнання — орієнтовна щомісячна вартість оновиться автоматично.",
+      "unitSettings": {
+        "label": "Кількість юнітів",
+        "minimum": 1,
+        "maximum": 42,
+        "defaultValue": 1,
+        "monthlyPricePerUnit": 500
+      },
+      "electricitySettings": {
+        "pricePerKwh": 18.7,
+        "hoursPerDay": 24,
+        "daysPerMonth": 30,
+        "formula": "powerW / 1000 * hoursPerDay * daysPerMonth * pricePerKwh"
+      },
+      "labels": {
+        "power": "Потужність блоків живлення",
+        "ip": "Кількість IP",
+        "speed": "Швидкість інтернету",
+        "monthlyTotal": "Щомісячна вартість",
+        "setupTotal": "Одноразова інсталяція",
+        "currency": "грн",
+        "monthlySuffix": "/ місяць",
+        "vatNote": "Ціни включають ПДВ. Остаточну конфігурацію підтвердить менеджер.",
+        "calculationDetails": "Деталі розрахунку"
+      }
+    },
+    "en": {
+      "id": "6a6212234f12a331109f21ac",
+      "installationPrice": 1000,
+      "blockName": null,
+      "powerOptions": [
+        {
+          "id": "6abb6d90f6e06738fc031d87",
+          "value": 100,
+          "label": "100 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d88",
+          "value": 200,
+          "label": "200 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d89",
+          "value": 300,
+          "label": "300 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d8a",
+          "value": 400,
+          "label": "400 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d8b",
+          "value": 500,
+          "label": "500 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d8c",
+          "value": 600,
+          "label": "600 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d8d",
+          "value": 700,
+          "label": "700 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d8e",
+          "value": 800,
+          "label": "800 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d8f",
+          "value": 900,
+          "label": "900 W"
+        }
+      ],
+      "ipOptions": [
+        {
+          "id": "6abb6d90f6e06738fc031d90",
+          "value": 1,
+          "monthlyPrice": 0,
+          "label": "/30 · 1 usable IP"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d92",
+          "value": 5,
+          "monthlyPrice": 300,
+          "label": "/29 · 5 usable IP"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d93",
+          "value": 13,
+          "monthlyPrice": 500,
+          "label": "/28 · 13 usable IP"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d94",
+          "value": 29,
+          "monthlyPrice": 950,
+          "label": "/27 · 29 usable IP"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d95",
+          "value": 61,
+          "monthlyPrice": 1750,
+          "label": "/26 · 61 usable IP"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d96",
+          "value": 125,
+          "monthlyPrice": 3200,
+          "label": "/25 · 125 usable IP"
+        }
+      ],
+      "speedOptions": [
+        {
+          "id": "6abb6d90f6e06738fc031d97",
+          "value": 100,
+          "monthlyPrice": 0,
+          "label": "100 Mbit/s"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d98",
+          "value": 1000,
+          "monthlyPrice": 500,
+          "label": "1000 Mbit/s"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d99",
+          "value": 100,
+          "monthlyPrice": 500,
+          "label": "100 Mbit/s · guaranteed"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d9a",
+          "value": 1000,
+          "monthlyPrice": 4000,
+          "label": "1000 Mbit/s · guaranteed"
+        },
+        {
+          "id": "6abbb445b3e6c02948743aa1",
+          "value": 10000,
+          "monthlyPrice": 20000,
+          "label": "10G"
+        }
+      ],
+      "blockType": "colocation-calculator",
+      "heading": "Calculate your colocation cost",
+      "subheading": "Choose your hardware parameters to get an instant estimated monthly price.",
+      "unitSettings": {
+        "label": "Rack units",
+        "minimum": 1,
+        "maximum": 42,
+        "defaultValue": 1,
+        "monthlyPricePerUnit": 500
+      },
+      "electricitySettings": {
+        "pricePerKwh": 18.7,
+        "hoursPerDay": 24,
+        "daysPerMonth": 30,
+        "formula": "powerW / 1000 * hoursPerDay * daysPerMonth * pricePerKwh"
+      },
+      "labels": {
+        "power": "Power supply capacity",
+        "ip": "Number of IPs",
+        "speed": "Internet speed",
+        "monthlyTotal": "Monthly total",
+        "setupTotal": "One-time installation",
+        "currency": "UAH",
+        "monthlySuffix": "/ month",
+        "vatNote": "Prices include VAT. A manager will confirm the final configuration.",
+        "calculationDetails": "Calculation details"
+      }
+    },
+    "pl": {
+      "id": "6a6212234f12a331109f21ac",
+      "installationPrice": 1000,
+      "blockName": null,
+      "powerOptions": [
+        {
+          "id": "6abb6d90f6e06738fc031d87",
+          "value": 100,
+          "label": "100 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d88",
+          "value": 200,
+          "label": "200 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d89",
+          "value": 300,
+          "label": "300 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d8a",
+          "value": 400,
+          "label": "400 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d8b",
+          "value": 500,
+          "label": "500 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d8c",
+          "value": 600,
+          "label": "600 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d8d",
+          "value": 700,
+          "label": "700 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d8e",
+          "value": 800,
+          "label": "800 W"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d8f",
+          "value": 900,
+          "label": "900 W"
+        }
+      ],
+      "ipOptions": [
+        {
+          "id": "6abb6d90f6e06738fc031d90",
+          "value": 1,
+          "monthlyPrice": 0,
+          "label": "/30 · 1 usable IP"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d92",
+          "value": 5,
+          "monthlyPrice": 300,
+          "label": "/29 · 5 usable IP"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d93",
+          "value": 13,
+          "monthlyPrice": 500,
+          "label": "/28 · 13 usable IP"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d94",
+          "value": 29,
+          "monthlyPrice": 950,
+          "label": "/27 · 29 usable IP"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d95",
+          "value": 61,
+          "monthlyPrice": 1750,
+          "label": "/26 · 61 usable IP"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d96",
+          "value": 125,
+          "monthlyPrice": 3200,
+          "label": "/25 · 125 usable IP"
+        }
+      ],
+      "speedOptions": [
+        {
+          "id": "6abb6d90f6e06738fc031d97",
+          "value": 100,
+          "monthlyPrice": 0,
+          "label": "100 Mbit/s"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d98",
+          "value": 1000,
+          "monthlyPrice": 500,
+          "label": "1000 Mbit/s"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d99",
+          "value": 100,
+          "monthlyPrice": 500,
+          "label": "100 Mbit/s · guaranteed"
+        },
+        {
+          "id": "6abb6d90f6e06738fc031d9a",
+          "value": 1000,
+          "monthlyPrice": 4000,
+          "label": "1000 Mbit/s · guaranteed"
+        },
+        {
+          "id": "6abbb445b3e6c02948743aa1",
+          "value": 10000,
+          "monthlyPrice": 20000,
+          "label": "10G"
+        }
+      ],
+      "blockType": "colocation-calculator",
+      "heading": "Oblicz koszt kolokacji",
+      "subheading": "Wybierz parametry sprzętu, aby otrzymać szacunkową miesięczną cenę.",
+      "unitSettings": {
+        "label": "Liczba jednostek U",
+        "minimum": 1,
+        "maximum": 42,
+        "defaultValue": 1,
+        "monthlyPricePerUnit": 500
+      },
+      "electricitySettings": {
+        "pricePerKwh": 18.7,
+        "hoursPerDay": 24,
+        "daysPerMonth": 30,
+        "formula": "powerW / 1000 * hoursPerDay * daysPerMonth * pricePerKwh"
+      },
+      "labels": {
+        "power": "Moc zasilaczy",
+        "ip": "Liczba adresów IP",
+        "speed": "Prędkość Internetu",
+        "monthlyTotal": "Koszt miesięczny",
+        "setupTotal": "Jednorazowa instalacja",
+        "currency": "UAH",
+        "monthlySuffix": "/ miesiąc",
+        "vatNote": "Ceny zawierają VAT. Ostateczną konfigurację potwierdzi opiekun.",
+        "calculationDetails": "Szczegóły obliczenia"
+      }
+    }
+  }
+}

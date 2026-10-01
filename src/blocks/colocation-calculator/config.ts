@@ -1,9 +1,15 @@
 import type { Block, Field } from 'payload'
+import { DEFAULT_ELECTRICITY_FORMULA, validateElectricityFormula } from './formula'
 
 const optionFields: Field[] = [
   { name: 'label', type: 'text', required: true, localized: true },
   { name: 'value', type: 'number', required: true, min: 0 },
   { name: 'monthlyPrice', type: 'number', required: true, min: 0, defaultValue: 0 },
+]
+
+const powerOptionFields: Field[] = [
+  { name: 'label', type: 'text', required: true, localized: true },
+  { name: 'value', type: 'number', required: true, min: 0, label: 'Power (W)' },
 ]
 
 export const ColocationCalculatorBlock: Block = {
@@ -24,7 +30,7 @@ export const ColocationCalculatorBlock: Block = {
         { name: 'minimum', type: 'number', required: true, min: 1, defaultValue: 1 },
         { name: 'maximum', type: 'number', required: true, min: 1, defaultValue: 42 },
         { name: 'defaultValue', type: 'number', required: true, min: 1, defaultValue: 1 },
-        { name: 'monthlyPricePerUnit', type: 'number', required: true, min: 0, defaultValue: 500 },
+        { name: 'monthlyPricePerUnit', type: 'number', required: true, min: 0, defaultValue: 1000 },
       ],
     },
     {
@@ -33,7 +39,58 @@ export const ColocationCalculatorBlock: Block = {
       required: true,
       min: 0,
       defaultValue: 1000,
-      admin: { description: 'Fixed one-time installation price. It is not multiplied by the number of rack units.' },
+      admin: {
+        description:
+          'Fixed one-time installation price. It is not multiplied by the number of rack units.',
+      },
+    },
+    {
+      name: 'electricitySettings',
+      type: 'group',
+      label: 'Electricity calculation',
+      admin: {
+        description: 'Formula: power (W) / 1000 × hours per day × days per month × price per kWh.',
+      },
+      fields: [
+        {
+          name: 'pricePerKwh',
+          type: 'number',
+          required: true,
+          min: 0,
+          defaultValue: 18.7,
+          label: 'Price, UAH/kWh',
+        },
+        {
+          name: 'hoursPerDay',
+          type: 'number',
+          required: true,
+          min: 0,
+          max: 24,
+          defaultValue: 24,
+          label: 'Hours per day',
+        },
+        {
+          name: 'daysPerMonth',
+          type: 'number',
+          required: true,
+          min: 1,
+          max: 31,
+          defaultValue: 30,
+          label: 'Days per month',
+        },
+        {
+          name: 'formula',
+          type: 'text',
+          required: true,
+          defaultValue: DEFAULT_ELECTRICITY_FORMULA,
+          validate: validateElectricityFormula,
+          label: 'Formula',
+          admin: {
+            description:
+              'Available variables: powerW, hoursPerDay, daysPerMonth, pricePerKwh. Operators: +, -, *, / and parentheses.',
+          },
+        },
+      ],
     },
     {
       name: 'powerOptions',
@@ -41,8 +98,11 @@ export const ColocationCalculatorBlock: Block = {
       required: true,
       minRows: 1,
       label: 'Power supply options',
-      admin: { description: 'value is the power limit in watts.' },
-      fields: optionFields,
+      admin: {
+        description: 'Потужність у ватах. Ціна автоматично обчислюється за формулою.',
+        components: { Field: '@/blocks/colocation-calculator/AdminOptionsTable#AdminOptionsTable' },
+      },
+      fields: powerOptionFields,
     },
     {
       name: 'ipOptions',
@@ -50,7 +110,10 @@ export const ColocationCalculatorBlock: Block = {
       required: true,
       minRows: 1,
       label: 'IP address options',
-      admin: { description: 'value is the number of usable/public IP addresses.' },
+      admin: {
+        description: 'Кількість публічних IP та фіксована місячна ціна.',
+        components: { Field: '@/blocks/colocation-calculator/AdminOptionsTable#AdminOptionsTable' },
+      },
       fields: optionFields,
     },
     {
@@ -59,7 +122,10 @@ export const ColocationCalculatorBlock: Block = {
       required: true,
       minRows: 1,
       label: 'Internet speed options',
-      admin: { description: 'value is the connection speed in Mbit/s.' },
+      admin: {
+        description: 'Швидкість підключення та фіксована місячна ціна.',
+        components: { Field: '@/blocks/colocation-calculator/AdminOptionsTable#AdminOptionsTable' },
+      },
       fields: optionFields,
     },
     {
@@ -73,9 +139,31 @@ export const ColocationCalculatorBlock: Block = {
         { name: 'monthlyTotal', type: 'text', required: true, localized: true },
         { name: 'setupTotal', type: 'text', required: true, localized: true },
         { name: 'currency', type: 'text', required: true, localized: true, defaultValue: 'грн' },
-        { name: 'monthlySuffix', type: 'text', required: true, localized: true, defaultValue: '/ місяць' },
+        {
+          name: 'monthlySuffix',
+          type: 'text',
+          required: true,
+          localized: true,
+          defaultValue: '/ місяць',
+        },
         { name: 'vatNote', type: 'text', localized: true },
+        {
+          name: 'calculationDetails',
+          type: 'text',
+          required: true,
+          localized: true,
+          defaultValue: 'Деталі розрахунку',
+        },
       ],
+    },
+    {
+      name: 'backupForSeed',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: '@/blocks/colocation-calculator/BackupButton#BackupButton',
+        },
+      },
     },
   ],
 }

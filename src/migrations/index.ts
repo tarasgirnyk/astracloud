@@ -21,11 +21,13 @@ import * as migration_20260723_101611_consultation_split_card from './20260723_1
 import * as migration_20260723_105056_advantages_split_layout from './20260723_105056_advantages_split_layout';
 import * as migration_20260724_115806_faq_items from './20260724_115806_faq_items';
 import * as migration_20260724_115950_pages_faq_index_block from './20260724_115950_pages_faq_index_block';
-import * as migration_20260724_153900_faq_items_pages_relationship from './20260724_153900_faq_items_pages_relationship';
 import * as migration_20260724_142826_steps_block from './20260724_142826_steps_block';
+import * as migration_20260724_153900_faq_items_pages_relationship from './20260724_153900_faq_items_pages_relationship';
 import * as migration_20260728_100850_add_seo_meta_fields from './20260728_100850_add_seo_meta_fields';
 import * as migration_20260929_074800_colocation_calculator from './20260929_074800_colocation_calculator';
 import * as migration_20260929_081409_fixed_colocation_installation_price from './20260929_081409_fixed_colocation_installation_price';
+import * as migration_20260929_121005_colocation_electricity_calculation from './20260929_121005_colocation_electricity_calculation';
+import * as migration_20260929_122407_editable_colocation_electricity_formula from './20260929_122407_editable_colocation_electricity_formula';
 
 export const migrations = [
   {
@@ -144,23 +146,14 @@ export const migrations = [
     name: '20260724_115950_pages_faq_index_block',
   },
   {
-    up: migration_20260724_153900_faq_items_pages_relationship.up,
-    down: migration_20260724_153900_faq_items_pages_relationship.down,
-    name: '20260724_153900_faq_items_pages_relationship',
-  },
-  {
-    // Listed after faq_items_pages_relationship (not by filename-timestamp
-    // order) to match actual run order: this migration ran as batch 17,
-    // after faq_items_pages_relationship's batch 16 (confirmed via
-    // `payload migrate:status`) — its own hand-written .json snapshot is
-    // the one complete, up-to-date schema baseline `migrate:create` diffs
-    // against, so it must be the last entry before any migration added
-    // after it. Previously being listed *before* faq_items_pages_relationship
-    // made `migrate:create` diff against that older, incomplete snapshot,
-    // causing it to try to re-create this migration's own tables.
     up: migration_20260724_142826_steps_block.up,
     down: migration_20260724_142826_steps_block.down,
     name: '20260724_142826_steps_block',
+  },
+  {
+    up: migration_20260724_153900_faq_items_pages_relationship.up,
+    down: migration_20260724_153900_faq_items_pages_relationship.down,
+    name: '20260724_153900_faq_items_pages_relationship',
   },
   {
     up: migration_20260728_100850_add_seo_meta_fields.up,
@@ -176,5 +169,15 @@ export const migrations = [
     up: migration_20260929_081409_fixed_colocation_installation_price.up,
     down: migration_20260929_081409_fixed_colocation_installation_price.down,
     name: '20260929_081409_fixed_colocation_installation_price',
+  },
+  {
+    up: migration_20260929_121005_colocation_electricity_calculation.up,
+    down: migration_20260929_121005_colocation_electricity_calculation.down,
+    name: '20260929_121005_colocation_electricity_calculation',
+  },
+  {
+    up: migration_20260929_122407_editable_colocation_electricity_formula.up,
+    down: migration_20260929_122407_editable_colocation_electricity_formula.down,
+    name: '20260929_122407_editable_colocation_electricity_formula'
   },
 ];
