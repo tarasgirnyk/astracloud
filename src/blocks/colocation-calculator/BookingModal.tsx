@@ -15,7 +15,13 @@ export interface BookingConfiguration {
   currency: string
 }
 
-export function BookingModal({ configuration }: { configuration: BookingConfiguration }) {
+export function BookingModal({
+  configuration,
+  comment,
+}: {
+  configuration: BookingConfiguration
+  comment: string
+}) {
   const t = useTranslations('colocationBooking')
   const [open, setOpen] = useState(false)
   const [phone, setPhone] = useState('')
@@ -41,7 +47,7 @@ export function BookingModal({ configuration }: { configuration: BookingConfigur
       const response = await fetch('/api/colocation-booking', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, email, configuration }),
+        body: JSON.stringify({ phone, email, comment, configuration }),
       })
       if (!response.ok) throw new Error('Request failed')
       setStatus('success')

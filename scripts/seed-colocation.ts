@@ -17,15 +17,7 @@ import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 import config from '../payload.config.ts'
 import { seedLocalizedDoc } from './seed-locale-helpers.ts'
-import {
-  bulletListNode,
-  headingNode,
-  paragraphNode,
-  richTextDoc,
-  tableCellNode,
-  tableNode,
-  tableRowNode,
-} from './lexical-helpers.ts'
+import { tableCellNode, tableNode, tableRowNode } from './lexical-helpers.ts'
 
 type Locale = 'ua' | 'en' | 'pl'
 
@@ -236,6 +228,15 @@ function buildPriceTable(sections: PriceSection[], headers: [string, string, str
   return tableNode(rows)
 }
 
+// Kept as legacy source data for administrators; it is no longer rendered on the public page.
+void SECTIONS_UA
+void SECTION_TITLES_EN
+void SECTION_TITLES_PL
+void ROW_LABELS_EN
+void ROW_LABELS_PL
+void translateSections
+void buildPriceTable
+
 const partners = [
   { name: 'GigaTrans', href: 'https://gigatrans.ua' },
   { name: 'IX' },
@@ -380,29 +381,6 @@ function colocationUa() {
     { blockType: 'partners', title: 'Нам довіряють', partners },
     calculatorBlock('ua'),
     {
-      blockType: 'simple-content',
-      content: richTextDoc([
-        paragraphNode(
-          'Astra Cloud розміщує обладнання клієнтів у власних дата-центрах у Львові — ДЦ Львів 1 та ДЦ Львів 2. Обладнання захищене від перебоїв живлення, перегріву та інших аварійних ситуацій цілодобовим моніторингом і резервними системами.',
-        ),
-        paragraphNode(
-          'ДЦ Львів 1 дає змогу розмістити обладнання в приміщенні колишнього бомбосховища.',
-        ),
-        headingNode('h3', 'Що входить у послугу'),
-        bulletListNode([
-          'Розміщення обладнання будь-якого розміру — від 1U до цілих стійок',
-          'Два незалежних джерела живлення з резервуванням (ДБЖ, дизель-генератори)',
-          'Цілодобова робота 24/7/365',
-          'Система кондиціонування для контролю температури та вологості',
-          'Канали Інтернету від 100 Мбіт/с до 10 Гбіт/с',
-          'Надання білих IP-адрес',
-        ]),
-        headingNode('h3', 'Тарифи на колокацію'),
-        paragraphNode('Ціни вказано в гривнях на місяць, ПДВ включено.'),
-        buildPriceTable(SECTIONS_UA, ['Послуга', 'ДЦ Львів 2', 'ДЦ Львів 1', 'Інсталяція']),
-      ]),
-    },
-    {
       blockType: 'consultation',
       tone: 'light',
       splitCard: true,
@@ -419,7 +397,6 @@ function colocationUa() {
 }
 
 function colocationEn() {
-  const sections = translateSections(SECTIONS_UA, SECTION_TITLES_EN, ROW_LABELS_EN)
   return [
     heroBlock(
       'Colocation',
@@ -428,27 +405,6 @@ function colocationEn() {
     ),
     { blockType: 'partners', title: 'Trusted by', partners },
     calculatorBlock('en'),
-    {
-      blockType: 'simple-content',
-      content: richTextDoc([
-        paragraphNode(
-          "Astra Cloud hosts clients' equipment in its own data centers in Lviv — DC Lviv 1 and DC Lviv 2. Equipment is protected from power outages, overheating, and other incidents through round-the-clock monitoring and redundant systems.",
-        ),
-        paragraphNode('DC Lviv 1 lets you host your equipment inside a former bomb shelter.'),
-        headingNode('h3', "What's Included"),
-        bulletListNode([
-          'Equipment of any size — from 1U to full racks',
-          'Two independent power feeds with redundancy (UPS, diesel generators)',
-          'Round-the-clock operation, 24/7/365',
-          'Climate control for temperature and humidity',
-          'Internet channels from 100 Mbit/s to 10 Gbit/s',
-          'Public (white) IP addresses',
-        ]),
-        headingNode('h3', 'Colocation Pricing'),
-        paragraphNode('Prices are in Ukrainian hryvnia per month, VAT included.'),
-        buildPriceTable(sections, ['Service', 'DC Lviv 2', 'DC Lviv 1', 'Installation']),
-      ]),
-    },
     {
       blockType: 'consultation',
       tone: 'light',
@@ -466,7 +422,6 @@ function colocationEn() {
 }
 
 function colocationPl() {
-  const sections = translateSections(SECTIONS_UA, SECTION_TITLES_PL, ROW_LABELS_PL)
   return [
     heroBlock(
       'Kolokacja',
@@ -475,29 +430,6 @@ function colocationPl() {
     ),
     { blockType: 'partners', title: 'Zaufali nam', partners },
     calculatorBlock('pl'),
-    {
-      blockType: 'simple-content',
-      content: richTextDoc([
-        paragraphNode(
-          'Astra Cloud umieszcza sprzęt klientów we własnych centrach danych we Lwowie — CD Lwów 1 i CD Lwów 2. Sprzęt jest chroniony przed przerwami w zasilaniu, przegrzaniem i innymi awariami dzięki całodobowemu monitoringowi i systemom redundantnym.',
-        ),
-        paragraphNode(
-          'CD Lwów 1 pozwala umieścić sprzęt w pomieszczeniu dawnego schronu przeciwbombowego.',
-        ),
-        headingNode('h3', 'Co obejmuje usługa'),
-        bulletListNode([
-          'Umieszczenie sprzętu dowolnego rozmiaru — od 1U po całe szafy',
-          'Dwa niezależne źródła zasilania z redundancją (UPS, generatory diesla)',
-          'Praca całodobowa 24/7/365',
-          'System klimatyzacji kontrolujący temperaturę i wilgotność',
-          'Łącza internetowe od 100 Mbit/s do 10 Gbit/s',
-          'Udostępnienie publicznych adresów IP',
-        ]),
-        headingNode('h3', 'Cennik kolokacji'),
-        paragraphNode('Ceny podane w hrywnach ukraińskich za miesiąc, z VAT.'),
-        buildPriceTable(sections, ['Usługa', 'CD Lwów 2', 'CD Lwów 1', 'Instalacja']),
-      ]),
-    },
     {
       blockType: 'consultation',
       tone: 'light',

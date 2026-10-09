@@ -27,6 +27,18 @@
     "title": "Zarezerwuj konfigurację",
     "email": "Email",
     "phone": "Telefon",
+    "comment": "Komentarz",
+    "commentPlaceholder": "Opisz szczegóły sprzętu lub połączenia",
+    "instructionTitle": "Jak obliczyć koszt",
+    "instructionIntro": "Wprowadź łączne parametry całego sprzętu:",
+    "instructions": {
+      "units": "Liczba jednostek — zsumuj wysokość wszystkich urządzeń w U.",
+      "power": "Zasilacze — podaj ich łączną moc dla wszystkich urządzeń; jeśli urządzenie ma dwa zasilacze, uwzględnij tylko jeden.",
+      "ip": "Adresy IP — wybierz wymaganą liczbę publicznych adresów IPv4.",
+      "speed": "Prędkość Internetu — wybierz wymaganą prędkość i typ łącza.",
+      "comment": "Komentarz — podaj modele sprzętu, schemat połączeń i dodatkowe wymagania."
+    },
+    "instructionResult": "Kalkulator pokaże szacunkowy miesięczny koszt i jednorazową opłatę instalacyjną. Ostateczną konfigurację potwierdzi opiekun.",
     "submit": "Wyślij zgłoszenie",
     "submitting": "Wysyłanie...",
     "success": "Dziękujemy! Konfiguracja została wysłana do opiekuna. Wkrótce się skontaktujemy.",

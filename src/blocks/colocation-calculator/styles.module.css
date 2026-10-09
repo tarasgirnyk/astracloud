@@ -34,6 +34,32 @@
   box-shadow: 0 18px 50px rgb(22 31 56 / 8%);
 }
 
+.instructions {
+  max-width: 1040px;
+  margin: 22px auto 0;
+  padding: 0 clamp(6px, 2vw, 18px);
+  color: var(--text-on-light-muted);
+  font: var(--text-body-sm);
+}
+.instructions > strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text-on-light);
+}
+.instructions > span {
+  display: block;
+}
+.instructions ul {
+  display: grid;
+  gap: 5px;
+  margin: 10px 0;
+  padding-left: 20px;
+}
+.instructions p {
+  margin: 0;
+  font: var(--text-caption);
+}
+
 .controls {
   display: grid;
   gap: 24px;
@@ -45,6 +71,11 @@
 .field label {
   font: var(--text-ui-label);
   color: var(--text-on-light);
+}
+.fieldHint {
+  margin-top: -4px;
+  color: var(--text-on-light-muted);
+  font: var(--text-caption);
 }
 .fieldHeader {
   display: flex;
@@ -70,6 +101,7 @@
   font: var(--text-caption);
 }
 .field select,
+.field textarea,
 .numberInput {
   width: 100%;
   min-height: 48px;
@@ -81,6 +113,11 @@
 }
 .field select {
   padding: 0 14px;
+}
+.field textarea {
+  min-height: 104px;
+  padding: 12px 14px;
+  resize: vertical;
 }
 .numberInput {
   display: flex;
@@ -162,6 +199,33 @@
 .setup b {
   white-space: nowrap;
 }
+.calculationDetails {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid rgb(255 255 255 / 18%);
+  font: var(--text-caption);
+}
+.calculationDetails > strong {
+  display: block;
+  margin-bottom: 10px;
+}
+.calculationDetails dl {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+}
+.calculationDetails dl > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+}
+.calculationDetails dt {
+  opacity: 0.72;
+}
+.calculationDetails dd {
+  margin: 0;
+  text-align: right;
+}
 .summary p {
   margin: 20px 0 0;
   font: var(--text-caption);
@@ -212,13 +276,21 @@
   margin-top: 6px;
   font: var(--text-ui-label);
 }
-.modal input {
+.modal input,
+.modal textarea {
   width: 100%;
-  min-height: 48px;
-  padding: 0 14px;
   border: 1px solid var(--border-on-light);
   border-radius: var(--radius-md);
   font: var(--text-body-sm);
+}
+.modal input {
+  min-height: 48px;
+  padding: 0 14px;
+}
+.modal textarea {
+  min-height: 104px;
+  padding: 12px 14px;
+  resize: vertical;
 }
 .modalClose {
   position: absolute;

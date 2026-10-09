@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { calculateColocationPrice } from './calculate'
 import styles from './styles.module.css'
 import { BookingModal } from './BookingModal'
@@ -41,6 +42,7 @@ export interface ColocationCalculatorBlockProps {
     currency: string
     monthlySuffix: string
     vatNote?: string | null
+    calculationDetails?: string | null
   }
 }
 
@@ -49,6 +51,7 @@ function clamp(value: number, min: number, max: number) {
 }
 
 export function ColocationCalculator(props: ColocationCalculatorBlockProps) {
+  const t = useTranslations('colocationBooking')
   const { unitSettings, labels } = props
   const [units, setUnits] = useState(() =>
     clamp(unitSettings.defaultValue, unitSettings.minimum, unitSettings.maximum),
@@ -56,6 +59,7 @@ export function ColocationCalculator(props: ColocationCalculatorBlockProps) {
   const [powerInput, setPowerInput] = useState(() => String(props.powerOptions[0]?.value ?? 0))
   const [ipIndex, setIpIndex] = useState(0)
   const [speedIndex, setSpeedIndex] = useState(0)
+  const [comment, setComment] = useState('')
   const powerW = Math.max(0, Number(powerInput) || 0)
 
   const total = useMemo(
@@ -126,9 +130,14 @@ export function ColocationCalculator(props: ColocationCalculatorBlockProps) {
 
             <div className={styles.field}>
               <label htmlFor="colocation-power">{labels.power}</label>
+              <small id="colocation-power-hint" className={styles.fieldHint}>
+                Сумарна потужність БЖ усіх пристроїв. Якщо пристрій має два БЖ — враховуйте лише
+                один.
+              </small>
               <div className={styles.numberInput}>
                 <input
                   id="colocation-power"
+                  aria-describedby="colocation-power-hint"
                   type="number"
                   min="0"
                   step="1"
@@ -160,6 +169,17 @@ export function ColocationCalculator(props: ColocationCalculatorBlockProps) {
               value={speedIndex}
               onChange={setSpeedIndex}
             />
+            <div className={styles.field}>
+              <label htmlFor="colocation-comment">{t('comment')}</label>
+              <textarea
+                id="colocation-comment"
+                maxLength={2000}
+                rows={4}
+                value={comment}
+                onChange={(event) => setComment(event.target.value)}
+                placeholder={t('commentPlaceholder')}
+              />
+            </div>
           </div>
 
           <aside className={styles.summary} aria-live="polite">
@@ -174,8 +194,38 @@ export function ColocationCalculator(props: ColocationCalculatorBlockProps) {
                 {money.format(setupTotal)} {labels.currency}
               </b>
             </div>
+            <div className={styles.calculationDetails}>
+              <strong>{labels.calculationDetails ?? 'Деталі розрахунку'}</strong>
+              <dl>
+                <div>
+                  <dt>{unitSettings.label}:</dt>
+                  <dd>{units}U</dd>
+                </div>
+                <div>
+                  <dt>{labels.power}:</dt>
+                  <dd>{powerW} W</dd>
+                </div>
+                <div>
+                  <dt>{labels.ip}:</dt>
+                  <dd>{props.ipOptions[ipIndex]?.label ?? ''}</dd>
+                </div>
+                <div>
+                  <dt>{labels.speed}:</dt>
+                  <dd>{props.speedOptions[speedIndex]?.label ?? ''}</dd>
+                </div>
+                <div>
+                  <dt>{labels.monthlyTotal}:</dt>
+                  <dd>{`${monthlyTotal} ${labels.currency}`}</dd>
+                </div>
+                <div>
+                  <dt>{labels.setupTotal}:</dt>
+                  <dd>{`${setupTotal} ${labels.currency}`}</dd>
+                </div>
+              </dl>
+            </div>
             {labels.vatNote ? <p>{labels.vatNote}</p> : null}
             <BookingModal
+              comment={comment}
               configuration={{
                 units,
                 power: `${powerW} W`,
@@ -187,6 +237,19 @@ export function ColocationCalculator(props: ColocationCalculatorBlockProps) {
               }}
             />
           </aside>
+        </div>
+
+        <div className={styles.instructions}>
+          <strong>{t('instructionTitle')}</strong>
+          <span>{t('instructionIntro')}</span>
+          <ul>
+            <li>{t('instructions.units')}</li>
+            <li>{t('instructions.power')}</li>
+            <li>{t('instructions.ip')}</li>
+            <li>{t('instructions.speed')}</li>
+            <li>{t('instructions.comment')}</li>
+          </ul>
+          <p>{t('instructionResult')}</p>
         </div>
       </div>
     </section>

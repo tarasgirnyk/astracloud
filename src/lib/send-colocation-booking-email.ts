@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer'
 export interface ColocationBookingRequest {
   phone: string
   email: string
+  comment: string
   configuration: {
     units: number
     power: string
@@ -23,8 +24,12 @@ export async function sendColocationBookingEmail(request: ColocationBookingReque
     throw new Error('Gmail SMTP is not configured.')
   }
 
-  const transporter = nodemailer.createTransport({ service: 'gmail', auth: { user, pass: appPassword } })
-  const { phone, email, configuration } = request
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: { user, pass: appPassword },
+  })
+  const { phone, email, comment, configuration } = request
+  const commentHtml = escapeHtml(comment || 'Не вказано').replace(/\n/g, '<br>')
   const lines = [
     `Кількість юнітів: ${configuration.units}U`,
     `Потужність блоків живлення: ${configuration.power}`,
@@ -39,14 +44,19 @@ export async function sendColocationBookingEmail(request: ColocationBookingReque
     to: recipient,
     replyTo: email,
     subject: 'Нове бронювання конфігурації колокації',
-    text: `Телефон: ${phone}\nEmail: ${email}\n\n${lines.join('\n')}`,
+    text: `Телефон: ${phone}\nEmail: ${email}\nКоментар: ${comment || 'Не вказано'}\n\n${lines.join('\n')}`,
     html: `<h2>Бронювання конфігурації колокації</h2>
       <p><strong>Телефон:</strong> ${escapeHtml(phone)}</p>
       <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+      <p><strong>Коментар:</strong><br>${commentHtml}</p>
       <hr><ul>${lines.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>`,
   })
 }
 
 function escapeHtml(value: string): string {
-  return value.replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char] ?? char)
+  return value.replace(
+    /[&<>"']/g,
+    (char) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char] ?? char,
+  )
 }

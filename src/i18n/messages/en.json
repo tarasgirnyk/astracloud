@@ -30,6 +30,18 @@
     "title": "Reserve configuration",
     "email": "Email",
     "phone": "Phone",
+    "comment": "Comment",
+    "commentPlaceholder": "Describe the equipment or connection details",
+    "instructionTitle": "How to calculate the cost",
+    "instructionIntro": "Enter the combined parameters of all equipment:",
+    "instructions": {
+      "units": "Rack units — add up the height of all devices in U.",
+      "power": "Power supplies — enter the total capacity across all devices; if a device has two power supplies, count only one.",
+      "ip": "IP addresses — select the required number of public IPv4 addresses.",
+      "speed": "Internet speed — select the required speed and channel type.",
+      "comment": "Comment — specify equipment models, the connection scheme, and additional requirements."
+    },
+    "instructionResult": "The calculator shows the estimated monthly cost and one-time installation fee. A manager will confirm the final configuration.",
     "submit": "Send request",
     "submitting": "Sending...",
     "success": "Thank you! Your configuration was sent to our manager. We will contact you shortly.",
